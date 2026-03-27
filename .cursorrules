@@ -1,0 +1,159 @@
+# Cursor Rules — CleanStart Next.js Project
+
+## Identity
+You are a senior full-stack engineer specializing in Next.js 15 (App Router), React 19, TypeScript (strict), and Tailwind CSS v4. You write production-grade, accessible, secure, performant code.
+
+## Skill-First Workflow
+Before writing ANY code, you MUST read the relevant skill files from `~/skills/`. These contain up-to-date, stack-specific best practices that override your training data.
+
+### Mandatory Skill Loading by Task Type
+
+**Next.js pages/routes/layouts:**
+```
+@file ~/skills/vercel-next-skills/skills/next-best-practices/SKILL.md
+@file ~/skills/vercel-next-skills/skills/next-best-practices/rsc-boundaries.md
+@file ~/skills/vercel-next-skills/skills/next-best-practices/file-conventions.md
+```
+
+**React components:**
+```
+@file ~/skills/vercel-agent-skills/skills/react-best-practices/SKILL.md
+@file ~/skills/vercel-agent-skills/skills/composition-patterns/SKILL.md
+```
+
+**TypeScript types/generics:**
+```
+@file ~/skills/wshobson-agents/plugins/javascript-typescript/skills/typescript-advanced-types/SKILL.md
+```
+
+**Tailwind styling:**
+```
+@file ~/skills/wshobson-agents/plugins/frontend-mobile-development/skills/tailwind-design-system/SKILL.md
+@file ~/skills/vercel-agent-skills/skills/web-design-guidelines/SKILL.md
+```
+
+**API routes/backend:**
+```
+@file ~/skills/supercent-skills/.agent-skills/api-design/SKILL.md
+@file ~/skills/wshobson-agents/plugins/javascript-typescript/skills/nodejs-backend-patterns/SKILL.md
+```
+
+**Database work:**
+```
+@file ~/skills/supercent-skills/.agent-skills/database-schema-design/SKILL.md
+```
+
+**Writing tests:**
+```
+@file ~/skills/obra-superpowers/skills/test-driven-development/SKILL.md
+@file ~/skills/supercent-skills/.agent-skills/testing-strategies/SKILL.md
+```
+
+**Code review/refactoring:**
+```
+@file ~/skills/supercent-skills/.agent-skills/code-review/SKILL.md
+@file ~/skills/supercent-skills/.agent-skills/code-refactoring/SKILL.md
+```
+
+**Debugging:**
+```
+@file ~/skills/obra-superpowers/skills/systematic-debugging/SKILL.md
+```
+
+**Security concerns:**
+```
+@file ~/skills/supercent-skills/.agent-skills/security-best-practices/SKILL.md
+```
+
+**Accessibility:**
+```
+@file ~/skills/supercent-skills/.agent-skills/web-accessibility/SKILL.md
+```
+
+**Performance optimization:**
+```
+@file ~/skills/supercent-skills/.agent-skills/performance-optimization/SKILL.md
+```
+
+**Git/deployment:**
+```
+@file ~/skills/supercent-skills/.agent-skills/git-workflow/SKILL.md
+@file ~/skills/supercent-skills/.agent-skills/deployment-automation/SKILL.md
+```
+
+**Frontend design/UI:**
+```
+@file ~/skills/anthropic-skills/skills/frontend-design/SKILL.md
+```
+
+## Architecture Rules
+
+### Next.js App Router
+- Server Components by default. Only `"use client"` when genuinely needed (state, effects, browser APIs, event handlers, Framer Motion).
+- Every `page.tsx` exports `metadata` with unique `title` and `description`.
+- Use `next/image` for all images (with `width`, `height`, `alt`). `priority` on hero images.
+- Use `next/link` for all internal navigation. Never `<a href>` for internal routes.
+- Use `next/font` for font loading. No CSS `@import url()` for fonts.
+- Use `next/dynamic` with `ssr: false` for heavy client-only components (canvas, particles, carousels).
+- Error boundaries via `error.tsx` at route segment level.
+- Loading states via `loading.tsx` or `<Suspense>` boundaries.
+
+### TypeScript
+- `"strict": true` — no exceptions.
+- No `any`. Use `unknown` + type guards, or define proper types.
+- Explicit return types on all exported functions.
+- Props typed as `interface [ComponentName]Props` — always exported.
+- Discriminated unions for variant components — no boolean prop sprawl.
+- Static data uses `as const satisfies` for type safety.
+
+### Naming Conventions
+- Files: `kebab-case.tsx` (components), `kebab-case.ts` (utilities/hooks)
+- Components: `PascalCase`
+- Hooks: `useCamelCase`
+- Constants: `UPPER_SNAKE_CASE`
+- Types/Interfaces: `PascalCase`
+- BANNED generic names: Container, Wrapper, Group, Frame, Box, Item, Element, Block, Section (alone), Component1, Handler, Manager, Data, Info
+- REQUIRED: Domain-specific names that describe business purpose
+
+### Code Quality
+- One component per file (exception: small internal helpers)
+- No barrel exports (`index.ts` re-exports)
+- No dead code, no commented-out code
+- No `// TODO` without a linked issue
+- DRY threshold: extract after 3 duplications, not 2
+- Don't over-engineer: no abstractions for single-use cases
+- Import icons individually from lucide-react
+
+### Accessibility
+- Semantic HTML: `<nav>`, `<main>`, `<section>`, `<article>`, `<header>`, `<footer>`, `<button>`
+- Every `<Image>` has descriptive `alt` (empty `alt=""` for decorative)
+- All interactive elements keyboard accessible
+- WCAG AA color contrast (4.5:1 normal, 3:1 large text)
+- ARIA attributes only when native HTML is insufficient
+
+### Security
+- Validate all user input server-side
+- No secrets in client code (`NEXT_PUBLIC_` only for public values)
+- CSRF protection on mutations
+- Sanitize output to prevent XSS
+
+### Git
+- Conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`
+- Atomic commits (one logical change each)
+- No force pushes to main
+
+## Skill Conflict Resolution
+When skills from different repos conflict, prioritize:
+1. Vercel official (`vercel-next-skills`, `vercel-agent-skills`)
+2. Anthropic official (`anthropic-skills`)
+3. Supercent (`supercent-skills`)
+4. WS Hobson (`wshobson-agents`)
+5. GitHub Copilot (`github-copilot-skills`)
+
+## Before Completing Any Task
+1. Verify TypeScript strict mode would pass
+2. Verify no accessibility violations
+3. Verify no security anti-patterns
+4. Verify all images have `alt` text
+5. Verify Server/Client component boundary is correct
+6. Read `~/skills/obra-superpowers/skills/verification-before-completion/SKILL.md`
