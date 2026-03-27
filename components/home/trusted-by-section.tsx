@@ -1,122 +1,20 @@
 "use client";
 
 import { motion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
 import svgPaths from '@/lib/svg-data/svg-0p28azmihl';
 
-function useCountUp(end: number, duration: number = 2000, decimals: number = 0) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const hasAnimated = useRef(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          const startTime = performance.now();
-          const animate = (now: number) => {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            // ease-out cubic
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setCount(parseFloat((eased * end).toFixed(decimals)));
-            if (progress < 1) requestAnimationFrame(animate);
-          };
-          requestAnimationFrame(animate);
-        }
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [end, duration, decimals]);
-
-  return { count, ref };
-}
-
 export function TrustedBySection() {
-  const hardenedCount = useCountUp(1000, 2000, 0);
-  const packagesCount = useCountUp(40000, 2000, 0);
-  const reproducedCount = useCountUp(90, 2000, 0);
-  const verifiedCount = useCountUp(1000, 2000, 0);
-  const cvesCount = useCountUp(3000, 2000, 0);
-
   return (
-    <section className="bg-white py-10 md:py-16 lg:py-20 px-4 md:px-8 lg:px-[50px] overflow-hidden">
-      {/* Content — 30:70 split grid */}
-      <div className="max-w-[1340px] mx-auto grid grid-cols-1 lg:grid-cols-10 gap-8 lg:gap-0">
-        {/* Left 30%: Headline */}
-        <motion.div
-          className="lg:col-span-3"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-black tracking-[-0.02em] leading-normal">
-            Trusted by<br />
-            Leading Global<br />
-            Brands
-          </h2>
-        </motion.div>
-
-        {/* Right 70%: Description + Stats */}
-        <div className="lg:col-span-7 flex flex-col gap-8 md:gap-[50px]">
-          <motion.p
-            className="font-['Google_Sans',sans-serif] font-semibold text-[18px] md:text-[20px] text-black leading-normal"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          >
-            From Fortune 500 enterprises to fast-growing startups, teams trust CleanStart to eliminate vulnerabilities and accelerate secure deployments.
-          </motion.p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8">
-            {[
-              { ref: hardenedCount.ref, value: hardenedCount.count.toLocaleString(), suffix: '+', label: 'Hardened image variants active' },
-              { ref: packagesCount.ref, value: packagesCount.count.toLocaleString(), suffix: '+', label: 'Packages built from source' },
-              { ref: reproducedCount.ref, value: reproducedCount.count.toString(), suffix: '%', label: 'Builds reproduced identically' },
-              { ref: verifiedCount.ref, value: verifiedCount.count.toLocaleString(), suffix: '+', label: 'Cryptographically verified builds' },
-              { ref: cvesCount.ref, value: cvesCount.count.toLocaleString(), suffix: '+', label: 'Critical CVEs eliminated' },
-            ].map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                className="flex flex-col gap-1"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.7, delay: 0.2 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <p className="font-['Google_Sans',sans-serif] font-normal text-[28px] md:text-[36px] lg:text-[42px] text-[#056BF1] leading-[1.2] tracking-[-0.02em]">
-                  <span ref={stat.ref}>{stat.value}</span>{stat.suffix}
-                </p>
-                <p className="font-['Google_Sans',sans-serif] font-normal text-[14px] text-[#181818]/50 leading-[1.5]">
-                  {stat.label}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Logo Ticker */}
+    <section className="bg-white py-6 md:py-[40px] overflow-hidden">
       <motion.div
-        className="mt-[80px] max-w-[1340px] mx-auto"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: '-40px' }}
-        transition={{ duration: 0.8, delay: 0.3 }}
+        transition={{ duration: 0.8 }}
       >
         <div className="relative overflow-hidden">
-          {/* Fade edges */}
           <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent z-10" />
           <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent z-10" />
-
           <div className="flex items-center gap-0 animate-[scroll_30s_linear_infinite]">
             <LogoRow />
             <LogoRow />

@@ -29,12 +29,12 @@ const faqItems = [
   {
     question: 'Which registries work with CleanStart images?',
     answer:
-      'CleanStart images are compatible with all major container registries including Docker Hub, AWS ECR, Google Artifact Registry, Azure Container Registry, and any OCI-compliant registry.',
+      'CleanStart images are compatible with all major container registries including Docker Hub, AWS ECR, Google Artifact Registry, Azure Container Registry, and any OCI-compliant registry. We also support private registry mirrors and dedicated endpoints for enterprise customers.',
   },
   {
-    question: 'Which registries work with CleanStart images?',
+    question: 'Does CleanStart support compliance frameworks like FIPS or NIST?',
     answer:
-      'We also support private registry mirrors and can provide dedicated endpoints for enterprise customers with specific compliance requirements.',
+      'Yes. CleanStart images are built to meet FIPS 140-2, NIST SP 800-190, CIS Benchmarks, and SOC 2 requirements. Our CleanSBOM product provides full software traceability for audit-ready compliance reporting.',
   },
 ];
 
@@ -59,7 +59,7 @@ export function FAQSection() {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <section className="bg-[#ecedef] px-4 md:px-8 lg:px-[50px] pt-12 md:pt-[100px] pb-[120px] md:pb-[220px]">
+    <section className="bg-[#ecedef] px-4 md:px-8 lg:px-[50px] py-12 md:py-[100px]">
       <div className="max-w-[1340px] mx-auto flex flex-col gap-8 md:gap-[50px]">
         {/* Header */}
         <div className="flex flex-col lg:flex-row items-start justify-between gap-4 lg:gap-0">
@@ -73,7 +73,7 @@ export function FAQSection() {
             Questions &amp; Answers
           </motion.h2>
           <motion.p
-            className="font-['Google_Sans',sans-serif] font-normal text-[16px] text-black max-w-full lg:max-w-[526px] leading-normal"
+            className="font-['Google_Sans',sans-serif] font-normal text-[16px] text-[#181818]/60 max-w-full lg:max-w-[526px] leading-normal"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
@@ -102,7 +102,7 @@ export function FAQSection() {
                   onClick={() => setOpenIndex(isOpen ? -1 : i)}
                 >
                   <div className="flex items-center justify-between p-[25px]">
-                    <p className="font-['Manrope',sans-serif] font-semibold text-[20px] text-black">
+                    <p className="font-['Google_Sans',sans-serif] font-semibold text-[20px] text-[#181818]">
                       {item.question}
                     </p>
                     {!isOpen && <PlusIcon />}

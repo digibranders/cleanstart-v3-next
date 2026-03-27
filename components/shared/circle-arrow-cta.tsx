@@ -9,6 +9,7 @@ interface CircleArrowCTAProps {
   size?: number;
   href?: string;
   className?: string;
+  forceHovered?: boolean;
 }
 
 const config: Record<CircleVariant, {
@@ -58,8 +59,10 @@ export function CircleArrowCTA({
   size = 28,
   href,
   className = "",
+  forceHovered,
 }: CircleArrowCTAProps) {
-  const [hovered, setHovered] = useState(false);
+  const [selfHovered, setSelfHovered] = useState(false);
+  const hovered = forceHovered ?? selfHovered;
   const c = config[variant];
   const arrowSize = Math.round(size * 0.36);
   const strokeWidth = 1.3;
@@ -74,8 +77,8 @@ export function CircleArrowCTA({
         border: `${strokeWidth}px solid ${hovered ? c.hoverBorder : c.border}`,
         transform: hovered ? "rotate(45deg)" : "rotate(0deg)",
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={() => setSelfHovered(true)}
+      onMouseLeave={() => setSelfHovered(false)}
     >
       <svg
         width={arrowSize}

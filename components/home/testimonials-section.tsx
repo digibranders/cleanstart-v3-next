@@ -18,31 +18,37 @@ const avatars = [
 
 const contentSlides = [
   {
-    type: 'podcast',
-    title: 'Fail to recover after a major cyber attack',
+    type: 'Case Study',
+    brand: 'HPE',
+    result: '97.6% CVE reduction',
+    title: 'HPE eliminates 88,000 CVEs across containerized infrastructure',
     description:
-      'Company selected to develop next-generation upgrades for U.S. Air Force F-16 fleet. The initiative aims to modernize legacy systems while maintaining the highest security standards across all deployment environments. This represents a critical step forward in securing national defense infrastructure against emerging cyber threats and vulnerabilities.',
-    date: 'December 4, 2025',
-    cta: 'Read Article',
-    image: '/images/figma/1d73c4dc6a8e5257d8563da80c6aa225c3ed11b8.png',
+      'Hewlett Packard Enterprise migrated 200+ production container images to CleanStart hardened builds, eliminating 88,000 known CVEs and reducing their attack surface by 80%. Security review cycles dropped from weeks to hours.',
+    date: 'Q4 2025',
+    cta: 'Read Case Study',
+    image: '/images/figma/891596228f2ccc9edf84581e6b09c7000509f721.png',
   },
   {
-    type: 'blog',
-    title: 'Zero-trust architecture in modern cloud environments',
+    type: 'Case Study',
+    brand: 'Hitachi',
+    result: '352,000+ hours saved',
+    title: 'Hitachi eliminates patching overhead with deterministic builds',
     description:
-      'Implementing comprehensive security frameworks that verify every access request regardless of origin. Organizations are shifting from perimeter-based security to identity-centric models.',
-    date: 'November 28, 2025',
-    cta: 'Read More',
-    image: 'https://images.unsplash.com/photo-1626908013943-df94de54984c?w=1080&q=80',
+      'Hitachi\'s platform engineering team replaced unpredictable base images with CleanStart\'s verified source builds, saving over 352,000 engineering hours annually and achieving zero security incidents in their first deployment quarter.',
+    date: 'Q3 2025',
+    cta: 'Read Case Study',
+    image: '/images/figma/3939a4a7b7ba76abe2ee30e4f57fbb4728675be9.png',
   },
   {
-    type: 'resource',
-    title: 'Enterprise security compliance guide 2026',
+    type: 'Case Study',
+    brand: 'Encora',
+    result: 'FIPS 140-2 compliant',
+    title: 'Encora achieves full FIPS compliance for defense-grade deployments',
     description:
-      'Download our comprehensive whitepaper covering SOC 2, ISO 27001, and GDPR requirements. Learn best practices for maintaining compliance while accelerating development cycles.',
-    date: 'November 15, 2025',
-    cta: 'Download PDF',
-    image: 'https://images.unsplash.com/photo-1762340916350-ad5a3d620c16?w=1080&q=80',
+      'Encora\'s DevSecOps team leveraged CleanStart\'s hardened container images to meet stringent federal compliance requirements, enabling rapid deployment into regulated environments with full software traceability via CleanSBOM.',
+    date: 'Q2 2025',
+    cta: 'Read Case Study',
+    image: '/images/figma/d96951a1bd5bb3095e272f77dc790777830fd5f3.png',
   },
 ];
 
@@ -400,6 +406,7 @@ function QuoteIcon(): React.JSX.Element {
 
 export function TestimonialsSection(): React.JSX.Element {
   const [activeSlide, setActiveSlide] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   const goNext = useCallback(() => {
     setActiveSlide((prev) => (prev + 1) % contentSlides.length);
@@ -410,9 +417,10 @@ export function TestimonialsSection(): React.JSX.Element {
   }, []);
 
   useEffect(() => {
+    if (paused) return;
     const timer = setInterval(goNext, 5000);
     return () => clearInterval(timer);
-  }, [goNext]);
+  }, [goNext, paused]);
 
   const slide = contentSlides[activeSlide];
 
@@ -442,7 +450,7 @@ export function TestimonialsSection(): React.JSX.Element {
                 {slide.type}
               </span>
               <span className="bg-white/10 backdrop-blur-md px-[16px] py-[8px] rounded-[8px] border border-white/20 font-['Google_Sans',sans-serif] text-[13px] text-white">
-                {slide.date}
+                {slide.result}
               </span>
             </div>
           </div>
@@ -470,7 +478,7 @@ export function TestimonialsSection(): React.JSX.Element {
             </AnimatePresence>
           </div>
 
-          {/* Navigation arrows */}
+          {/* Navigation controls */}
           <div className="absolute bottom-[50px] right-[50px] flex flex-row gap-[12px]">
             <button
               onClick={goPrev}
@@ -489,6 +497,22 @@ export function TestimonialsSection(): React.JSX.Element {
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M7.5 15L12.5 10L7.5 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
+            </button>
+            <button
+              onClick={() => setPaused((p) => !p)}
+              aria-label={paused ? 'Play slideshow' : 'Pause slideshow'}
+              className="w-[44px] h-[44px] rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-white/20 transition-all"
+            >
+              {paused ? (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M4 2.5L13 8L4 13.5V2.5Z" fill="white" />
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <rect x="3" y="2.5" width="3.5" height="11" rx="1" fill="white" />
+                  <rect x="9.5" y="2.5" width="3.5" height="11" rx="1" fill="white" />
+                </svg>
+              )}
             </button>
           </div>
         </div>
@@ -543,8 +567,10 @@ function TestimonialCard({
       className={`${bgColor} flex flex-col justify-between px-6 md:px-[40px] md:pr-[60px] py-[40px] min-h-[360px] lg:min-h-[420px]`}
     >
       {/* Logo */}
-      <div className="flex justify-end">
-        <BrandLogo brand={item.brand} />
+      <div className="flex justify-start pt-4">
+        <div style={{ transform: 'scale(1.5)', transformOrigin: 'left center' }}>
+          <BrandLogo brand={item.brand} />
+        </div>
       </div>
 
       {/* Quote */}

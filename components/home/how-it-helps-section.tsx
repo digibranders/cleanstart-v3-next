@@ -214,7 +214,7 @@ export function HowItHelpsSection() {
         <AnimatePresence mode="wait">
           <motion.div
             key={`cards-${activeRole}`}
-            className={`grid grid-cols-1 gap-4 md:gap-6 ${data.cards.length > 3 ? "md:grid-cols-3" : "md:grid-cols-3"}`}
+            className="grid grid-cols-1 gap-4 md:gap-6 md:grid-cols-3"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -234,13 +234,6 @@ export function HowItHelpsSection() {
                 transition={{ duration: 0.5, delay: i * 0.08, ease: EASE }}
                 whileHover={{ borderColor: "rgba(255,255,255,0.25)" }}
               >
-                {/* Subtle shine on hover */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 50%, rgba(255,255,255,0.02) 100%)",
-                  }}
-                />
 
                 {/* Icon circle */}
                 <div

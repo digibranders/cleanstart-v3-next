@@ -7,16 +7,17 @@ import { AnimatedBird } from '@/components/shared/animated-bird';
 
 /* ---- Arrow Circle Component ---- */
 
-function ArrowCircle({ variant = 'blue' }: { variant?: 'blue' | 'white' }) {
-  const [hovered, setHovered] = useState(false);
+function ArrowCircle({ variant = 'blue', forceHovered }: { variant?: 'blue' | 'white'; forceHovered?: boolean }) {
+  const [selfHovered, setSelfHovered] = useState(false);
+  const hovered = forceHovered ?? selfHovered;
   const bgClass = variant === 'blue' ? 'bg-[#056bf1]' : 'bg-white';
   const arrowColor = variant === 'blue' ? 'white' : '#181818';
 
   return (
     <div
       className={`w-[44px] h-[44px] rounded-full ${bgClass} flex items-center justify-center transition-transform duration-300 cursor-pointer ${hovered ? 'rotate-45' : ''}`}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={() => setSelfHovered(true)}
+      onMouseLeave={() => setSelfHovered(false)}
     >
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <path
@@ -50,9 +51,9 @@ function EventCard() {
         className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 ${hovered ? 'scale-105' : 'scale-100'}`}
         src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-purple-900/90 via-purple-900/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0F1924]/90 via-[#0F1924]/40 to-transparent" />
       <div className="relative h-full flex flex-col justify-between p-6">
-        <span className="bg-[#5d04d8] text-white font-['Google_Sans',sans-serif] text-[12px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full self-start">
+        <span className="bg-[#056BF1] text-white font-['Google_Sans',sans-serif] text-[12px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full self-start">
           Event
         </span>
         <div className="flex flex-col gap-2">
@@ -66,7 +67,7 @@ function EventCard() {
             Join industry leaders for three days of security insights and networking.
           </p>
           <div className="flex justify-end mt-2">
-            <ArrowCircle variant="white" />
+            <ArrowCircle variant="white" forceHovered={hovered} />
           </div>
         </div>
       </div>
@@ -145,7 +146,7 @@ function ResourceCard({
         </p>
       </div>
       <div className="relative flex justify-end mt-3">
-        <ArrowCircle variant="blue" />
+        <ArrowCircle variant="blue" forceHovered={hovered} />
       </div>
     </motion.div>
   );
@@ -181,7 +182,7 @@ function BlogCard() {
             Explore how zero-CVE containers are reshaping security posture for Fortune 500 companies.
           </p>
           <div className="flex justify-end mt-2">
-            <ArrowCircle variant="blue" />
+            <ArrowCircle variant="blue" forceHovered={hovered} />
           </div>
         </div>
       </div>
@@ -231,7 +232,7 @@ function WinnerCard() {
           </p>
         </div>
         <div className="flex justify-end">
-          <ArrowCircle variant="white" />
+          <ArrowCircle variant="white" forceHovered={hovered} />
         </div>
       </div>
     </motion.div>
@@ -278,7 +279,7 @@ export function ResourcesSection() {
           <StatCard
             value="67%"
             description="of security teams report improved incident response time"
-            bgColor="bg-[#5d04d8]"
+            bgColor="bg-[#056BF1]"
             gridClass="lg:col-start-2 lg:row-start-1"
           />
 
