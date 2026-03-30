@@ -6,6 +6,11 @@ import WhiteBgCube from '@/lib/svg-data/WhiteBgCube1';
 import { CallToActionButton } from '@/components/shared/call-to-action-button';
 import { TECH_LOGOS, TechLogoSVG } from '@/components/home/tech-logo-data';
 
+function pseudoRandom(seed: number) {
+  const value = Math.sin(seed * 12.9898) * 43758.5453;
+  return value - Math.floor(value);
+}
+
 // --- Antigravity Particle System ---
 
 interface Particle {
@@ -171,13 +176,16 @@ function FrostedSquareFlow() {
     const logoCount = TECH_LOGOS.length;
     const UNIFORM_SIZE = 56;
     for (let i = 0; i < 9; i++) {
+      const ySeed = pseudoRandom(i + 1);
+      const rotationSeed = pseudoRandom(i + 101);
+      const durationSeed = pseudoRandom(i + 201);
       items.push({
         id: i,
         size: UNIFORM_SIZE,
-        yOffset: (Math.random() - 0.5) * 280,
+        yOffset: (ySeed - 0.5) * 280,
         delay: i * 1.0,
-        rotation: Math.random() * 20 - 10,
-        duration: 6 + Math.random() * 1.5,
+        rotation: rotationSeed * 20 - 10,
+        duration: 6 + durationSeed * 1.5,
         logoIndex: i % logoCount,
       });
     }
@@ -563,46 +571,31 @@ function WavesVisual() {
   );
 }
 
-// --- Vulnerability Grid Visual (Slide 2) ---
+// --- Vulnerability Scan Visual (Slide 2) — Concentric ring scan ---
 
 function VulnerabilityGridVisual() {
-  const COLS = 5;
-  const ROWS = 4;
-  const TOTAL = COLS * ROWS;
-  const CLEAN_INDEX = 10;
+  const RINGS = [
+    { radius: 60, label: 'OS', delay: 0 },
+    { radius: 100, label: 'Runtime', delay: 0.8 },
+    { radius: 140, label: 'Libraries', delay: 1.6 },
+    { radius: 180, label: 'Packages', delay: 2.4 },
+    { radius: 220, label: 'Config', delay: 3.2 },
+  ];
 
-  const [scanned, setScanned] = useState(new Set<number>());
-  const [isDone, setIsDone] = useState(false);
+  const [scannedCount, setScannedCount] = useState(0);
+  const isDone = scannedCount >= RINGS.length;
 
   useEffect(() => {
     let timeoutIds: ReturnType<typeof setTimeout>[] = [];
-
-    const clearAll = () => {
-      timeoutIds.forEach(clearTimeout);
-      timeoutIds = [];
-    };
+    const clearAll = () => { timeoutIds.forEach(clearTimeout); timeoutIds = []; };
 
     const runCycle = () => {
       clearAll();
-      setScanned(new Set());
-      setIsDone(false);
-
-      const t0 = setTimeout(() => {
-        for (let i = 0; i < TOTAL; i++) {
-          const t = setTimeout(() => {
-            setScanned((prev) => {
-              const next = new Set(prev);
-              next.add(i);
-              return next;
-            });
-          }, i * 90);
-          timeoutIds.push(t);
-        }
-        const tDone = setTimeout(() => setIsDone(true), TOTAL * 90 + 400);
-        timeoutIds.push(tDone);
-      }, 1500);
-      timeoutIds.push(t0);
-
+      setScannedCount(0);
+      for (let i = 0; i < RINGS.length; i++) {
+        const t = setTimeout(() => setScannedCount(i + 1), 1500 + i * 900);
+        timeoutIds.push(t);
+      }
       const tLoop = setTimeout(runCycle, 10000);
       timeoutIds.push(tLoop);
     };
@@ -611,325 +604,401 @@ function VulnerabilityGridVisual() {
     return clearAll;
   }, []);
 
-  const vulnerableRemaining = Array.from({ length: TOTAL }, (_, i) => i).filter(
-    (i) => i !== CLEAN_INDEX && !scanned.has(i)
-  ).length;
-
-  return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-5">
-      <motion.div
-        className="grid gap-2.5"
-        style={{ gridTemplateColumns: `repeat(${COLS}, 1fr)` }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-      >
-        {Array.from({ length: TOTAL }, (_, i) => {
-          const isVulnerable = i !== CLEAN_INDEX;
-          const isClean = scanned.has(i) || !isVulnerable;
-          return (
-            <motion.div
-              key={`${i}-${isClean}`}
-              className="relative flex items-center justify-center rounded-xl"
-              style={{
-                width: 52,
-                height: 52,
-                background: isClean ? 'rgba(5, 207, 100, 0.15)' : 'rgba(255, 80, 60, 0.12)',
-                border: `1.5px solid ${isClean ? 'rgba(5, 207, 100, 0.5)' : 'rgba(255, 100, 60, 0.45)'}`,
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-              }}
-              initial={{ scale: 0.85, opacity: 0.7 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            >
-              {isClean ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="rgba(5, 207, 100, 0.95)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              ) : (
-                <>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="rgba(255, 120, 80, 0.95)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  <motion.div
-                    className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center text-white font-bold"
-                    style={{ background: 'rgba(255, 60, 40, 0.95)', fontSize: 9 }}
-                    animate={{ scale: [1, 1.25, 1] }}
-                    transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', delay: (i % 5) * 0.3 }}
-                  >
-                    !
-                  </motion.div>
-                </>
-              )}
-            </motion.div>
-          );
-        })}
-      </motion.div>
-
-      <motion.div
-        className="flex items-center gap-2.5 px-5 py-2.5 rounded-full border backdrop-blur-md"
-        style={{ background: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.3)' }}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 1, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <motion.div
-          className="w-2 h-2 rounded-full shrink-0"
-          animate={{ backgroundColor: isDone ? 'rgba(5, 207, 100, 0.9)' : 'rgba(255, 120, 80, 0.9)' }}
-          transition={{ duration: 0.3 }}
-        />
-        <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white whitespace-nowrap">
-          {isDone ? '19 CVEs Eliminated by CleanStart' : `${vulnerableRemaining} Vulnerabilities Active`}
-        </span>
-      </motion.div>
-    </div>
-  );
-}
-
-// --- Award Shield Visual (Slide 3) ---
-
-function AwardShieldVisual() {
-  const BADGES = ['Verified', 'Secure', 'Trusted', 'Certified', 'Compliant', 'Hardened'];
-  const ORBIT_RADIUS = 210;
-  const ORBIT_DURATION = 25;
-
   return (
     <div className="absolute inset-0 flex items-center justify-center">
-      <div
-        className="absolute rounded-full pointer-events-none"
-        style={{ width: ORBIT_RADIUS * 2 + 20, height: ORBIT_RADIUS * 2 + 20, border: '1px solid rgba(255,255,255,0.07)' }}
-      />
-
-      {/* Orbiting badges container */}
-      <motion.div
-        className="absolute"
-        style={{ width: ORBIT_RADIUS * 2, height: ORBIT_RADIUS * 2, left: '50%', top: '50%', marginLeft: -ORBIT_RADIUS, marginTop: -ORBIT_RADIUS }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: ORBIT_DURATION, repeat: Infinity, ease: 'linear' }}
-      >
-        {BADGES.map((badge, i) => {
-          const angle = (360 / BADGES.length) * i;
-          const rad = (angle * Math.PI) / 180;
-          const x = ORBIT_RADIUS + Math.cos(rad) * ORBIT_RADIUS - 36;
-          const y = ORBIT_RADIUS + Math.sin(rad) * ORBIT_RADIUS - 13;
-          return (
+      {/* Concentric scan rings */}
+      {RINGS.map((ring, i) => {
+        const isScanned = i < scannedCount;
+        return (
+          <motion.div
+            key={ring.label}
+            className="absolute rounded-full"
+            style={{
+              width: ring.radius * 2, height: ring.radius * 2,
+              border: `1.5px solid ${isScanned ? 'rgba(6, 199, 242, 0.4)' : 'rgba(255,255,255,0.12)'}`,
+              transition: 'border-color 0.8s ease',
+            }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {/* Scanning pulse on active ring */}
+            {i === scannedCount - 1 && (
+              <motion.div className="absolute inset-0 rounded-full"
+                style={{ border: '2px solid rgba(6, 199, 242, 0.6)' }}
+                animate={{ scale: [1, 1.08, 1], opacity: [0.8, 0, 0.8] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeOut' }}
+              />
+            )}
+            {/* Ring label */}
             <motion.div
-              key={badge}
-              className="absolute px-3 py-1.5 rounded-full text-[11px] font-medium text-white whitespace-nowrap font-['Google_Sans',sans-serif]"
+              className="absolute font-['Google_Sans',sans-serif] text-[10px] font-medium whitespace-nowrap"
               style={{
-                left: x,
-                top: y,
-                background: 'rgba(255,255,255,0.13)',
-                border: '1px solid rgba(255,255,255,0.22)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
+                top: -8, left: '50%', transform: 'translateX(-50%)',
+                color: isScanned ? 'rgba(6, 199, 242, 0.9)' : 'rgba(255,255,255,0.4)',
+                transition: 'color 0.8s ease',
               }}
-              animate={{ rotate: -360 }}
-              transition={{ duration: ORBIT_DURATION, repeat: Infinity, ease: 'linear' }}
             >
-              {badge}
+              {ring.label}
             </motion.div>
-          );
-        })}
-      </motion.div>
+            {/* Scanned checkmark at right */}
+            {isScanned && (
+              <motion.div
+                className="absolute flex items-center justify-center rounded-full"
+                style={{
+                  right: -14, top: '50%', marginTop: -14, width: 28, height: 28,
+                  background: 'rgba(6, 199, 242, 0.2)',
+                  border: '1.5px solid rgba(6, 199, 242, 0.5)',
+                  backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+                }}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 12l2 2 4-4" stroke="rgba(6,199,242,0.95)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </motion.div>
+            )}
+          </motion.div>
+        );
+      })}
 
-      {/* Central frosted circle */}
+      {/* Central shield icon */}
       <motion.div
-        className="relative flex items-center justify-center"
+        className="absolute flex items-center justify-center rounded-full"
         style={{
-          width: 210,
-          height: 210,
-          borderRadius: '50%',
-          background: 'rgba(255,255,255,0.12)',
-          border: '1.5px solid rgba(255,255,255,0.3)',
-          backdropFilter: 'blur(32px)',
-          WebkitBackdropFilter: 'blur(32px)',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 0 60px rgba(255,220,60,0.06), 0 8px 32px rgba(0,0,0,0.08)',
-          zIndex: 10,
+          width: 80, height: 80, zIndex: 25,
+          background: 'rgba(255, 255, 255, 0.15)',
+          border: '1.5px solid rgba(255, 255, 255, 0.3)',
+          backdropFilter: 'blur(32px)', WebkitBackdropFilter: 'blur(32px)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 32px rgba(0,0,0,0.08)',
         }}
         initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
       >
-        <motion.div
-          className="absolute inset-0 rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(255,220,60,0.07), transparent 70%)' }}
-          animate={{ opacity: [0.5, 1, 0.5] }}
+        <motion.svg width="36" height="36" viewBox="0 0 24 24" fill="none"
+          animate={{ scale: [1, 1.06, 1] }}
           transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.svg
-          width="76" height="76" viewBox="0 0 24 24" fill="none"
-          style={{ zIndex: 1, position: 'relative' }}
-          animate={{ scale: [1, 1.04, 1] }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <path d="M8 21h8M12 17v4M6 3H4a2 2 0 000 4c0 3 2 5 4.5 6M18 3h2a2 2 0 010 4c0 3-2 5-4.5 6M12 17c-3.5 0-6-2.5-6-6V3h12v8c0 3.5-2.5 6-6 6z" stroke="rgba(255,255,255,0.9)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" stroke="rgba(255,255,255,0.9)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M9 12l2 2 4-4" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </motion.svg>
       </motion.div>
 
-      {/* Award pill */}
+      {/* Rotating scan line */}
       <motion.div
-        className="absolute left-1/2 -translate-x-1/2"
-        style={{ bottom: '20px', zIndex: 20 }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        className="absolute"
+        style={{ width: 440, height: 2, zIndex: 24, transformOrigin: 'center center' }}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
       >
-        <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-full border backdrop-blur-md"
-          style={{ background: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.3)' }}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="rgba(255,255,255,0.9)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="rgba(255,255,255,0.1)" />
-          </svg>
-          <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white">
-            Cybersecurity Excellence Award 2026
-          </span>
+        <div style={{
+          width: '50%', height: '100%', marginLeft: '50%',
+          background: 'linear-gradient(90deg, rgba(6,199,242,0.6), transparent)',
+        }} />
+      </motion.div>
+
+      {/* Status pill */}
+      <motion.div
+        className="absolute left-1/2 bottom-[20px] -translate-x-1/2"
+        style={{ zIndex: 30 }}
+        initial={{ opacity: 0, y: 20, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className="px-5 py-2.5 rounded-full border" style={{
+          background: 'rgba(255,255,255,0.2)', borderColor: 'rgba(255,255,255,0.35)',
+          backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+        }}>
+          <div className="flex items-center gap-2.5">
+            <motion.div className="w-2 h-2 rounded-full shrink-0"
+              animate={{ backgroundColor: isDone ? 'rgba(6, 199, 242, 0.9)' : 'rgba(255, 255, 255, 0.6)' }}
+              transition={{ duration: 0.3 }}
+            />
+            <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white whitespace-nowrap">
+              {isDone ? '19 CVEs Eliminated — All Layers Clean' : `Scanning Layer ${scannedCount + 1} of ${RINGS.length}...`}
+            </span>
+          </div>
         </div>
       </motion.div>
     </div>
   );
 }
 
-// --- Source Build Visual (Slide 4) ---
+// --- Award Visual (Slide 3) — Rising trophy with staggered badge reveals ---
 
-function SourceBuildVisual() {
-  const sources = ['ubuntu:22.04', 'node:20-lts', 'python:3.11', 'golang:1.21'];
+function AwardShieldVisual() {
+  const BADGES = [
+    { label: 'Verified', x: -180, y: -80 },
+    { label: 'Secure', x: 170, y: -60 },
+    { label: 'Trusted', x: -160, y: 50 },
+    { label: 'Certified', x: 190, y: 70 },
+    { label: 'Compliant', x: -100, y: 140 },
+    { label: 'Hardened', x: 120, y: 150 },
+  ];
 
   return (
     <div className="absolute inset-0 flex items-center justify-center">
+      {/* Subtle radial glow rings */}
+      {[160, 240, 320].map((size, i) => (
+        <motion.div key={size} className="absolute rounded-full"
+          style={{ width: size, height: size, border: '1px solid rgba(255,255,255,0.06)' }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.3 + i * 0.2, ease: [0.16, 1, 0.3, 1] }}
+        />
+      ))}
+
+      {/* Central frosted circle with trophy */}
       <motion.div
-        className="flex items-center gap-2.5"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        className="absolute flex items-center justify-center rounded-full"
+        style={{
+          width: 200, height: 200, zIndex: 25,
+          background: 'rgba(255, 255, 255, 0.15)',
+          border: '1.5px solid rgba(255, 255, 255, 0.3)',
+          backdropFilter: 'blur(32px)', WebkitBackdropFilter: 'blur(32px)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 32px rgba(0,0,0,0.08)',
+        }}
+        initial={{ opacity: 0, scale: 0.85, y: 30 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
       >
-        {/* Source column */}
-        <div className="flex flex-col gap-3">
-          {sources.map((src, i) => (
-            <motion.div
-              key={src}
-              className="flex items-center gap-2 rounded-xl px-3 py-2.5"
-              style={{
-                width: 108,
-                background: 'rgba(255,255,255,0.10)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-              }}
-              initial={{ opacity: 0, x: -16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" className="shrink-0">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M14 2v6h6M8 13h8M8 17h5" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-              <span className="font-['Google_Sans',sans-serif] text-[10px] text-white/70 truncate">{src}</span>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Left flow arrows */}
-        <div className="flex flex-col gap-3">
-          {sources.map((_, i) => (
-            <div key={i} className="relative flex items-center" style={{ width: 36, height: 44 }}>
-              <div className="w-full h-px" style={{ background: 'rgba(255,255,255,0.15)' }} />
-              <motion.div
-                className="absolute w-2 h-2 rounded-full"
-                style={{ background: 'rgba(6, 199, 242, 0.85)', boxShadow: '0 0 8px rgba(6,199,242,0.6)' }}
-                animate={{ x: [-4, 28] }}
-                transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut', delay: i * 0.28 }}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Central processor */}
-        <motion.div
-          className="flex flex-col items-center justify-center gap-2 rounded-2xl"
-          style={{
-            width: 94,
-            height: 152,
-            background: 'rgba(255,255,255,0.12)',
-            border: '1.5px solid rgba(255,255,255,0.28)',
-            backdropFilter: 'blur(24px)',
-            WebkitBackdropFilter: 'blur(24px)',
-          }}
-          animate={{ boxShadow: ['0 0 20px rgba(6,199,242,0.08)', '0 0 40px rgba(6,199,242,0.2)', '0 0 20px rgba(6,199,242,0.08)'] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+        {/* Gold shimmer */}
+        <motion.div className="absolute inset-0 rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(255,220,60,0.1), transparent 65%)' }}
+          animate={{ opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.svg width="80" height="80" viewBox="0 0 24 24" fill="none" style={{ zIndex: 1 }}
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <div style={{ width: 38, height: 44 }}>
-            <WhiteBgCube />
-          </div>
-          <span className="font-['Google_Sans',sans-serif] text-[10px] font-semibold text-white/80 text-center leading-tight">
-            CleanStart<br />Build
-          </span>
-          <motion.div
-            className="w-5 h-5 rounded-full"
-            style={{ border: '2px solid rgba(255,255,255,0.25)', borderTopColor: 'rgba(255,255,255,0.85)' }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1.1, repeat: Infinity, ease: 'linear' }}
-          />
+          <path d="M8 21h8M12 17v4M6 3H4a2 2 0 000 4c0 3 2 5 4.5 6M18 3h2a2 2 0 010 4c0 3-2 5-4.5 6M12 17c-3.5 0-6-2.5-6-6V3h12v8c0 3.5-2.5 6-6 6z" stroke="rgba(255,255,255,0.9)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+        </motion.svg>
+      </motion.div>
+
+      {/* Floating badge pills — staggered reveal */}
+      {BADGES.map((badge, i) => (
+        <motion.div
+          key={badge.label}
+          className="absolute px-4 py-2 rounded-full font-['Google_Sans',sans-serif] text-[12px] font-medium text-white"
+          style={{
+            zIndex: 26,
+            background: 'rgba(255,255,255,0.15)',
+            border: '1px solid rgba(255,255,255,0.25)',
+            backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
+          }}
+          initial={{ opacity: 0, scale: 0.8, x: badge.x * 0.5, y: badge.y * 0.5 }}
+          animate={{ opacity: 1, scale: 1, x: badge.x, y: badge.y }}
+          transition={{ duration: 0.8, delay: 0.8 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <motion.span
+            animate={{ y: [0, -3, 0] }}
+            transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}
+            style={{ display: 'block' }}
+          >
+            {badge.label}
+          </motion.span>
         </motion.div>
+      ))}
 
-        {/* Right flow arrows */}
-        <div className="flex flex-col gap-3">
-          {sources.map((_, i) => (
-            <div key={i} className="relative flex items-center" style={{ width: 36, height: 44 }}>
-              <div className="w-full h-px" style={{ background: 'rgba(255,255,255,0.15)' }} />
-              <motion.div
-                className="absolute w-2 h-2 rounded-full"
-                style={{ background: 'rgba(5, 207, 100, 0.85)', boxShadow: '0 0 8px rgba(5,207,100,0.6)' }}
-                animate={{ x: [-4, 28] }}
-                transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut', delay: i * 0.28 + 0.55 }}
-              />
-            </div>
-          ))}
-        </div>
+      {/* Connecting lines from badges to center */}
+      <svg className="absolute" style={{ width: 500, height: 400, left: '50%', top: '50%', marginLeft: -250, marginTop: -200, zIndex: 23 }}>
+        {BADGES.map((badge, i) => (
+          <motion.line
+            key={`line-${i}`}
+            x1={250} y1={200}
+            x2={250 + badge.x} y2={200 + badge.y}
+            stroke="rgba(255,255,255,0.08)"
+            strokeWidth="1"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.8 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+          />
+        ))}
+      </svg>
 
-        {/* Output column */}
-        <div className="flex flex-col gap-3">
-          {sources.map((src, i) => (
-            <motion.div
-              key={`out-${src}`}
-              className="flex items-center gap-2 rounded-xl px-3 py-2.5"
-              style={{
-                width: 108,
-                background: 'rgba(5, 207, 100, 0.12)',
-                border: '1px solid rgba(5, 207, 100, 0.4)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-              }}
-              initial={{ opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.1 + 1.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" className="shrink-0">
-                <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" stroke="rgba(5,207,100,0.9)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="rgba(5,207,100,0.1)" />
-                <path d="M9 12l2 2 4-4" stroke="rgba(5,207,100,0.9)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span className="font-['Google_Sans',sans-serif] text-[10px] text-white/80 truncate">cs/{src}</span>
-            </motion.div>
-          ))}
+      {/* Award pill */}
+      <motion.div
+        className="absolute left-1/2 bottom-[20px] -translate-x-1/2"
+        style={{ zIndex: 30 }}
+        initial={{ opacity: 0, y: 20, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.8, delay: 1.8, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className="px-5 py-2.5 rounded-full border" style={{
+          background: 'rgba(255,255,255,0.2)', borderColor: 'rgba(255,255,255,0.35)',
+          backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+        }}>
+          <div className="flex items-center gap-2.5">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="rgba(255,255,255,0.9)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="rgba(255,255,255,0.1)" />
+            </svg>
+            <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white">
+              Cybersecurity Excellence Award 2026
+            </span>
+          </div>
         </div>
       </motion.div>
+    </div>
+  );
+}
+
+// --- Build Pipeline Visual (Slide 4) — Fluid drop flow ---
+
+function SourceBuildVisual() {
+  const sources = [
+    { name: 'ubuntu', label: 'Ubuntu 22.04' },
+    { name: 'node', label: 'Node 20 LTS' },
+    { name: 'python', label: 'Python 3.11' },
+    { name: 'golang', label: 'Go 1.21' },
+  ];
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      {/* Central frosted circle with CleanStart logo */}
+      <motion.div
+        className="absolute flex flex-col items-center justify-center rounded-full"
+        style={{
+          width: 180, height: 180, zIndex: 25,
+          background: 'rgba(255, 255, 255, 0.15)',
+          border: '1.5px solid rgba(255, 255, 255, 0.3)',
+          backdropFilter: 'blur(32px)', WebkitBackdropFilter: 'blur(32px)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 32px rgba(0,0,0,0.08)',
+        }}
+        initial={{ opacity: 0, scale: 0.85 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div style={{ width: 60, height: 68 }}>
+          <WhiteBgCube />
+        </div>
+        <span className="font-['Google_Sans',sans-serif] text-[11px] font-semibold text-white/80 mt-1">Build Engine</span>
+      </motion.div>
+
+      {/* Source circles — left side */}
+      {sources.map((src, i) => {
+        const yOffset = (i - 1.5) * 68;
+        return (
+          <motion.div
+            key={src.name}
+            className="absolute flex flex-col items-center gap-1.5"
+            style={{ left: '50%', top: '50%', marginLeft: -250, marginTop: yOffset - 24, zIndex: 26 }}
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="flex items-center justify-center rounded-full" style={{
+              width: 48, height: 48,
+              background: 'rgba(255,255,255,0.15)',
+              border: '1.5px solid rgba(255,255,255,0.3)',
+              backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="rgba(255,255,255,0.8)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M14 2v6h6" stroke="rgba(255,255,255,0.8)" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </div>
+            <span className="font-['Google_Sans',sans-serif] text-[10px] text-white/60 whitespace-nowrap">{src.label}</span>
+          </motion.div>
+        );
+      })}
+
+      {/* Output circles — right side (bright cyan instead of green for better contrast) */}
+      {sources.map((src, i) => {
+        const yOffset = (i - 1.5) * 68;
+        return (
+          <motion.div
+            key={`out-${src.name}`}
+            className="absolute flex flex-col items-center gap-1.5"
+            style={{ left: '50%', top: '50%', marginLeft: 202, marginTop: yOffset - 24, zIndex: 26 }}
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: i * 0.12 + 1.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="flex items-center justify-center rounded-full" style={{
+              width: 48, height: 48,
+              background: 'rgba(6, 199, 242, 0.15)',
+              border: '1.5px solid rgba(6, 199, 242, 0.45)',
+              backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" stroke="rgba(6,199,242,0.9)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M9 12l2 2 4-4" stroke="rgba(6,199,242,0.9)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <span className="font-['Google_Sans',sans-serif] text-[10px] text-white/60 whitespace-nowrap">cs/{src.name}</span>
+          </motion.div>
+        );
+      })}
+
+      {/* Fluid drop connections — left to center */}
+      {sources.map((_, i) => {
+        const yOffset = (i - 1.5) * 68;
+        return (
+          <div key={`lconn-${i}`} className="absolute" style={{ left: '50%', top: '50%', marginLeft: -190, marginTop: yOffset, zIndex: 24 }}>
+            <div className="relative" style={{ width: 110, height: 1 }}>
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.06), rgba(6,199,242,0.12))' }} />
+              {/* Fluid elongated drop */}
+              <motion.div className="absolute -top-[3px]"
+                style={{
+                  width: 20, height: 8, borderRadius: '40%',
+                  background: 'linear-gradient(90deg, rgba(6,199,242,0.3), rgba(6,199,242,0.8))',
+                  boxShadow: '0 0 12px rgba(6,199,242,0.4)',
+                  filter: 'blur(0.5px)',
+                }}
+                animate={{ x: [-10, 100], scaleX: [0.6, 1.2, 0.6] }}
+                transition={{ duration: 2, repeat: Infinity, ease: [0.4, 0, 0.2, 1], delay: i * 0.35 }}
+              />
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Fluid drop connections — center to right */}
+      {sources.map((_, i) => {
+        const yOffset = (i - 1.5) * 68;
+        return (
+          <div key={`rconn-${i}`} className="absolute" style={{ left: '50%', top: '50%', marginLeft: 80, marginTop: yOffset, zIndex: 24 }}>
+            <div className="relative" style={{ width: 110, height: 1 }}>
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(6,199,242,0.12), rgba(255,255,255,0.06))' }} />
+              {/* Fluid elongated drop */}
+              <motion.div className="absolute -top-[3px]"
+                style={{
+                  width: 20, height: 8, borderRadius: '40%',
+                  background: 'linear-gradient(90deg, rgba(6,199,242,0.8), rgba(6,199,242,0.3))',
+                  boxShadow: '0 0 12px rgba(6,199,242,0.4)',
+                  filter: 'blur(0.5px)',
+                }}
+                animate={{ x: [-10, 100], scaleX: [0.6, 1.2, 0.6] }}
+                transition={{ duration: 2, repeat: Infinity, ease: [0.4, 0, 0.2, 1], delay: i * 0.35 + 1 }}
+              />
+            </div>
+          </div>
+        );
+      })}
 
       {/* Status pill */}
       <motion.div
-        className="absolute left-1/2 -translate-x-1/2"
-        style={{ bottom: '20px' }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        className="absolute left-1/2 bottom-[20px] -translate-x-1/2"
+        style={{ zIndex: 30 }}
+        initial={{ opacity: 0, y: 20, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 2, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-full border backdrop-blur-md"
-          style={{ background: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.3)' }}
-        >
-          <div className="w-2 h-2 rounded-full" style={{ background: 'rgba(5, 207, 100, 0.9)' }} />
-          <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white">
-            0 CVEs in Output — Built from Source
-          </span>
+        <div className="px-5 py-2.5 rounded-full border" style={{
+          background: 'rgba(255,255,255,0.2)', borderColor: 'rgba(255,255,255,0.35)',
+          backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+        }}>
+          <div className="flex items-center gap-2.5">
+            <div className="w-2 h-2 rounded-full" style={{ background: 'rgba(6, 199, 242, 0.9)' }} />
+            <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white">
+              0 CVEs in Output — Built from Source
+            </span>
+          </div>
         </div>
       </motion.div>
     </div>
@@ -941,20 +1010,20 @@ function SourceBuildVisual() {
 function ScrollDownIndicator() {
   return (
     <motion.div
-      className="hidden sm:flex absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex-col items-center gap-3"
+      className="hidden sm:flex flex-col items-center gap-2 shrink-0 z-40"
       initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 2 }}
     >
       <div className="relative w-[26px] h-[40px]">
         <svg width="26" height="40" viewBox="0 0 26 40" fill="none" className="absolute inset-0">
-          <rect x="1" y="1" width="24" height="38" rx="12" stroke="#181818" strokeWidth="2" fill="none" opacity="0.25" />
+          <rect x="1" y="1" width="24" height="38" rx="12" stroke="#056BF1" strokeWidth="2" fill="none" opacity="0.5" />
         </svg>
-        <motion.div className="absolute left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full" style={{ top: '10px', background: '#181818' }}
-          animate={{ y: [0, 12, 0], opacity: [0.5, 0.15, 0.5] }}
+        <motion.div className="absolute left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full" style={{ top: '10px', background: '#056BF1' }}
+          animate={{ y: [0, 12, 0], opacity: [0.8, 0.3, 0.8] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
         />
       </div>
-      <span className="font-['Google_Sans',sans-serif] text-[11px] text-[#181818]/30 tracking-[0.3em] uppercase">scroll</span>
+      <span className="font-['Google_Sans',sans-serif] text-[11px] text-[#056BF1]/60 tracking-[0.3em] uppercase">scroll</span>
     </motion.div>
   );
 }
@@ -1129,11 +1198,11 @@ export function HeroSection() {
       {activeSlide.visualType === 'orbital' && <FrostedSquareFlow />}
 
       {/* Main content — no Navbar here, it's in the Next.js layout */}
-      <div className="relative flex-1 flex flex-col items-center justify-center px-4 sm:px-6 md:px-8" style={{ gap: '25px' }}>
-        {/* Title & Subtitle — fixed height so both slides align identically */}
+      <div className="relative flex-1 flex flex-col items-center justify-center pt-[90px] px-4 sm:px-6 md:px-8" style={{ gap: '16px' }}>
+        {/* Title & Subtitle — z-40 to stay above hero animation and below navbar z-100 */}
         <motion.div
-          className="text-center z-10 w-full max-w-4xl shrink-0 flex flex-col items-center justify-end"
-          style={{ minHeight: '140px' }}
+          className="text-center z-40 w-full max-w-4xl shrink-0 flex flex-col items-center justify-end"
+          style={{ minHeight: '120px' }}
           key={`text-${currentSlide}`}
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1158,10 +1227,13 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* CTA */}
-        <motion.div className="z-10 shrink-0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}>
+        {/* CTA — below animation */}
+        <motion.div className="z-40 shrink-0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}>
           <CallToActionButton label={activeSlide.ctaText} variant="light" size="md" />
         </motion.div>
+
+        {/* Scroll Down Indicator — below CTA, brand blue */}
+        <ScrollDownIndicator />
       </div>
 
       {/* Slide Navigation */}
@@ -1172,9 +1244,6 @@ export function HeroSection() {
         onSlideChange={goToSlide}
         onPlayPauseToggle={togglePlayPause}
       />
-
-      {/* Scroll Down Indicator */}
-      <ScrollDownIndicator />
     </div>
   );
 }
