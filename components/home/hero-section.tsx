@@ -2,9 +2,23 @@
 
 import { motion } from 'motion/react';
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  Award03Icon,
+  CheckmarkBadge03Icon,
+  File01Icon,
+  FileVerifiedIcon,
+  SecurityCheckIcon,
+  Shield01Icon,
+} from '@hugeicons/core-free-icons';
 import WhiteBgCube from '@/lib/svg-data/WhiteBgCube1';
 import { CallToActionButton } from '@/components/shared/call-to-action-button';
 import { TECH_LOGOS, TechLogoSVG } from '@/components/home/tech-logo-data';
+
+function pseudoRandom(seed: number) {
+  const value = Math.sin(seed * 12.9898) * 43758.5453;
+  return value - Math.floor(value);
+}
 
 // --- Antigravity Particle System ---
 
@@ -154,8 +168,10 @@ interface FrostedSquare {
 function FrostedSquareFlow() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [halfWidth, setHalfWidth] = useState(960);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const measure = () => {
       if (containerRef.current) {
         setHalfWidth(containerRef.current.offsetWidth / 2 + 60);
@@ -171,18 +187,23 @@ function FrostedSquareFlow() {
     const logoCount = TECH_LOGOS.length;
     const UNIFORM_SIZE = 56;
     for (let i = 0; i < 9; i++) {
+      const ySeed = pseudoRandom(i + 1);
+      const rotationSeed = pseudoRandom(i + 101);
+      const durationSeed = pseudoRandom(i + 201);
       items.push({
         id: i,
         size: UNIFORM_SIZE,
-        yOffset: (Math.random() - 0.5) * 280,
+        yOffset: (ySeed - 0.5) * 280,
         delay: i * 1.0,
-        rotation: Math.random() * 20 - 10,
-        duration: 6 + Math.random() * 1.5,
+        rotation: rotationSeed * 20 - 10,
+        duration: 6 + durationSeed * 1.5,
         logoIndex: i % logoCount,
       });
     }
     return items;
   }, []);
+
+  if (!isMounted) return null;
 
   return (
     <div
@@ -462,11 +483,11 @@ function WavesVisual() {
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           {[100, 160, 220, 280, 340].map((radius, i) => (
             <motion.div key={radius} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-              style={{ width: radius * 2, height: radius * 2, border: '1px solid rgba(255, 255, 255, 0.2)' }}
+              style={{ width: radius * 2, height: radius * 2, border: '1px solid rgba(6, 199, 242, 0.16)' }}
               initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
-              <motion.div className="absolute inset-0 rounded-full" style={{ border: '2px solid rgba(255, 255, 255, 0.15)' }} initial={{ opacity: 0, scale: 1 }}
+              <motion.div className="absolute inset-0 rounded-full" style={{ border: '2px solid rgba(6, 199, 242, 0.18)' }} initial={{ opacity: 0, scale: 1 }}
                 animate={{ opacity: [0, 0.4, 0], scale: [1, 1.1, 1] }}
                 transition={{ duration: 3, delay: i * 0.3, repeat: Infinity, repeatDelay: 1, ease: 'easeOut' }}
               />
@@ -474,16 +495,16 @@ function WavesVisual() {
           ))}
 
           <svg className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" width="700" height="700" viewBox="-350 -350 700 700">
-            <motion.line x1="-340" y1="0" x2="340" y2="0" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="1" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1, delay: 0.5 }} />
-            <motion.line x1="0" y1="-340" x2="0" y2="340" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="1" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1, delay: 0.5 }} />
+            <motion.line x1="-340" y1="0" x2="340" y2="0" stroke="rgba(6, 199, 242, 0.12)" strokeWidth="1" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1, delay: 0.5 }} />
+            <motion.line x1="0" y1="-340" x2="0" y2="340" stroke="rgba(6, 199, 242, 0.12)" strokeWidth="1" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1, delay: 0.5 }} />
           </svg>
 
           <motion.div className="absolute left-1/2 top-1/2 -translate-y-1/2 origin-left" style={{ width: 340, height: 2, rotate: scanAngle }}>
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.4), transparent)', filter: 'blur(2px)' }} />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(6, 199, 242, 0.62), transparent)', filter: 'blur(2px)' }} />
           </motion.div>
 
           <motion.div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{ width: 680, height: 680, background: `conic-gradient(from ${scanAngle}deg, rgba(255, 255, 255, 0.08), transparent 60deg)` }}
+            style={{ width: 680, height: 680, background: `conic-gradient(from ${scanAngle}deg, rgba(6, 199, 242, 0.1), transparent 60deg)` }}
           />
 
           {threats.map((threat) => {
@@ -495,14 +516,14 @@ function WavesVisual() {
                 transition={{ duration: 0.3, ease: 'easeOut' }}
               >
                 <motion.div className={`absolute inset-0 ${threat.isCritical ? '-m-4' : '-m-3'} rounded-full`}
-                  style={{ border: `2px solid ${threat.isCritical ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.25)'}` }}
+                  style={{ border: `2px solid ${threat.isCritical ? 'rgba(6, 199, 242, 0.45)' : 'rgba(6, 199, 242, 0.25)'}` }}
                   animate={{ scale: [1, threat.isCritical ? 2.2 : 1.8, 1], opacity: [0.9, 0, 0.9] }}
                   transition={{ duration: threat.isCritical ? 1.2 : 2, repeat: Infinity, ease: 'easeOut' }}
                 />
                 <div className={`relative ${threat.isCritical ? 'w-7 h-7' : 'w-5 h-5'} rounded-full border-2 border-white/30 flex items-center justify-center`}
-                  style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: '0 0 12px rgba(255,255,255,0.2)' }}
+                  style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: '0 0 12px rgba(6,199,242,0.2)' }}
                 >
-                  <div className={`${threat.isCritical ? 'w-2.5 h-2.5' : 'w-1.5 h-1.5'} rounded-full bg-white`} />
+                  <div className={`${threat.isCritical ? 'w-2.5 h-2.5' : 'w-1.5 h-1.5'} rounded-full`} style={{ background: 'rgba(6,199,242,0.92)' }} />
                 </div>
               </motion.div>
             );
@@ -524,10 +545,13 @@ function WavesVisual() {
                   boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15), 0 8px 32px rgba(0,0,0,0.06)',
                 }}
               >
-                <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="rgba(255,255,255,0.08)" />
-                  <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <motion.div
+                  className="absolute inset-0 rounded-full"
+                  style={{ background: 'radial-gradient(circle, rgba(6,199,242,0.16), transparent 68%)' }}
+                  animate={{ opacity: [0.3, 0.7, 0.3] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                />
+                <HugeiconsIcon icon={Shield01Icon} size={60} color="white" strokeWidth={1.8} />
               </div>
           </motion.div>
         </div>
@@ -541,7 +565,8 @@ function WavesVisual() {
           >
             <div className="flex items-center gap-2.5">
               <motion.div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full" style={{ background: 'white' }} />
+                <div className="w-2 h-2 rounded-full" style={{ background: 'rgba(6,199,242,0.92)' }} />
+                <HugeiconsIcon icon={SecurityCheckIcon} size={18} color="white" strokeWidth={1.8} />
                 <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white">
                   {threats.filter((t) => t.detected).length} Threats Detected
                 </span>
@@ -553,7 +578,7 @@ function WavesVisual() {
         <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 1000 600">
           <defs>
             <pattern id="radarGrid" width="50" height="50" patternUnits="userSpaceOnUse">
-              <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255, 255, 255, 0.12)" strokeWidth="0.5" />
+              <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(6, 199, 242, 0.1)" strokeWidth="0.5" />
             </pattern>
           </defs>
           <rect width="1000" height="600" fill="url(#radarGrid)" />
@@ -563,47 +588,36 @@ function WavesVisual() {
   );
 }
 
-// --- Vulnerability Grid Visual (Slide 2) ---
+// --- Vulnerability Scan Visual (Slide 2) — Orbiting frosted circles ---
 
-function VulnerabilityGridVisual() {
-  const COLS = 5;
-  const ROWS = 4;
-  const TOTAL = COLS * ROWS;
-  const CLEAN_INDEX = 10;
+const VULN_LAYERS = [
+  { label: 'OS Layer', icon: SecurityCheckIcon },
+  { label: 'Runtime', icon: Shield01Icon },
+  { label: 'Libraries', icon: File01Icon },
+  { label: 'Packages', icon: FileVerifiedIcon },
+  { label: 'Config', icon: CheckmarkBadge03Icon },
+  { label: 'Network', icon: SecurityCheckIcon },
+  { label: 'Secrets', icon: Shield01Icon },
+  { label: 'SBOM', icon: FileVerifiedIcon },
+];
 
-  const [scanned, setScanned] = useState(new Set<number>());
-  const [isDone, setIsDone] = useState(false);
+function VulnerabilityScanVisual() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scannedCount, setScannedCount] = useState(0);
+  const isDone = scannedCount >= VULN_LAYERS.length;
 
   useEffect(() => {
     let timeoutIds: ReturnType<typeof setTimeout>[] = [];
-
-    const clearAll = () => {
-      timeoutIds.forEach(clearTimeout);
-      timeoutIds = [];
-    };
+    const clearAll = () => { timeoutIds.forEach(clearTimeout); timeoutIds = []; };
 
     const runCycle = () => {
       clearAll();
-      setScanned(new Set());
-      setIsDone(false);
-
-      const t0 = setTimeout(() => {
-        for (let i = 0; i < TOTAL; i++) {
-          const t = setTimeout(() => {
-            setScanned((prev) => {
-              const next = new Set(prev);
-              next.add(i);
-              return next;
-            });
-          }, i * 90);
-          timeoutIds.push(t);
-        }
-        const tDone = setTimeout(() => setIsDone(true), TOTAL * 90 + 400);
-        timeoutIds.push(tDone);
-      }, 1500);
-      timeoutIds.push(t0);
-
-      const tLoop = setTimeout(runCycle, 10000);
+      setScannedCount(0);
+      VULN_LAYERS.forEach((_, i) => {
+        const t = setTimeout(() => setScannedCount(i + 1), 1500 + i * 700);
+        timeoutIds.push(t);
+      });
+      const tLoop = setTimeout(runCycle, 11000);
       timeoutIds.push(tLoop);
     };
 
@@ -611,142 +625,63 @@ function VulnerabilityGridVisual() {
     return clearAll;
   }, []);
 
-  const vulnerableRemaining = Array.from({ length: TOTAL }, (_, i) => i).filter(
-    (i) => i !== CLEAN_INDEX && !scanned.has(i)
-  ).length;
-
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-5">
+    <div ref={containerRef} className="absolute inset-0 flex items-center justify-center">
+
+      {/* Orbiting group — rotates slowly, children counter-rotate to stay upright */}
       <motion.div
-        className="grid gap-2.5"
-        style={{ gridTemplateColumns: `repeat(${COLS}, 1fr)` }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{ width: 0, height: 0 }}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 24, ease: 'linear', repeat: Infinity }}
       >
-        {Array.from({ length: TOTAL }, (_, i) => {
-          const isVulnerable = i !== CLEAN_INDEX;
-          const isClean = scanned.has(i) || !isVulnerable;
+        {VULN_LAYERS.map((layer, i) => {
+          const angle = (i / VULN_LAYERS.length) * Math.PI * 2 - Math.PI / 2;
+          const ORBIT_R = 170;
+          const x = Math.cos(angle) * ORBIT_R;
+          const y = Math.sin(angle) * ORBIT_R;
+          const isScanned = i < scannedCount;
           return (
             <motion.div
-              key={`${i}-${isClean}`}
-              className="relative flex items-center justify-center rounded-xl"
+              key={layer.label}
+              className="absolute flex items-center justify-center rounded-full"
               style={{
-                width: 52,
-                height: 52,
-                background: isClean ? 'rgba(5, 207, 100, 0.15)' : 'rgba(255, 80, 60, 0.12)',
-                border: `1.5px solid ${isClean ? 'rgba(5, 207, 100, 0.5)' : 'rgba(255, 100, 60, 0.45)'}`,
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
+                width: 54, height: 54,
+                left: x - 27, top: y - 27,
+                background: isScanned ? 'rgba(5,207,100,0.22)' : 'rgba(255,255,255,0.22)',
+                border: `1.5px solid ${isScanned ? 'rgba(5,207,100,0.7)' : 'rgba(255,255,255,0.4)'}`,
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                boxShadow: isScanned
+                  ? '0 0 18px rgba(5,207,100,0.3), inset 0 1px 0 rgba(255,255,255,0.25)'
+                  : 'inset 0 1px 0 rgba(255,255,255,0.25), 0 6px 16px rgba(0,0,0,0.1)',
+                transition: 'background 0.6s ease, border-color 0.6s ease, box-shadow 0.6s ease',
               }}
-              initial={{ scale: 0.85, opacity: 0.7 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              animate={{ rotate: -360 }}
+              transition={{ duration: 24, ease: 'linear', repeat: Infinity }}
             >
-              {isClean ? (
+              {isScanned ? (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="rgba(5, 207, 100, 0.95)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M9 12l2 2 4-4" stroke="rgba(5,207,100,0.95)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               ) : (
-                <>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="rgba(255, 120, 80, 0.95)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  <motion.div
-                    className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center text-white font-bold"
-                    style={{ background: 'rgba(255, 60, 40, 0.95)', fontSize: 9 }}
-                    animate={{ scale: [1, 1.25, 1] }}
-                    transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', delay: (i % 5) * 0.3 }}
-                  >
-                    !
-                  </motion.div>
-                </>
+                <HugeiconsIcon icon={layer.icon} size={20} color="rgba(255,255,255,0.9)" strokeWidth={1.8} />
               )}
             </motion.div>
           );
         })}
       </motion.div>
 
+      {/* Central frosted circle with shield — enhanced contrast */}
       <motion.div
-        className="flex items-center gap-2.5 px-5 py-2.5 rounded-full border backdrop-blur-md"
-        style={{ background: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.3)' }}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 1, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <motion.div
-          className="w-2 h-2 rounded-full shrink-0"
-          animate={{ backgroundColor: isDone ? 'rgba(5, 207, 100, 0.9)' : 'rgba(255, 120, 80, 0.9)' }}
-          transition={{ duration: 0.3 }}
-        />
-        <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white whitespace-nowrap">
-          {isDone ? '19 CVEs Eliminated by CleanStart' : `${vulnerableRemaining} Vulnerabilities Active`}
-        </span>
-      </motion.div>
-    </div>
-  );
-}
-
-// --- Award Shield Visual (Slide 3) ---
-
-function AwardShieldVisual() {
-  const BADGES = ['Verified', 'Secure', 'Trusted', 'Certified', 'Compliant', 'Hardened'];
-  const ORBIT_RADIUS = 210;
-  const ORBIT_DURATION = 25;
-
-  return (
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div
-        className="absolute rounded-full pointer-events-none"
-        style={{ width: ORBIT_RADIUS * 2 + 20, height: ORBIT_RADIUS * 2 + 20, border: '1px solid rgba(255,255,255,0.07)' }}
-      />
-
-      {/* Orbiting badges container */}
-      <motion.div
-        className="absolute"
-        style={{ width: ORBIT_RADIUS * 2, height: ORBIT_RADIUS * 2, left: '50%', top: '50%', marginLeft: -ORBIT_RADIUS, marginTop: -ORBIT_RADIUS }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: ORBIT_DURATION, repeat: Infinity, ease: 'linear' }}
-      >
-        {BADGES.map((badge, i) => {
-          const angle = (360 / BADGES.length) * i;
-          const rad = (angle * Math.PI) / 180;
-          const x = ORBIT_RADIUS + Math.cos(rad) * ORBIT_RADIUS - 36;
-          const y = ORBIT_RADIUS + Math.sin(rad) * ORBIT_RADIUS - 13;
-          return (
-            <motion.div
-              key={badge}
-              className="absolute px-3 py-1.5 rounded-full text-[11px] font-medium text-white whitespace-nowrap font-['Google_Sans',sans-serif]"
-              style={{
-                left: x,
-                top: y,
-                background: 'rgba(255,255,255,0.13)',
-                border: '1px solid rgba(255,255,255,0.22)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-              }}
-              animate={{ rotate: -360 }}
-              transition={{ duration: ORBIT_DURATION, repeat: Infinity, ease: 'linear' }}
-            >
-              {badge}
-            </motion.div>
-          );
-        })}
-      </motion.div>
-
-      {/* Central frosted circle */}
-      <motion.div
-        className="relative flex items-center justify-center"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full"
         style={{
-          width: 210,
-          height: 210,
-          borderRadius: '50%',
-          background: 'rgba(255,255,255,0.12)',
-          border: '1.5px solid rgba(255,255,255,0.3)',
-          backdropFilter: 'blur(32px)',
-          WebkitBackdropFilter: 'blur(32px)',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 0 60px rgba(255,220,60,0.06), 0 8px 32px rgba(0,0,0,0.08)',
-          zIndex: 10,
+          width: 240, height: 240, zIndex: 25,
+          background: 'rgba(255,255,255,0.2)',
+          border: '1.5px solid rgba(255,255,255,0.4)',
+          backdropFilter: 'blur(40px)',
+          WebkitBackdropFilter: 'blur(40px)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 32px rgba(0,0,0,0.1)',
         }}
         initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -754,182 +689,311 @@ function AwardShieldVisual() {
       >
         <motion.div
           className="absolute inset-0 rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(255,220,60,0.07), transparent 70%)' }}
-          animate={{ opacity: [0.5, 1, 0.5] }}
+          style={{ background: 'radial-gradient(circle, rgba(6,199,242,0.2), transparent 68%)' }}
+          animate={{ opacity: [0.4, 0.8, 0.4] }}
           transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
         />
-        <motion.svg
-          width="76" height="76" viewBox="0 0 24 24" fill="none"
-          style={{ zIndex: 1, position: 'relative' }}
-          animate={{ scale: [1, 1.04, 1] }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+        <motion.div
+          style={{ position: 'relative', zIndex: 1 }}
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <path d="M8 21h8M12 17v4M6 3H4a2 2 0 000 4c0 3 2 5 4.5 6M18 3h2a2 2 0 010 4c0 3-2 5-4.5 6M12 17c-3.5 0-6-2.5-6-6V3h12v8c0 3.5-2.5 6-6 6z" stroke="rgba(255,255,255,0.9)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </motion.svg>
+          <HugeiconsIcon icon={Shield01Icon} size={72} color="white" strokeWidth={1.5} />
+        </motion.div>
       </motion.div>
 
-      {/* Award pill */}
+      {/* Status pill */}
       <motion.div
-        className="absolute left-1/2 -translate-x-1/2"
-        style={{ bottom: '20px', zIndex: 20 }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        className="absolute left-1/2 bottom-[20px] -translate-x-1/2"
+        style={{ zIndex: 30 }}
+        initial={{ opacity: 0, y: 20, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-full border backdrop-blur-md"
-          style={{ background: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.3)' }}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="rgba(255,255,255,0.9)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="rgba(255,255,255,0.1)" />
-          </svg>
-          <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white">
-            Cybersecurity Excellence Award 2026
-          </span>
+        <div className="px-5 py-2.5 rounded-full border" style={{
+          background: 'rgba(255,255,255,0.25)', borderColor: 'rgba(255,255,255,0.45)',
+          backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        }}>
+          <div className="flex items-center gap-2.5">
+            <motion.div
+              className="w-2 h-2 rounded-full shrink-0"
+              animate={{ backgroundColor: isDone ? 'rgba(5,207,100,0.9)' : 'rgba(255,255,255,0.7)' }}
+              transition={{ duration: 0.3 }}
+            />
+            <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white whitespace-nowrap">
+              {isDone ? '19 CVEs Eliminated by CleanStart' : `Scanning Layer ${scannedCount + 1} of ${VULN_LAYERS.length}...`}
+            </span>
+          </div>
         </div>
       </motion.div>
     </div>
   );
 }
 
-// --- Source Build Visual (Slide 4) ---
+// --- Award Visual (Slide 3) — Trophy with orbiting badge circles ---
 
-function SourceBuildVisual() {
-  const sources = ['ubuntu:22.04', 'node:20-lts', 'python:3.11', 'golang:1.21'];
+function AwardShieldVisual() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const BADGES = [
+    { label: 'Verified', x: -215, y: -120 },
+    { label: 'Secure', x: 210, y: -96 },
+    { label: 'Trusted', x: -210, y: 58 },
+    { label: 'Certified', x: 216, y: 82 },
+    { label: 'Compliant', x: -126, y: 178 },
+    { label: 'Hardened', x: 148, y: 196 },
+  ];
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center">
+    <div ref={containerRef} className="absolute inset-0 flex items-center justify-center">
+
+      {/* Central frosted circle with trophy — enhanced contrast */}
       <motion.div
-        className="flex items-center gap-2.5"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        className="absolute flex items-center justify-center rounded-full"
+        style={{
+          width: 260, height: 260, zIndex: 25,
+          background: 'rgba(255,255,255,0.2)',
+          border: '1.5px solid rgba(255,255,255,0.4)',
+          backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 32px rgba(0,0,0,0.1)',
+        }}
+        initial={{ opacity: 0, scale: 0.85, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
       >
-        {/* Source column */}
-        <div className="flex flex-col gap-3">
-          {sources.map((src, i) => (
-            <motion.div
-              key={src}
-              className="flex items-center gap-2 rounded-xl px-3 py-2.5"
-              style={{
-                width: 108,
-                background: 'rgba(255,255,255,0.10)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-              }}
-              initial={{ opacity: 0, x: -16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" className="shrink-0">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M14 2v6h6M8 13h8M8 17h5" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-              <span className="font-['Google_Sans',sans-serif] text-[10px] text-white/70 truncate">{src}</span>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Left flow arrows */}
-        <div className="flex flex-col gap-3">
-          {sources.map((_, i) => (
-            <div key={i} className="relative flex items-center" style={{ width: 36, height: 44 }}>
-              <div className="w-full h-px" style={{ background: 'rgba(255,255,255,0.15)' }} />
-              <motion.div
-                className="absolute w-2 h-2 rounded-full"
-                style={{ background: 'rgba(6, 199, 242, 0.85)', boxShadow: '0 0 8px rgba(6,199,242,0.6)' }}
-                animate={{ x: [-4, 28] }}
-                transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut', delay: i * 0.28 }}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Central processor */}
-        <motion.div
-          className="flex flex-col items-center justify-center gap-2 rounded-2xl"
-          style={{
-            width: 94,
-            height: 152,
-            background: 'rgba(255,255,255,0.12)',
-            border: '1.5px solid rgba(255,255,255,0.28)',
-            backdropFilter: 'blur(24px)',
-            WebkitBackdropFilter: 'blur(24px)',
-          }}
-          animate={{ boxShadow: ['0 0 20px rgba(6,199,242,0.08)', '0 0 40px rgba(6,199,242,0.2)', '0 0 20px rgba(6,199,242,0.08)'] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+        {/* Warm gold glow */}
+        <motion.div className="absolute inset-0 rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(255,196,0,0.25), transparent 68%)' }}
+          animate={{ opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div style={{ position: 'relative', zIndex: 1 }}
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <div style={{ width: 38, height: 44 }}>
-            <WhiteBgCube />
-          </div>
-          <span className="font-['Google_Sans',sans-serif] text-[10px] font-semibold text-white/80 text-center leading-tight">
-            CleanStart<br />Build
-          </span>
-          <motion.div
-            className="w-5 h-5 rounded-full"
-            style={{ border: '2px solid rgba(255,255,255,0.25)', borderTopColor: 'rgba(255,255,255,0.85)' }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1.1, repeat: Infinity, ease: 'linear' }}
-          />
+          <HugeiconsIcon icon={Award03Icon} size={80} color="white" strokeWidth={1.5} />
         </motion.div>
+      </motion.div>
 
-        {/* Right flow arrows */}
-        <div className="flex flex-col gap-3">
-          {sources.map((_, i) => (
-            <div key={i} className="relative flex items-center" style={{ width: 36, height: 44 }}>
-              <div className="w-full h-px" style={{ background: 'rgba(255,255,255,0.15)' }} />
-              <motion.div
-                className="absolute w-2 h-2 rounded-full"
-                style={{ background: 'rgba(5, 207, 100, 0.85)', boxShadow: '0 0 8px rgba(5,207,100,0.6)' }}
-                animate={{ x: [-4, 28] }}
-                transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut', delay: i * 0.28 + 0.55 }}
-              />
-            </div>
-          ))}
-        </div>
+      {/* Floating badge pills — enhanced frosted glass, larger text */}
+      {BADGES.map((badge, i) => (
+        <motion.div
+          key={badge.label}
+          className="absolute px-4 py-2 rounded-full font-['Google_Sans',sans-serif] text-[13px] font-medium text-white"
+          style={{
+            zIndex: 26,
+            background: 'rgba(255,255,255,0.3)',
+            border: '1px solid rgba(255,255,255,0.55)',
+            backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.35)',
+          }}
+          initial={{ opacity: 0, scale: 0.8, x: badge.x * 0.5, y: badge.y * 0.5 }}
+          animate={{ opacity: 1, scale: 1, x: badge.x, y: badge.y }}
+          transition={{ duration: 0.8, delay: 0.8 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <motion.span
+            animate={{ y: [0, -3, 0] }}
+            transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}
+            style={{ display: 'block' }}
+          >
+            {badge.label}
+          </motion.span>
+        </motion.div>
+      ))}
 
-        {/* Output column */}
-        <div className="flex flex-col gap-3">
-          {sources.map((src, i) => (
-            <motion.div
-              key={`out-${src}`}
-              className="flex items-center gap-2 rounded-xl px-3 py-2.5"
-              style={{
-                width: 108,
-                background: 'rgba(5, 207, 100, 0.12)',
-                border: '1px solid rgba(5, 207, 100, 0.4)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-              }}
-              initial={{ opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.1 + 1.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" className="shrink-0">
-                <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" stroke="rgba(5,207,100,0.9)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="rgba(5,207,100,0.1)" />
-                <path d="M9 12l2 2 4-4" stroke="rgba(5,207,100,0.9)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span className="font-['Google_Sans',sans-serif] text-[10px] text-white/80 truncate">cs/{src}</span>
-            </motion.div>
-          ))}
+      {/* Connecting lines from badges to center */}
+      <svg className="absolute" style={{ width: 560, height: 480, left: '50%', top: '50%', marginLeft: -280, marginTop: -240, zIndex: 23 }}>
+        {BADGES.map((badge, i) => (
+          <motion.line
+            key={`line-${i}`}
+            x1={280} y1={240}
+            x2={280 + badge.x} y2={240 + badge.y}
+            stroke="rgba(255,255,255,0.2)"
+            strokeWidth="1"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.8 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+          />
+        ))}
+      </svg>
+
+      {/* Award pill */}
+      <motion.div
+        className="absolute left-1/2 bottom-[20px] -translate-x-1/2"
+        style={{ zIndex: 30 }}
+        initial={{ opacity: 0, y: 20, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.8, delay: 1.8, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className="px-5 py-2.5 rounded-full border" style={{
+          background: 'rgba(255,255,255,0.25)', borderColor: 'rgba(255,255,255,0.45)',
+          backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        }}>
+          <div className="flex items-center gap-2.5">
+            <HugeiconsIcon icon={CheckmarkBadge03Icon} size={16} color="white" strokeWidth={1.8} />
+            <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white">
+              Cybersecurity Excellence Award 2026
+            </span>
+          </div>
         </div>
       </motion.div>
+    </div>
+  );
+}
+
+// --- Build Pipeline Visual (Slide 4) — Fluid drop flow ---
+
+function SourceBuildVisual() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const sources = [
+    { name: 'ubuntu', label: 'Ubuntu 22.04' },
+    { name: 'node', label: 'Node 20 LTS' },
+    { name: 'python', label: 'Python 3.11' },
+    { name: 'golang', label: 'Go 1.21' },
+  ];
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 flex items-center justify-center">
+
+      {/* Central frosted circle — enhanced contrast */}
+      <motion.div
+        className="absolute flex flex-col items-center justify-center rounded-full"
+        style={{
+          width: 220, height: 220, zIndex: 25,
+          background: 'rgba(255,255,255,0.2)',
+          border: '1.5px solid rgba(255,255,255,0.4)',
+          backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 32px rgba(0,0,0,0.1)',
+        }}
+        initial={{ opacity: 0, scale: 0.85 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <motion.div
+          className="absolute inset-0 rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(6,199,242,0.2), transparent 70%)' }}
+          animate={{ opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <div style={{ position: 'relative', zIndex: 1, width: 48, height: 55 }}>
+          <WhiteBgCube />
+        </div>
+        <span className="font-['Google_Sans',sans-serif] text-[12px] font-semibold text-white mt-1" style={{ position: 'relative', zIndex: 1 }}>Build Engine</span>
+      </motion.div>
+
+      {/* Source circles — left side, enhanced frosted glass */}
+      {sources.map((src, i) => {
+        const yOffset = (i - 1.5) * 86;
+        return (
+          <motion.div
+            key={src.name}
+            className="absolute flex flex-col items-center gap-1.5"
+            style={{ left: '50%', top: '50%', marginLeft: -310, marginTop: yOffset - 28, zIndex: 26 }}
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="flex items-center justify-center rounded-full" style={{
+              width: 56, height: 56,
+              background: 'rgba(255,255,255,0.22)',
+              border: '1.5px solid rgba(255,255,255,0.4)',
+              backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25), 0 6px 16px rgba(0,0,0,0.1)',
+            }}>
+              <HugeiconsIcon icon={File01Icon} size={22} color="rgba(255,255,255,0.95)" strokeWidth={1.8} />
+            </div>
+            <span className="font-['Google_Sans',sans-serif] text-[12px] font-medium text-white/90 whitespace-nowrap">{src.label}</span>
+          </motion.div>
+        );
+      })}
+
+      {/* Output circles — right side, brand blue frosted glass */}
+      {sources.map((src, i) => {
+        const yOffset = (i - 1.5) * 86;
+        return (
+          <motion.div
+            key={`out-${src.name}`}
+            className="absolute flex flex-col items-center gap-1.5"
+            style={{ left: '50%', top: '50%', marginLeft: 254, marginTop: yOffset - 28, zIndex: 26 }}
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: i * 0.12 + 1.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="flex items-center justify-center rounded-full" style={{
+              width: 56, height: 56,
+              background: 'rgba(5,107,241,0.25)',
+              border: '1.5px solid rgba(5,107,241,0.6)',
+              backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+              boxShadow: '0 0 14px rgba(5,107,241,0.3), inset 0 1px 0 rgba(255,255,255,0.25)',
+            }}>
+              <HugeiconsIcon icon={FileVerifiedIcon} size={22} color="rgba(255,255,255,0.95)" strokeWidth={1.8} />
+            </div>
+            <span className="font-['Google_Sans',sans-serif] text-[12px] font-medium text-white/90 whitespace-nowrap">cs/{src.name}</span>
+          </motion.div>
+        );
+      })}
+
+      {/* Fluid drop connections — left to center */}
+      {sources.map((_, i) => {
+        const yOffset = (i - 1.5) * 86;
+        return (
+          <div key={`lconn-${i}`} className="absolute" style={{ left: '50%', top: '50%', marginLeft: -244, marginTop: yOffset, zIndex: 24 }}>
+            <div className="relative" style={{ width: 134, height: 1 }}>
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.1), rgba(255,255,255,0.22))' }} />
+              <motion.div className="absolute -top-[3px]"
+                style={{
+                  width: 18, height: 7, borderRadius: '40%',
+                  background: 'linear-gradient(90deg, rgba(255,255,255,0.4), rgba(255,255,255,0.8))',
+                  boxShadow: '0 0 8px rgba(255,255,255,0.25)',
+                  filter: 'blur(0.5px)',
+                }}
+                animate={{ x: [-8, 116], scaleX: [0.6, 1.2, 0.6] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: [0.4, 0, 0.2, 1], delay: i * 0.35 }}
+              />
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Fluid drop connections — center to right */}
+      {sources.map((_, i) => {
+        const yOffset = (i - 1.5) * 86;
+        return (
+          <div key={`rconn-${i}`} className="absolute" style={{ left: '50%', top: '50%', marginLeft: 112, marginTop: yOffset, zIndex: 24 }}>
+            <div className="relative" style={{ width: 134, height: 1 }}>
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.22), rgba(5,107,241,0.25))' }} />
+              <motion.div className="absolute -top-[3px]"
+                style={{
+                  width: 18, height: 7, borderRadius: '40%',
+                  background: 'linear-gradient(90deg, rgba(255,255,255,0.8), rgba(5,107,241,0.8))',
+                  boxShadow: '0 0 8px rgba(5,107,241,0.25)',
+                  filter: 'blur(0.5px)',
+                }}
+                animate={{ x: [-8, 116], scaleX: [0.6, 1.2, 0.6] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: [0.4, 0, 0.2, 1], delay: i * 0.35 + 0.9 }}
+              />
+            </div>
+          </div>
+        );
+      })}
 
       {/* Status pill */}
       <motion.div
-        className="absolute left-1/2 -translate-x-1/2"
-        style={{ bottom: '20px' }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        className="absolute left-1/2 bottom-[20px] -translate-x-1/2"
+        style={{ zIndex: 30 }}
+        initial={{ opacity: 0, y: 20, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 2, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-full border backdrop-blur-md"
-          style={{ background: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.3)' }}
-        >
-          <div className="w-2 h-2 rounded-full" style={{ background: 'rgba(5, 207, 100, 0.9)' }} />
-          <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white">
-            0 CVEs in Output — Built from Source
-          </span>
+        <div className="px-5 py-2.5 rounded-full border" style={{
+          background: 'rgba(255,255,255,0.25)', borderColor: 'rgba(255,255,255,0.45)',
+          backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        }}>
+          <div className="flex items-center gap-2.5">
+            <div className="w-2 h-2 rounded-full" style={{ background: 'rgba(255,255,255,0.9)' }} />
+            <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white">
+              0 CVEs in Output — Built from Source
+            </span>
+          </div>
         </div>
       </motion.div>
     </div>
@@ -941,20 +1005,20 @@ function SourceBuildVisual() {
 function ScrollDownIndicator() {
   return (
     <motion.div
-      className="hidden sm:flex absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex-col items-center gap-3"
+      className="hidden sm:flex flex-col items-center gap-2 shrink-0 z-40"
       initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 2 }}
     >
       <div className="relative w-[26px] h-[40px]">
         <svg width="26" height="40" viewBox="0 0 26 40" fill="none" className="absolute inset-0">
-          <rect x="1" y="1" width="24" height="38" rx="12" stroke="#181818" strokeWidth="2" fill="none" opacity="0.25" />
+          <rect x="1" y="1" width="24" height="38" rx="12" stroke="#056BF1" strokeWidth="2" fill="none" opacity="0.5" />
         </svg>
-        <motion.div className="absolute left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full" style={{ top: '10px', background: '#181818' }}
-          animate={{ y: [0, 12, 0], opacity: [0.5, 0.15, 0.5] }}
+        <motion.div className="absolute left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full" style={{ top: '10px', background: '#056BF1' }}
+          animate={{ y: [0, 12, 0], opacity: [0.8, 0.3, 0.8] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
         />
       </div>
-      <span className="font-['Google_Sans',sans-serif] text-[11px] text-[#181818]/30 tracking-[0.3em] uppercase">scroll</span>
+      <span className="font-['Google_Sans',sans-serif] text-[11px] text-[#056BF1]/60 tracking-[0.3em] uppercase">scroll</span>
     </motion.div>
   );
 }
@@ -1129,11 +1193,11 @@ export function HeroSection() {
       {activeSlide.visualType === 'orbital' && <FrostedSquareFlow />}
 
       {/* Main content — no Navbar here, it's in the Next.js layout */}
-      <div className="relative flex-1 flex flex-col items-center justify-center px-4 sm:px-6 md:px-8" style={{ gap: '25px' }}>
-        {/* Title & Subtitle — fixed height so both slides align identically */}
+      <div className="relative flex-1 flex flex-col items-center justify-center pt-[90px] px-4 sm:px-6 md:px-8" style={{ gap: '16px' }}>
+        {/* Title & Subtitle — z-40 to stay above hero animation and below navbar z-100 */}
         <motion.div
-          className="text-center z-10 w-full max-w-4xl shrink-0 flex flex-col items-center justify-end"
-          style={{ minHeight: '140px' }}
+          className="text-center z-40 w-full max-w-4xl shrink-0 flex flex-col items-center justify-end"
+          style={{ minHeight: '120px' }}
           key={`text-${currentSlide}`}
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1148,20 +1212,23 @@ export function HeroSection() {
         </motion.div>
 
         {/* Visualization — equal fixed size, clipped to prevent overlap */}
-        <div className="relative w-full max-w-[940px] aspect-square shrink-0" style={{ maxHeight: '530px', zIndex: 23 }}>
+        <div className="relative w-full max-w-[940px] aspect-square" style={{ maxHeight: '480px', zIndex: 23 }}>
           <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'scale(0.78)', transformOrigin: 'center center' }}>
             {activeSlide.visualType === 'orbital' && <OrbitalVerification />}
             {activeSlide.visualType === 'waves' && <WavesVisual />}
-            {activeSlide.visualType === 'vulnerability-grid' && <VulnerabilityGridVisual />}
+            {activeSlide.visualType === 'vulnerability-grid' && <VulnerabilityScanVisual />}
             {activeSlide.visualType === 'award' && <AwardShieldVisual />}
             {activeSlide.visualType === 'source-build' && <SourceBuildVisual />}
           </div>
         </div>
 
-        {/* CTA */}
-        <motion.div className="z-10 shrink-0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}>
+        {/* CTA — below animation */}
+        <motion.div className="z-40 shrink-0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}>
           <CallToActionButton label={activeSlide.ctaText} variant="light" size="md" />
         </motion.div>
+
+        {/* Scroll Down Indicator — below CTA, brand blue */}
+        <ScrollDownIndicator />
       </div>
 
       {/* Slide Navigation */}
@@ -1172,9 +1239,6 @@ export function HeroSection() {
         onSlideChange={goToSlide}
         onPlayPauseToggle={togglePlayPause}
       />
-
-      {/* Scroll Down Indicator */}
-      <ScrollDownIndicator />
     </div>
   );
 }

@@ -5,47 +5,9 @@ import { useRef, useEffect, useState } from 'react';
 import WhiteBgCube from '@/lib/svg-data/WhiteBgCube1';
 import { CircleArrowCTA } from '@/components/shared/circle-arrow-cta';
 import { type ReactNode } from 'react';
+import { PackageOpenIcon, RefreshIcon, ScanIcon, ShuffleIcon } from 'hugeicons-react';
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
-
-// ─── Problem icons ────────────────────────────────────────────────────────────
-
-function IconPackage({ color }: { color: string }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function IconRefresh({ color }: { color: string }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <path d="M23 4v6h-6" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function IconScan({ color }: { color: string }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M7 12h10" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function IconShuffle({ color }: { color: string }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <path d="M16 3h5v5M4 20L21 3" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M21 16v5h-5" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M15 15l6 6M4 4l5 5" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 // ─── Count-up hook ────────────────────────────────────────────────────────────
 
@@ -81,70 +43,39 @@ function useCountUp(target: number, decimals = 0, duration = 1800) {
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 interface ProblemData {
-  icon: (color: string) => ReactNode;
+  icon: ReactNode;
   title: string;
   description: string;
-  bg: string;
-  dark: boolean;
-  iconColor: string;
-  iconBg: string;
 }
 
 const PROBLEMS: ProblemData[] = [
   {
-    icon: (c) => <IconPackage color={c} />,
+    icon: <PackageOpenIcon size={20} color="#0F1924" strokeWidth={1.5} />,
     title: 'Unknown Dependencies',
     description: 'Images include packages from multiple sources that are hard to verify.',
-    bg: '#0F1924',
-    dark: true,
-    iconColor: '#60a5fa',
-    iconBg: 'rgba(96,165,250,0.12)',
   },
   {
-    icon: (c) => <IconRefresh color={c} />,
+    icon: <RefreshIcon size={20} color="#0F1924" strokeWidth={1.5} />,
     title: 'Endless Patching',
     description: 'Fixing vulnerabilities after build leads to constant updates and overhead.',
-    bg: '#056BF1',
-    dark: true,
-    iconColor: '#bfdbfe',
-    iconBg: 'rgba(255,255,255,0.15)',
   },
   {
-    icon: (c) => <IconScan color={c} />,
+    icon: <ScanIcon size={20} color="#0F1924" strokeWidth={1.5} />,
     title: 'Reactive Scanning',
     description: 'Scanning detects issues late but does not control how software is built.',
-    bg: '#ECEDEF',
-    dark: false,
-    iconColor: '#056BF1',
-    iconBg: 'rgba(5,107,241,0.1)',
   },
   {
-    icon: (c) => <IconShuffle color={c} />,
+    icon: <ShuffleIcon size={20} color="#0F1924" strokeWidth={1.5} />,
     title: 'Uncontrolled Builds',
     description: 'Without deterministic builds, artifacts can change across environments.',
-    bg: '#181818',
-    dark: true,
-    iconColor: '#f87171',
-    iconBg: 'rgba(248,113,113,0.12)',
   },
 ];
 
-const PRODUCTS = [
-  {
-    name: 'CleanImage',
-    description: 'Hardened container images built from verified source with minimal components and near-zero vulnerabilities.',
-    image: '/images/figma/523d69e15824438a4fbbf34f51fb05a35f7fdf0d.png',
-  },
-  {
-    name: 'CleanSight',
-    description: 'Real-time visibility across your software supply chain — detect risks before they reach production.',
-    image: '/images/figma/cd141cb5bc524f13a11e1d3e641bff9c5c0aaf62.png',
-  },
-  {
-    name: 'CleanSBOM',
-    description: 'A verified bill of materials for every image you ship — full traceability from source to deployment.',
-    image: '/images/figma/d77f8a0a1e5bedbff53424b69f5812b4cb560788.png',
-  },
+const PIPELINE_NODES = [
+  { id: 'clean-images', label: 'CleanImages', description: 'Secured base images' },
+  { id: 'packages', label: 'Packages', description: 'Verified packages' },
+  { id: 'llm-models', label: 'LLM Models', description: 'Scanned AI artifacts' },
+  { id: 'clean-sight', label: 'CleanSight', description: 'Visibility dashboard' },
 ];
 
 const COMPARISON_ROWS = [
@@ -174,15 +105,17 @@ const STATS: StatItem[] = [
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
-function ProblemCard({ icon, title, description, bg, dark, iconColor, iconBg, delay }: ProblemData & { delay: number }) {
+function ProblemCard({ icon, title, description, delay }: ProblemData & { delay: number }) {
   const [cardHovered, setCardHovered] = useState(false);
-  const textColor = dark ? 'rgba(255,255,255,0.9)' : '#181818';
-  const subColor = dark ? 'rgba(255,255,255,0.5)' : 'rgba(24,24,24,0.55)';
 
   return (
     <motion.div
-      className="rounded-2xl flex flex-col gap-5 h-full cursor-pointer"
-      style={{ background: bg, minHeight: '220px', padding: '28px' }}
+      className="rounded-2xl h-full cursor-pointer group flex flex-col justify-between"
+      style={{
+        background: '#ffffff',
+        border: '1px solid rgba(0,0,0,0.06)',
+        padding: '28px',
+      }}
       initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
@@ -190,33 +123,22 @@ function ProblemCard({ icon, title, description, bg, dark, iconColor, iconBg, de
       onMouseEnter={() => setCardHovered(true)}
       onMouseLeave={() => setCardHovered(false)}
     >
-      {/* Icon */}
-      <div
-        className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-        style={{ background: iconBg }}
-      >
-        {icon(iconColor)}
-      </div>
-
-      {/* Text */}
-      <div className="flex flex-col gap-2 flex-1">
-        <h3
-          className="font-['Google_Sans',sans-serif] font-normal text-[20px] leading-[1.2] tracking-[-0.02em]"
-          style={{ color: textColor }}
-        >
+      {/* Icon + Title row */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="shrink-0">{icon}</div>
+        <h3 className="font-['Google_Sans',sans-serif] font-medium text-[17px] leading-[1.3] tracking-[-0.01em] text-[#0F1924]">
           {title}
         </h3>
-        <p
-          className="font-['Google_Sans',sans-serif] font-normal text-[13px] leading-relaxed"
-          style={{ color: subColor }}
-        >
-          {description}
-        </p>
       </div>
 
-      {/* CTA */}
-      <div className="flex justify-end mt-auto">
-        <CircleArrowCTA variant={dark ? 'filled-white' : 'filled-blue'} size={44} forceHovered={cardHovered} />
+      {/* Subtext + CTA row */}
+      <div className="flex items-end justify-between gap-4">
+        <p className="font-['Google_Sans',sans-serif] font-normal text-[13px] leading-relaxed text-[#0F1924]/45 flex-1 min-w-0">
+          {description}
+        </p>
+        <div className="shrink-0">
+          <CircleArrowCTA variant="filled-blue" size={40} forceHovered={cardHovered} />
+        </div>
       </div>
     </motion.div>
   );
@@ -269,10 +191,231 @@ function StatCard({ stat, delay }: { stat: StatItem; delay: number }) {
   );
 }
 
+// ─── Pipeline Infographic ────────────────────────────────────────────────────
+
+function cubeGeom(cx: number, cy: number, size: number) {
+  const hw = size * 0.58;
+  const hh = size * 0.33;
+  const h = size * 0.72;
+  return {
+    top: `M${cx},${cy - h} L${cx + hw},${cy - h + hh} L${cx},${cy - h + 2 * hh} L${cx - hw},${cy - h + hh} Z`,
+    left: `M${cx - hw},${cy - h + hh} L${cx},${cy - h + 2 * hh} L${cx},${cy} L${cx - hw},${cy - hh} Z`,
+    right: `M${cx + hw},${cy - h + hh} L${cx},${cy - h + 2 * hh} L${cx},${cy} L${cx + hw},${cy - hh} Z`,
+  };
+}
+
+function PipelineInfographic() {
+  const NODES = [
+    { x: 160, y: 175, label: 'CleanImages', desc: 'Secured base images' },
+    { x: 370, y: 175, label: 'Packages', desc: 'Verified packages' },
+    { x: 580, y: 175, label: 'LLM Models', desc: 'Scanned AI models' },
+    { x: 790, y: 175, label: 'CleanSight', desc: 'Visibility dashboard' },
+  ];
+  const PLABELS = ['CleanCompile', 'Factory', 'Vault', 'Build'];
+
+  return (
+    <motion.div
+      className="relative w-full max-w-[1060px] mx-auto"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.5, ease: EASE }}
+    >
+      {/* ═══ DESKTOP ═══ */}
+      <svg viewBox="0 0 950 480" fill="none" className="w-full hidden md:block">
+        <defs>
+          <filter id="dotGlow">
+            <feGaussianBlur stdDeviation="3" />
+            <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+          <filter id="cubeDropShadow" x="-20%" y="-10%" width="140%" height="150%">
+            <feDropShadow dx="6" dy="10" stdDeviation="8" floodColor="rgba(10,40,100,0.18)" />
+          </filter>
+        </defs>
+
+        {/* ── Foundation Platform ── */}
+        <motion.g
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.8, delay: 0.3, ease: EASE }}
+        >
+          <ellipse cx={475} cy={395} rx={340} ry={28} fill="rgba(5,107,241,0.04)" />
+          <path d="M475 345 L820 375 L475 405 L130 375 Z" fill="white" fillOpacity={0.55} stroke="#93c5fd" strokeWidth="1" />
+          <path d="M130 375 L475 405 L475 418 L130 388 Z" fill="#dbeafe" fillOpacity={0.7} stroke="#93c5fd" strokeWidth="0.7" />
+          <path d="M820 375 L475 405 L475 418 L820 388 Z" fill="#bfdbfe" fillOpacity={0.6} stroke="#93c5fd" strokeWidth="0.7" />
+          {[0.25, 0.5, 0.75].map((t) => (
+            <line key={t}
+              x1={130 + (475 - 130) * t} y1={375 + (345 - 375) * t}
+              x2={475 + (820 - 475) * t} y2={405 + (375 - 405) * t}
+              stroke="#93c5fd" strokeWidth="0.4" opacity={0.35} />
+          ))}
+        </motion.g>
+
+        {/* Platform labels */}
+        {PLABELS.map((name, i) => (
+          <motion.text key={name} x={220 + i * 160} y={393} textAnchor="middle"
+            className="font-['Google_Sans',sans-serif]" fontSize="10.5" fill="#3b82f6" fillOpacity={0.45}
+            fontWeight="500" letterSpacing="0.04em"
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.4, delay: 0.9 + i * 0.08, ease: EASE }}
+          >{name}</motion.text>
+        ))}
+        <motion.text x={475} y={450} textAnchor="middle"
+          className="font-['Google_Sans',sans-serif]" fontSize="10" fill="#3b82f6" fillOpacity={0.3}
+          fontWeight="500" letterSpacing="0.15em"
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.5, delay: 1.1, ease: EASE }}
+        >CLEANSTART PLATFORM</motion.text>
+
+        {/* ── Vertical dashed connectors ── */}
+        {NODES.map((node, i) => (
+          <motion.g key={`vc-${i}`} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.5, delay: 0.6 + i * 0.08, ease: EASE }}>
+            <line x1={node.x} y1={node.y + 95} x2={node.x} y2={348}
+              stroke="#3b82f6" strokeWidth="1" strokeDasharray="4 5" opacity={0.18} />
+            <circle cx={node.x} cy={348} r="2.5" fill="#3b82f6" opacity={0.25} />
+          </motion.g>
+        ))}
+
+        {/* ── Horizontal connections ── */}
+        {[0, 1, 2].map((i) => {
+          const x1 = NODES[i].x + 55, x2 = NODES[i + 1].x - 55, y = NODES[i].y + 40;
+          return (
+            <motion.g key={`conn-${i}`} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.5, delay: 0.5 + i * 0.12, ease: EASE }}>
+              <line x1={x1} y1={y} x2={x2} y2={y} stroke="#3b82f6" strokeWidth="1" opacity={0.2} />
+              <circle cx={x1} cy={y} r="3" fill="#3b82f6" />
+              <circle cx={x2} cy={y} r="3" fill="#3b82f6" />
+              <motion.circle r="4" fill="#3b82f6" filter="url(#dotGlow)"
+                animate={{ cx: [x1, x2], cy: [y, y], opacity: [0, 1, 1, 0] }}
+                transition={{ duration: 2.5, delay: 1 + i * 0.6, repeat: Infinity, ease: 'linear', times: [0, 0.1, 0.9, 1] }} />
+            </motion.g>
+          );
+        })}
+
+        {/* ═══ NODE 1 — CleanImages: stacked layers + shield ═══ */}
+        <motion.g initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.7, delay: 0.15, ease: EASE }}
+          filter="url(#cubeDropShadow)">
+          <motion.g animate={{ y: [0, -6, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}>
+            {[
+              { yOff: 0, fill: '#dbeafe', stroke: '#93c5fd' },
+              { yOff: -12, fill: '#bfdbfe', stroke: '#60a5fa' },
+              { yOff: -24, fill: '#93c5fd', stroke: '#3b82f6' },
+              { yOff: -36, fill: '#60a5fa', stroke: '#2563eb' },
+            ].map((l, i) => (
+              <path key={i} d={`M160,${220 + l.yOff - 12} L210,${220 + l.yOff} L160,${220 + l.yOff + 12} L110,${220 + l.yOff} Z`}
+                fill={l.fill} stroke={l.stroke} strokeWidth="1" />
+            ))}
+            <path d="M160,155 L174,162 L174,174 C174,181 160,187 160,187 C160,187 146,181 146,174 L146,162 Z"
+              fill="white" stroke="#2563eb" strokeWidth="1.5" />
+            <path d="M155,173 L158,176 L166,167" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </motion.g>
+        </motion.g>
+
+        {/* ═══ NODE 2 — Packages: solid cube cluster ═══ */}
+        <motion.g initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.7, delay: 0.3, ease: EASE }}
+          filter="url(#cubeDropShadow)">
+          <motion.g animate={{ y: [0, -6, 0] }} transition={{ duration: 4, delay: 0.5, repeat: Infinity, ease: 'easeInOut' }}>
+            {(() => { const g = cubeGeom(370, 230, 62); return (<><path d={g.left} fill="#1d4ed8" /><path d={g.right} fill="#3b82f6" /><path d={g.top} fill="#60a5fa" /></>); })()}
+            {(() => { const g = cubeGeom(335, 215, 32); return (<><path d={g.left} fill="#0891b2" /><path d={g.right} fill="#06b6d4" /><path d={g.top} fill="#67e8f9" /></>); })()}
+            {(() => { const g = cubeGeom(405, 218, 32); return (<><path d={g.left} fill="#1e40af" /><path d={g.right} fill="#2563eb" /><path d={g.top} fill="#93c5fd" /></>); })()}
+          </motion.g>
+        </motion.g>
+
+        {/* ═══ NODE 3 — LLM Models: wireframe + neural dots ═══ */}
+        <motion.g initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.7, delay: 0.45, ease: EASE }}>
+          <motion.g animate={{ y: [0, -6, 0] }} transition={{ duration: 4, delay: 1, repeat: Infinity, ease: 'easeInOut' }}>
+            {(() => { const g = cubeGeom(580, 230, 65); return (<>
+              <path d={g.left} fill="rgba(255,255,255,0.45)" stroke="#3b82f6" strokeWidth="1.2" strokeDasharray="6 4" />
+              <path d={g.right} fill="rgba(255,255,255,0.3)" stroke="#3b82f6" strokeWidth="1.2" strokeDasharray="6 4" />
+              <path d={g.top} fill="rgba(255,255,255,0.6)" stroke="#3b82f6" strokeWidth="1.2" strokeDasharray="6 4" />
+            </>); })()}
+            {(() => {
+              const ns = [[562, 197], [580, 188], [598, 197], [568, 208], [592, 208], [580, 216]];
+              const cs = [[0,1],[1,2],[0,3],[2,4],[3,4],[3,5],[4,5],[1,3],[1,4]];
+              return (<>
+                {cs.map(([a, b], ci) => <line key={ci} x1={ns[a][0]} y1={ns[a][1]} x2={ns[b][0]} y2={ns[b][1]} stroke="#3b82f6" strokeWidth="0.8" opacity={0.35} />)}
+                {ns.map(([nx, ny], ni) => <motion.circle key={ni} cx={nx} cy={ny} r="3.5" fill="#3b82f6"
+                  animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 2, delay: ni * 0.2, repeat: Infinity, ease: 'easeInOut' }} />)}
+              </>);
+            })()}
+          </motion.g>
+        </motion.g>
+
+        {/* ═══ NODE 4 — CleanSight: solid cube + magnifier ═══ */}
+        <motion.g initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.7, delay: 0.6, ease: EASE }}
+          filter="url(#cubeDropShadow)">
+          <motion.g animate={{ y: [0, -6, 0] }} transition={{ duration: 4, delay: 1.5, repeat: Infinity, ease: 'easeInOut' }}>
+            {(() => { const g = cubeGeom(790, 230, 58); return (<><path d={g.left} fill="#1d4ed8" /><path d={g.right} fill="#3b82f6" /><path d={g.top} fill="#60a5fa" /></>); })()}
+            <circle cx={790} cy={198} r="10" fill="none" stroke="white" strokeWidth="1.5" />
+            <circle cx={790} cy={198} r="4" fill="white" opacity={0.8} />
+            <line x1={798} y1={206} x2={804} y2={212} stroke="white" strokeWidth="1.8" strokeLinecap="round" />
+          </motion.g>
+        </motion.g>
+
+        {/* ── Node labels ── */}
+        {NODES.map((node, i) => (
+          <motion.g key={node.label} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.5, delay: 0.8 + i * 0.1, ease: EASE }}>
+            <rect x={node.x - 50} y={node.y + 86} width={100} height={24} rx={12}
+              fill="white" fillOpacity={0.75} stroke="#93c5fd" strokeWidth="0.8" />
+            <text x={node.x} y={node.y + 102} textAnchor="middle"
+              className="font-['Google_Sans',sans-serif]" fontSize="11" fill="#1d4ed8" fontWeight="600">{node.label}</text>
+            <text x={node.x} y={node.y + 120} textAnchor="middle"
+              className="font-['Google_Sans',sans-serif]" fontSize="9" fill="rgba(24,24,24,0.4)">{node.desc}</text>
+          </motion.g>
+        ))}
+      </svg>
+
+      {/* ═══ MOBILE ═══ */}
+      <div className="md:hidden flex flex-col items-center gap-6">
+        {PIPELINE_NODES.map((node, i) => (
+          <motion.div key={node.id} className="flex flex-col items-center gap-2"
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.6, delay: i * 0.1, ease: EASE }}>
+            <svg viewBox="0 0 100 90" fill="none" className="w-[80px] h-[72px]">
+              <path d="M50 15 L80 32 L50 49 L20 32 Z" fill="#60a5fa" />
+              <path d="M20 32 L50 49 L50 75 L20 58 Z" fill="#1d4ed8" />
+              <path d="M80 32 L50 49 L50 75 L80 58 Z" fill="#3b82f6" />
+            </svg>
+            <span className="font-['Google_Sans',sans-serif] text-[14px] text-[#181818] font-medium">{node.label}</span>
+            <span className="font-['Google_Sans',sans-serif] text-[11px] text-[#181818]/40 -mt-1">{node.description}</span>
+            {i < 3 && (
+              <svg width="2" height="20" viewBox="0 0 2 20" className="mt-1">
+                <line x1="1" y1="0" x2="1" y2="16" stroke="#3b82f6" strokeWidth="1" strokeDasharray="3 3" opacity={0.3} />
+                <circle cx="1" cy="18" r="1.5" fill="#3b82f6" opacity={0.5} />
+              </svg>
+            )}
+          </motion.div>
+        ))}
+        <motion.div className="w-full max-w-[300px] mt-2 py-3 px-4 rounded-xl border border-[#93c5fd]/30"
+          style={{ background: 'rgba(255,255,255,0.5)' }}
+          initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.6, delay: 0.4, ease: EASE }}>
+          <p className="text-center font-['Google_Sans',sans-serif] text-[10px] text-[#1d4ed8]/40 tracking-widest mb-1.5">CLEANSTART PLATFORM</p>
+          <p className="text-center font-['Google_Sans',sans-serif] text-[11px] text-[#1d4ed8]/50">
+            CleanCompile&nbsp;&nbsp;·&nbsp;&nbsp;Factory&nbsp;&nbsp;·&nbsp;&nbsp;Vault&nbsp;&nbsp;·&nbsp;&nbsp;Build
+          </p>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
 // ─── Main Section ─────────────────────────────────────────────────────────────
 
 export function BuildSecurelySection() {
-  const [activeCard, setActiveCard] = useState(0);
   const comparisonRef = useRef<HTMLDivElement>(null);
   const isComparisonInView = useInView(comparisonRef, { once: true, margin: '-80px' });
 
@@ -282,44 +425,21 @@ export function BuildSecurelySection() {
       <div className="px-4 md:px-8 lg:px-[50px] py-12 md:py-[100px]">
         <div className="max-w-[1340px] mx-auto flex flex-col gap-10 md:gap-14">
           {/* Header */}
-          <div className="flex flex-col lg:flex-row lg:items-end gap-6 lg:gap-0">
-            <motion.div
-              className="lg:w-[580px] shrink-0"
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.7, ease: EASE }}
-            >
-              <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.02em] leading-[1.1]">
-                Modern Software Introduces New Security Risks
-              </h2>
-            </motion.div>
-            <motion.p
-              className="flex-1 lg:pl-16 font-['Google_Sans',sans-serif] font-normal text-[15px] md:text-[16px] text-[#181818]/55 leading-relaxed max-w-[480px]"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.7, delay: 0.15, ease: EASE }}
-            >
-              Every dependency is a risk. Every update is a vulnerability window. The traditional approach
-              to container security leaves teams constantly patching — never truly secure.
-            </motion.p>
-          </div>
+          <motion.h2
+            className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.02em] leading-[1.1]"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.7, ease: EASE }}
+          >
+            Modern Software Introduces<br />New Security Risks
+          </motion.h2>
 
-          {/* Problem cards — bento grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-5 auto-rows-fr">
-            <div className="sm:col-span-1 lg:col-span-7 h-full">
-              <ProblemCard {...PROBLEMS[0]} delay={0} />
-            </div>
-            <div className="sm:col-span-1 lg:col-span-5 h-full">
-              <ProblemCard {...PROBLEMS[1]} delay={0.08} />
-            </div>
-            <div className="sm:col-span-1 lg:col-span-5 h-full">
-              <ProblemCard {...PROBLEMS[2]} delay={0.16} />
-            </div>
-            <div className="sm:col-span-1 lg:col-span-7 h-full">
-              <ProblemCard {...PROBLEMS[3]} delay={0.24} />
-            </div>
+          {/* Problem cards — single row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+            {PROBLEMS.map((problem, i) => (
+              <ProblemCard key={problem.title} {...problem} delay={i * 0.08} />
+            ))}
           </div>
         </div>
       </div>
@@ -354,94 +474,8 @@ export function BuildSecurelySection() {
             </motion.div>
           </div>
 
-          {/* ── PRODUCT CARDS (mobile: grid, desktop: accordion) ──────────── */}
-          {/* Mobile */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:hidden">
-            {PRODUCTS.map((card, i) => (
-              <motion.div
-                key={card.name}
-                className="relative rounded-[15px] overflow-hidden h-[320px] sm:h-[380px]"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.7, delay: i * 0.1, ease: EASE }}
-              >
-                <img
-                  src={card.image}
-                  alt={card.name}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="relative flex flex-col justify-between h-full p-[25px]">
-                  <p className="font-['Google_Sans',sans-serif] font-normal text-[14px] text-white/80 leading-normal">
-                    {card.description}
-                  </p>
-                  <div className="flex items-end justify-between gap-4">
-                    <h3 className="font-['Google_Sans',sans-serif] font-bold text-[24px] text-white leading-tight">
-                      {card.name}
-                    </h3>
-                    <CircleArrowCTA variant="outline-white" size={40} />
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Desktop accordion */}
-          <div className="hidden lg:flex gap-[15px] items-center w-full" style={{ height: 500 }}>
-            {PRODUCTS.map((card, i) => {
-              const isActive = activeCard === i;
-              return (
-                <motion.div
-                  key={card.name}
-                  className="relative rounded-[15px] overflow-hidden cursor-pointer"
-                  onMouseEnter={() => setActiveCard(i)}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.7, delay: i * 0.1, ease: EASE }}
-                  animate={{
-                    flex: isActive ? 1.2 : 0.9,
-                    height: isActive ? 500 : 400,
-                  }}
-                  style={{
-                    transition: 'flex 500ms cubic-bezier(0.16,1,0.3,1), height 500ms cubic-bezier(0.16,1,0.3,1)',
-                  }}
-                >
-                  <img
-                    src={card.image}
-                    alt={card.name}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  {/* Expanded content */}
-                  <motion.div
-                    className="relative flex flex-col justify-between h-full p-[25px]"
-                    animate={{ opacity: isActive ? 1 : 0 }}
-                    transition={{ duration: isActive ? 0.4 : 0.15, delay: isActive ? 0.12 : 0 }}
-                  >
-                    <p className="font-['Google_Sans',sans-serif] font-normal text-[15px] text-white/80 leading-normal max-w-[280px]">
-                      {card.description}
-                    </p>
-                    <div className="flex items-end justify-between gap-4">
-                      <h3 className="font-['Google_Sans',sans-serif] font-bold text-[28px] text-white leading-tight">
-                        {card.name}
-                      </h3>
-                      <CircleArrowCTA variant="outline-white" size={40} />
-                    </div>
-                  </motion.div>
-                  {/* Collapsed label */}
-                  <motion.div
-                    className="absolute inset-0 flex flex-col items-start justify-end p-[25px]"
-                    animate={{ opacity: isActive ? 0 : 1 }}
-                    transition={{ duration: isActive ? 0.15 : 0.4, delay: isActive ? 0 : 0.12 }}
-                  >
-                    <h3 className="font-['Google_Sans',sans-serif] font-bold text-[22px] text-white leading-tight">
-                      {card.name}
-                    </h3>
-                  </motion.div>
-                </motion.div>
-              );
-            })}
-          </div>
+          {/* ── PIPELINE INFOGRAPHIC ──────────────────────────────────── */}
+          <PipelineInfographic />
 
           {/* ── COMPARISON TABLE ─────────────────────────────────────────── */}
           <motion.div
