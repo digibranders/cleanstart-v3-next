@@ -11,6 +11,7 @@ import {
   SecurityCheckIcon,
   Shield01Icon,
 } from '@hugeicons/core-free-icons';
+import Image from 'next/image';
 import WhiteBgCube from '@/lib/svg-data/WhiteBgCube1';
 import { CallToActionButton } from '@/components/shared/call-to-action-button';
 import { TECH_LOGOS, TechLogoSVG } from '@/components/home/tech-logo-data';
@@ -730,112 +731,106 @@ function VulnerabilityScanVisual() {
   );
 }
 
-// --- Award Visual (Slide 3) — Trophy with orbiting badge circles ---
+// --- Award Visual (Slide 3) — 3D cube-corner volumetric light ---
 
 function AwardShieldVisual() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const BADGES = [
-    { label: 'Verified', x: -215, y: -120 },
-    { label: 'Secure', x: 210, y: -96 },
-    { label: 'Trusted', x: -210, y: 58 },
-    { label: 'Certified', x: 216, y: 82 },
-    { label: 'Compliant', x: -126, y: 178 },
-    { label: 'Hardened', x: 148, y: 196 },
+  const LEFT_BADGES = [
+    { label: 'Verified', y: -100 },
+    { label: 'Trusted', y: 0 },
+    { label: 'Compliant', y: 100 },
+  ];
+  const RIGHT_BADGES = [
+    { label: 'Secure', y: -100 },
+    { label: 'Certified', y: 0 },
+    { label: 'Hardened', y: 100 },
   ];
 
   return (
-    <div ref={containerRef} className="absolute inset-0 flex items-center justify-center">
+    <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
 
-      {/* Central frosted circle with trophy — enhanced contrast */}
+      {/* ══ Award SVG — center ══ */}
       <motion.div
-        className="absolute flex items-center justify-center rounded-full"
-        style={{
-          width: 260, height: 260, zIndex: 25,
-          background: 'rgba(255,255,255,0.2)',
-          border: '1.5px solid rgba(255,255,255,0.4)',
-          backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 32px rgba(0,0,0,0.1)',
-        }}
-        initial={{ opacity: 0, scale: 0.85, y: 20 }}
+        className="absolute flex items-center justify-center"
+        style={{ zIndex: 30 }}
+        initial={{ opacity: 0, scale: 0.7, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
       >
-        {/* Warm gold glow */}
-        <motion.div className="absolute inset-0 rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(255,196,0,0.25), transparent 68%)' }}
-          animate={{ opacity: [0.4, 0.8, 0.4] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div style={{ position: 'relative', zIndex: 1 }}
-          animate={{ scale: [1, 1.05, 1] }}
+        <motion.div
+          animate={{ scale: [1, 1.04, 1] }}
           transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <HugeiconsIcon icon={Award03Icon} size={80} color="white" strokeWidth={1.5} />
+          <Image src="/home/cybersecurity-award-2026.svg" alt="Cybersecurity Excellence Award 2026" width={160} height={160} />
         </motion.div>
       </motion.div>
 
-      {/* Floating badge pills — enhanced frosted glass, larger text */}
-      {BADGES.map((badge, i) => (
+      {/* ══ Left badges (3) ══ */}
+      {LEFT_BADGES.map((badge, i) => (
         <motion.div
           key={badge.label}
-          className="absolute px-4 py-2 rounded-full font-['Google_Sans',sans-serif] text-[13px] font-medium text-white"
-          style={{
-            zIndex: 26,
-            background: 'rgba(255,255,255,0.3)',
-            border: '1px solid rgba(255,255,255,0.55)',
-            backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.35)',
-          }}
-          initial={{ opacity: 0, scale: 0.8, x: badge.x * 0.5, y: badge.y * 0.5 }}
-          animate={{ opacity: 1, scale: 1, x: badge.x, y: badge.y }}
-          transition={{ duration: 0.8, delay: 0.8 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute flex items-center gap-3"
+          style={{ left: '50%', top: '50%', marginLeft: -280, marginTop: badge.y - 18, zIndex: 28 }}
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.8 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
         >
-          <motion.span
-            animate={{ y: [0, -3, 0] }}
-            transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}
-            style={{ display: 'block' }}
+          <div
+            className="px-5 py-2.5 rounded-full font-['Google_Sans',sans-serif] text-[13px] font-medium text-white/90 whitespace-nowrap"
+            style={{
+              background: 'rgba(255,255,255,0.15)',
+              border: '1px solid rgba(255,255,255,0.3)',
+              backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.25)',
+            }}
           >
             {badge.label}
-          </motion.span>
+          </div>
+          <motion.div
+            style={{
+              width: 60, height: '1px',
+              background: 'linear-gradient(90deg, rgba(255,255,255,0.0), rgba(255,255,255,0.2), rgba(255,255,255,0.5))',
+            }}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.5, delay: 1.0 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+            className="origin-left"
+          />
         </motion.div>
       ))}
 
-      {/* Connecting lines from badges to center */}
-      <svg className="absolute" style={{ width: 560, height: 480, left: '50%', top: '50%', marginLeft: -280, marginTop: -240, zIndex: 23 }}>
-        {BADGES.map((badge, i) => (
-          <motion.line
-            key={`line-${i}`}
-            x1={280} y1={240}
-            x2={280 + badge.x} y2={240 + badge.y}
-            stroke="rgba(255,255,255,0.2)"
-            strokeWidth="1"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.8 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+      {/* ══ Right badges (3) ══ */}
+      {RIGHT_BADGES.map((badge, i) => (
+        <motion.div
+          key={badge.label}
+          className="absolute flex items-center gap-3"
+          style={{ right: '50%', top: '50%', marginRight: -280, marginTop: badge.y - 18, zIndex: 28 }}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.8 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <motion.div
+            style={{
+              width: 60, height: '1px',
+              background: 'linear-gradient(90deg, rgba(255,255,255,0.5), rgba(255,255,255,0.2), rgba(255,255,255,0.0))',
+            }}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.5, delay: 1.0 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+            className="origin-right"
           />
-        ))}
-      </svg>
-
-      {/* Award pill */}
-      <motion.div
-        className="absolute left-1/2 bottom-[20px] -translate-x-1/2"
-        style={{ zIndex: 30 }}
-        initial={{ opacity: 0, y: 20, scale: 0.9 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.8, delay: 1.8, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <div className="px-5 py-2.5 rounded-full border" style={{
-          background: 'rgba(255,255,255,0.25)', borderColor: 'rgba(255,255,255,0.45)',
-          backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-        }}>
-          <div className="flex items-center gap-2.5">
-            <HugeiconsIcon icon={CheckmarkBadge03Icon} size={16} color="white" strokeWidth={1.8} />
-            <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white">
-              Cybersecurity Excellence Award 2026
-            </span>
+          <div
+            className="px-5 py-2.5 rounded-full font-['Google_Sans',sans-serif] text-[13px] font-medium text-white/90 whitespace-nowrap"
+            style={{
+              background: 'rgba(255,255,255,0.15)',
+              border: '1px solid rgba(255,255,255,0.3)',
+              backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.25)',
+            }}
+          >
+            {badge.label}
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      ))}
     </div>
   );
 }
@@ -1036,6 +1031,7 @@ interface HeroSlide {
 }
 
 const MASTER_GRADIENT = 'linear-gradient(180deg, rgb(3, 22, 48) 0%, rgb(6, 107, 241) 40%, rgb(6, 199, 242) 75%, rgb(255, 255, 255) 100%)';
+const AWARD_GRADIENT = 'linear-gradient(180deg, rgb(15, 12, 8) 0%, rgb(101, 82, 52) 35%, rgb(181, 153, 103) 65%, rgb(255, 255, 255) 100%)';
 
 const HERO_SLIDES: HeroSlide[] = [
   {
@@ -1061,7 +1057,7 @@ const HERO_SLIDES: HeroSlide[] = [
     title: 'Gold Award Winner — Cybersecurity Excellence Award 2026',
     subtitle: 'Recognized for innovation in secure software supply chain and hardened container images.',
     ctaText: 'Read More',
-    background: MASTER_GRADIENT,
+    background: AWARD_GRADIENT,
     visualType: 'award',
     navLabel: 'Award Winner',
   },

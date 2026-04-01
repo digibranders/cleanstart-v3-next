@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from 'motion/react';
+import { motion, useInView, AnimatePresence } from 'motion/react';
 import { useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { CircleArrowCTA } from '@/components/shared/circle-arrow-cta';
@@ -810,6 +810,17 @@ function OrbitalInfographic() {
 export function BuildSecurelySection() {
   const comparisonRef = useRef<HTMLDivElement>(null);
   const isComparisonInView = useInView(comparisonRef, { once: true, margin: '-80px' });
+  const [activeView, setActiveView] = useState<'cleanstart' | 'public'>('public');
+  const hasAutoSwitched = useRef(false);
+
+  // Auto-switch to CleanStart 1.5s after scrolling into view for dramatic effect
+  useEffect(() => {
+    if (isComparisonInView && !hasAutoSwitched.current) {
+      hasAutoSwitched.current = true;
+      const timer = setTimeout(() => setActiveView('cleanstart'), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isComparisonInView]);
 
   return (
     <section className="bg-white">
@@ -912,7 +923,7 @@ export function BuildSecurelySection() {
       <div className="bg-white px-4 md:px-8 lg:px-[50px] py-12 md:py-[100px]">
         <div className="max-w-[1340px] mx-auto flex flex-col gap-12 md:gap-16">
 
-          {/* Header — split: title left, description right */}
+          {/* Header — 35/65 split */}
           <div className="flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-0">
             <motion.div
               className="lg:w-[35%] shrink-0"
@@ -925,130 +936,153 @@ export function BuildSecurelySection() {
                 Security isn&apos;t just patching
               </h2>
             </motion.div>
-            <motion.p
-              className="flex-1 lg:pl-8 font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-[#181818]/50 leading-relaxed max-w-[480px]"
+            <motion.div
+              className="flex-1 lg:pl-8"
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.7, delay: 0.15, ease: EASE }}
             >
-              Comparison Block with a Cube
-            </motion.p>
+              <p className="font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-[#181818]/50 leading-relaxed max-w-[480px]">
+                Most container security tools patch vulnerabilities after the fact. CleanStart eliminates them at the source, before your images are even built.
+              </p>
+              <div className="flex items-center gap-3 mt-[10px]">
+                <button
+                  onClick={() => setActiveView('public')}
+                  className="relative rounded-full font-['Google_Sans',sans-serif] font-medium text-[13px] md:text-[14px] px-5 py-2.5 transition-all duration-400"
+                  style={{
+                    background: activeView === 'public' ? '#181818' : 'transparent',
+                    color: activeView === 'public' ? '#ffffff' : 'rgba(24,24,24,0.3)',
+                    border: activeView === 'public' ? '1.5px solid #181818' : '1.5px solid rgba(24,24,24,0.1)',
+                    boxShadow: activeView === 'public' ? '0 2px 12px rgba(0,0,0,0.12)' : 'none',
+                  }}
+                >
+                  Public Images
+                </button>
+                <button
+                  onClick={() => setActiveView('cleanstart')}
+                  className="relative flex items-center gap-2 rounded-full font-['Google_Sans',sans-serif] font-medium text-[13px] md:text-[14px] px-5 py-2.5 transition-all duration-400"
+                  style={{
+                    background: activeView === 'cleanstart' ? '#056BF1' : 'transparent',
+                    color: activeView === 'cleanstart' ? '#ffffff' : 'rgba(24,24,24,0.3)',
+                    border: activeView === 'cleanstart' ? '1.5px solid #056BF1' : '1.5px solid rgba(24,24,24,0.1)',
+                    boxShadow: activeView === 'cleanstart' ? '0 2px 16px rgba(5,107,241,0.2)' : 'none',
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 108.25 123.68" fill="none" className="shrink-0">
+                    <polygon
+                      points="94.39 39.89 94.39 85.24 61.19 105.11 61.19 59.02 48.28 66.46 48.63 66.68 48.63 120.39 54.12 123.68 108.25 92.04 108.25 32.16 108.03 32.03 94.39 39.89"
+                      fill={activeView === 'cleanstart' ? '#06C7F2' : 'currentColor'}
+                      style={{ transition: 'fill 0.4s ease' }}
+                    />
+                    <polygon
+                      points="61.19 58.83 19.87 34.52 54.64 15.43 94.39 38.18 94.39 39.89 108.03 32.03 53.86 0 0 32.16 0 91.26 12.55 98.77 12.55 45.5 48.28 66.46 61.19 59.02 61.19 58.83"
+                      fill={activeView === 'cleanstart' ? '#ffffff' : 'currentColor'}
+                      style={{ transition: 'fill 0.4s ease' }}
+                    />
+                  </svg>
+                  CleanStart
+                </button>
+              </div>
+            </motion.div>
           </div>
 
-          {/* Before → After — two premium cards with center connector */}
-          <motion.div
-            ref={comparisonRef}
-            className="relative"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.8, ease: EASE }}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 relative">
+          {/* Comparison — Morphing Cards */}
+          <div ref={comparisonRef}>
+            {/* Morphing cards grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-5 w-full">
+              {COMPARISON_ROWS.map((row, i) => {
+                const isClean = activeView === 'cleanstart';
+                const cardIcons = [
+                  <Shield01Icon key="shield" size={36} strokeWidth={1.4} />,
+                  <Blockchain04Icon key="chain" size={36} strokeWidth={1.4} />,
+                  <Layers01Icon key="layers" size={36} strokeWidth={1.4} />,
+                  <ScanIcon key="scan" size={36} strokeWidth={1.4} />,
+                  <RefreshIcon key="refresh" size={36} strokeWidth={1.4} />,
+                ];
+                return (
+                  <motion.div
+                    key={row.left}
+                    className="relative rounded-[20px] overflow-hidden flex flex-col"
+                    style={{
+                      background: isClean ? 'white' : '#F4F5F7',
+                      border: isClean ? '1px solid rgba(5,107,241,0.1)' : '1px solid rgba(0,0,0,0.03)',
+                      boxShadow: isClean
+                        ? '0 8px 32px rgba(5,107,241,0.08), 0 1px 2px rgba(0,0,0,0.04)'
+                        : '0 1px 4px rgba(0,0,0,0.02)',
+                      padding: '28px 24px',
+                      minHeight: '240px',
+                      transition: 'background 0.5s cubic-bezier(0.16,1,0.3,1), border 0.5s ease, box-shadow 0.5s ease',
+                    }}
+                    initial={{ opacity: 0, y: 36 }}
+                    animate={isComparisonInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.6, delay: 0.06 + i * 0.08, ease: EASE }}
+                  >
+                    {/* Top accent line — slides in when CleanStart */}
+                    <motion.div
+                      className="absolute top-0 left-0 right-0 h-[3px]"
+                      style={{ background: 'linear-gradient(90deg, #056BF1, #06C7F2)' }}
+                      animate={{ scaleX: isClean ? 1 : 0, transformOrigin: 'left' }}
+                      transition={{ duration: 0.6, delay: i * 0.06, ease: EASE }}
+                    />
 
-              {/* ── Left: Without CleanStart ── */}
-              <div
-                className="rounded-[20px] lg:rounded-r-none p-8 md:p-10 lg:p-12 relative overflow-hidden"
-                style={{ background: '#F8F9FB', border: '1px solid #ECEDEF', borderRight: 'none' }}
-              >
-                {/* Subtle grid pattern bg */}
-                <div className="absolute inset-0 opacity-[0.4]" style={{
-                  backgroundImage: 'linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)',
-                  backgroundSize: '32px 32px',
-                }} />
+                    {/* Icon */}
+                    <div
+                      className="mb-6"
+                      style={{
+                        color: isClean ? '#056BF1' : 'rgba(24,24,24,0.15)',
+                        transition: 'color 0.5s cubic-bezier(0.16,1,0.3,1)',
+                      }}
+                    >
+                      {cardIcons[i]}
+                    </div>
 
-                <div className="relative z-10 flex flex-col gap-6">
-                  {/* Header */}
-                  <span className="font-['Google_Sans',sans-serif] font-normal text-[20px] md:text-[22px] text-[#181818]">
-                    Public Images
-                  </span>
+                    {/* Feature text — morphs between states */}
+                    <div className="mt-auto flex flex-col gap-3">
+                      <AnimatePresence mode="wait">
+                        <motion.p
+                          key={activeView}
+                          className="font-['Google_Sans',sans-serif] font-semibold text-[15px] md:text-[16px] leading-snug tracking-[-0.01em]"
+                          style={{ color: isClean ? '#181818' : 'rgba(24,24,24,0.35)' }}
+                          initial={{ opacity: 0, y: 8, filter: 'blur(4px)' }}
+                          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                          exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
+                          transition={{ duration: 0.35, delay: i * 0.04, ease: EASE }}
+                        >
+                          {isClean ? row.right : row.left}
+                        </motion.p>
+                      </AnimatePresence>
 
-                  {/* Items */}
-                  <div className="flex flex-col gap-5">
-                    {COMPARISON_ROWS.map((row, i) => (
-                      <motion.div
-                        key={row.left}
-                        className="flex items-center gap-3"
-                        initial={{ opacity: 0, x: -12 }}
-                        animate={isComparisonInView ? { opacity: 1, x: 0 } : {}}
-                        transition={{ duration: 0.5, delay: 0.1 + i * 0.07, ease: EASE }}
-                      >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0">
-                          <circle cx="12" cy="12" r="10" stroke="#181818" strokeOpacity="0.15" strokeWidth="1.5" />
-                          <path d="M8 12h8" stroke="#181818" strokeOpacity="0.3" strokeWidth="1.5" strokeLinecap="round" />
-                        </svg>
-                        <span className="font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-[#181818]/70 leading-relaxed">
-                          {row.left}
-                        </span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* ── Center connector (desktop) ── */}
-              <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-                <div
-                  className="w-[52px] h-[52px] rounded-full flex items-center justify-center"
-                  style={{ background: '#056BF1', boxShadow: '0 0 0 8px white, 0 4px 20px rgba(5,107,241,0.25)' }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M5 12h14M12 5l7 7-7 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-              </div>
-
-              {/* Mobile connector */}
-              <div className="flex lg:hidden items-center justify-center py-3">
-                <div
-                  className="w-[44px] h-[44px] rounded-full flex items-center justify-center"
-                  style={{ background: '#056BF1', boxShadow: '0 4px 16px rgba(5,107,241,0.25)' }}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="rotate-90">
-                    <path d="M5 12h14M12 5l7 7-7 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-              </div>
-
-              {/* ── Right: With CleanStart ── */}
-              <div
-                className="rounded-[20px] lg:rounded-l-none p-8 md:p-10 lg:p-12 relative overflow-hidden"
-                style={{ background: '#056BF1' }}
-              >
-                {/* Subtle radial glow */}
-                <div className="absolute -top-[100px] -right-[100px] w-[300px] h-[300px] rounded-full opacity-[0.15]" style={{ background: 'radial-gradient(circle, #06C7F2, transparent 70%)' }} />
-
-                <div className="relative z-10 flex flex-col gap-6">
-                  {/* Header */}
-                  <span className="font-['Google_Sans',sans-serif] font-normal text-[20px] md:text-[22px] text-white">
-                    With CleanStart
-                  </span>
-
-                  {/* Items */}
-                  <div className="flex flex-col gap-5">
-                    {COMPARISON_ROWS.map((row, i) => (
-                      <motion.div
-                        key={row.right}
-                        className="flex items-center gap-3"
-                        initial={{ opacity: 0, x: 12 }}
-                        animate={isComparisonInView ? { opacity: 1, x: 0 } : {}}
-                        transition={{ duration: 0.5, delay: 0.1 + i * 0.07, ease: EASE }}
-                      >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0">
-                          <circle cx="12" cy="12" r="10" stroke="white" strokeOpacity="0.3" strokeWidth="1.5" />
-                          <path d="M8 12l3 3 5-5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        <span className="font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-white leading-relaxed">
-                          {row.right}
-                        </span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+                      {/* Status indicator */}
+                      <div className="flex items-center gap-2">
+                        <motion.div
+                          className="w-[7px] h-[7px] rounded-full"
+                          animate={{
+                            backgroundColor: isClean ? '#10B981' : '#F59E0B',
+                            scale: isClean ? [1, 1.4, 1] : 1,
+                          }}
+                          transition={{ duration: 0.4, delay: i * 0.05, ease: EASE }}
+                        />
+                        <AnimatePresence mode="wait">
+                          <motion.span
+                            key={activeView}
+                            className="font-['Google_Sans',sans-serif] font-medium text-[11px] md:text-[12px] tracking-[0.02em]"
+                            style={{ color: isClean ? '#10B981' : '#D97706' }}
+                            initial={{ opacity: 0, x: -4 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 4 }}
+                            transition={{ duration: 0.25, delay: i * 0.04 }}
+                          >
+                            {isClean ? 'Secured' : 'At risk'}
+                          </motion.span>
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 

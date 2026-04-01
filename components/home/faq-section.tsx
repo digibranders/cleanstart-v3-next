@@ -62,18 +62,20 @@ export function FAQSection() {
     <section className="bg-[#ecedef] px-4 md:px-8 lg:px-[50px] py-12 md:py-[100px]">
       <div className="max-w-[1340px] mx-auto flex flex-col gap-8 md:gap-[50px]">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row items-start justify-between gap-4 lg:gap-0">
-          <motion.h2
-            className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-black tracking-[-0.95px] w-full lg:w-[670px] shrink-0"
+        <div className="flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-0">
+          <motion.div
+            className="lg:w-[35%] shrink-0"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            Questions &amp; Answers
-          </motion.h2>
+            <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.02em] leading-[1.1]">
+              Questions &amp; Answers
+            </h2>
+          </motion.div>
           <motion.p
-            className="font-['Google_Sans',sans-serif] font-normal text-[16px] text-[#181818]/60 max-w-full lg:max-w-[526px] leading-normal"
+            className="flex-1 lg:pl-8 font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-[#181818]/50 leading-relaxed max-w-[480px]"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}

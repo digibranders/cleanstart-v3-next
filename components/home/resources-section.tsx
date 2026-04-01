@@ -252,18 +252,18 @@ export function ResourcesSection() {
   return (
     <section className="bg-white px-4 md:px-8 lg:px-[50px] py-12 md:py-[100px]">
       <div className="max-w-[1340px] mx-auto flex flex-col gap-8 md:gap-[50px]">
-        {/* Header: 30:70 split */}
-        <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 lg:gap-8 items-start">
-          {/* Left 3 cols */}
-          <motion.div className="lg:col-span-3" {...anim(0)}>
-            <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.95px] leading-[1.1]">
+        {/* Header: 35:65 split */}
+        <div className="flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-0">
+          {/* Left 35% */}
+          <motion.div className="lg:w-[35%] shrink-0" {...anim(0)}>
+            <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.02em] leading-[1.1]">
               Resources &amp; Insights
             </h2>
           </motion.div>
 
-          {/* Right 7 cols */}
-          <motion.div className="lg:col-span-7 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4" {...anim(0.05)}>
-            <p className="font-['Google_Sans',sans-serif] font-normal text-[16px] text-[#181818]/70 leading-normal max-w-[520px]">
+          {/* Right 65% */}
+          <motion.div className="flex-1 lg:pl-8 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4" {...anim(0.05)}>
+            <p className="font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-[#181818]/70 leading-relaxed max-w-[480px]">
               Stay informed with the latest research, threat intelligence reports, and expert analysis from our security team.
             </p>
             <CallToActionButton label="View All Resources" variant="dark" size="md" />
