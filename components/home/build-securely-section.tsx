@@ -241,21 +241,20 @@ function ProductAccordionCards() {
   return (
     <div>
       {/* Desktop accordion */}
-      <div ref={containerRef} className="hidden lg:flex gap-4 md:gap-5" style={{ height: '420px' }}>
+      <div ref={containerRef} className="hidden lg:flex gap-5" style={{ height: '420px' }}>
         {PRODUCT_CARDS.map((card, i) => {
           const isActive = i === activeIndex;
           return (
-            <motion.div
+            <div
               key={card.title}
               ref={(el) => { cardRefs.current[i] = el; }}
               className="relative rounded-[15px] overflow-hidden flex flex-col justify-end cursor-pointer h-full"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.7, delay: i * 0.08, ease: EASE }}
-              animate={{ flex: isActive ? 2 : 0.75 }}
               onMouseEnter={() => setActiveIndex(i)}
-              style={{ minWidth: 0 }}
+              style={{
+                flex: isActive ? '0 0 420px' : '1 1 0px',
+                minWidth: 0,
+                transition: 'flex 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
             >
               <Image
                 src={card.image}
@@ -268,22 +267,24 @@ function ProductAccordionCards() {
               <div className="absolute inset-x-0 bottom-0 h-[50%] bg-gradient-to-t from-[#0F1924]/90 to-transparent" />
 
               {/* Bottom: title + CTA */}
-              <motion.div
+              <div
                 className="relative z-10 p-6 md:p-7 flex items-center justify-between gap-4"
-                animate={{ opacity: isActive ? 1 : 0.7 }}
-                transition={{ duration: 0.3 }}
+                style={{ opacity: isActive ? 1 : 0.7, transition: 'opacity 0.3s ease' }}
               >
                 <h4 className="font-['Google_Sans',sans-serif] text-[18px] text-white font-semibold leading-tight whitespace-nowrap">
                   {card.title}
                 </h4>
-                <motion.div
-                  animate={{ opacity: isActive ? 1 : 0, scale: isActive ? 1 : 0.8 }}
-                  transition={{ duration: 0.3, ease: EASE }}
+                <div
+                  style={{
+                    opacity: isActive ? 1 : 0,
+                    transform: isActive ? 'scale(1)' : 'scale(0.8)',
+                    transition: 'opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
                 >
                   <CircleArrowCTA variant="filled-blue" size={44} />
-                </motion.div>
-              </motion.div>
-            </motion.div>
+                </div>
+              </div>
+            </div>
           );
         })}
       </div>
