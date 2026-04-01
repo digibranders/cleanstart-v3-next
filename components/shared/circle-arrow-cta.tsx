@@ -75,7 +75,7 @@ export function CircleArrowCTA({
         height: size,
         backgroundColor: hovered ? c.hoverBg : c.bg,
         border: `${strokeWidth}px solid ${hovered ? c.hoverBorder : c.border}`,
-        transform: hovered ? "rotate(45deg)" : "rotate(0deg)",
+        transform: hovered ? "rotate(45deg)" : "rotate(-20deg)",
       }}
       onMouseEnter={() => setSelfHovered(true)}
       onMouseLeave={() => setSelfHovered(false)}
