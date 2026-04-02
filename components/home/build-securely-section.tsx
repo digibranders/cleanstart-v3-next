@@ -93,13 +93,15 @@ const PIPELINE_NODES = [
   { id: 'clean-sight', label: 'CleanSight', description: 'Visibility dashboard' },
 ];
 
-const COMPARISON_ROWS = [
-  { left: 'Patch after image creation', right: 'Built from verified source' },
-  { left: 'Public base images', right: 'Controlled packages' },
-  { left: 'Large attack surface', right: 'Minimal components' },
-  { left: 'Scanner-driven security', right: 'Secure by design' },
-  { left: 'Non-deterministic builds', right: 'Reproducible builds' },
-] as const;
+const BAR_TOTAL = 20;
+const COMPARISON_GRID = [
+  { label: 'Source trust', publicScore: 7, cleanScore: 20 },
+  { label: 'Attack surface', publicScore: 4, cleanScore: 17 },
+  { label: 'Build integrity', publicScore: 3, cleanScore: 20 },
+  { label: 'Security model', publicScore: 7, cleanScore: 20 },
+  { label: 'Reproducibility', publicScore: 3, cleanScore: 20 },
+];
+
 
 interface StatItem {
   value: number;
@@ -129,8 +131,8 @@ function ProblemCard({ icon, title, description, tint, bgIcon, bgColor, delay }:
       style={{
         background: tint,
         border: '1px solid rgba(0,0,0,0.04)',
-        padding: '28px',
-        minHeight: '240px',
+        padding: '20px',
+        minHeight: '160px',
       }}
       initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -141,24 +143,24 @@ function ProblemCard({ icon, title, description, tint, bgIcon, bgColor, delay }:
     >
       {/* Large bg icon — top right, 30% masked */}
       <div
-        className="absolute -top-[54px] -right-[54px] opacity-[0.18] transition-transform duration-500 group-hover:scale-110 group-hover:opacity-[0.25]"
+        className="absolute -top-[40px] -right-[40px] opacity-[0.18] transition-transform duration-500 group-hover:scale-110 group-hover:opacity-[0.25]"
       >
         {bgIcon}
       </div>
 
       {/* Content */}
       <div className="relative z-10">
-        <h3 className="font-['Google_Sans',sans-serif] font-semibold text-[18px] leading-[1.3] tracking-[-0.01em] text-[#0F1924] mb-2">
+        <h3 className="font-['Google_Sans',sans-serif] font-semibold text-[16px] leading-[1.3] tracking-[-0.01em] text-[#0F1924] mb-1.5">
           {title}
         </h3>
-        <p className="font-['Google_Sans',sans-serif] font-normal text-[13px] leading-relaxed text-[#0F1924]/50 max-w-[300px]">
+        <p className="font-['Google_Sans',sans-serif] font-normal text-[12px] leading-relaxed text-[#0F1924]/50 max-w-[280px]">
           {description}
         </p>
       </div>
 
       {/* CTA bottom right */}
-      <div className="relative z-10 flex justify-end mt-4">
-        <CircleArrowCTA variant="filled-blue" size={40} forceHovered={cardHovered} />
+      <div className="relative z-10 flex justify-end mt-2">
+        <CircleArrowCTA variant="filled-blue" size={36} forceHovered={cardHovered} />
       </div>
     </motion.div>
   );
@@ -808,38 +810,26 @@ function OrbitalInfographic() {
 // ─── Main Section ─────────────────────────────────────────────────────────────
 
 export function BuildSecurelySection() {
-  const comparisonRef = useRef<HTMLDivElement>(null);
-  const isComparisonInView = useInView(comparisonRef, { once: true, margin: '-80px' });
-  const [activeView, setActiveView] = useState<'cleanstart' | 'public'>('public');
-  const hasAutoSwitched = useRef(false);
-
-  // Auto-switch to CleanStart 1.5s after scrolling into view for dramatic effect
-  useEffect(() => {
-    if (isComparisonInView && !hasAutoSwitched.current) {
-      hasAutoSwitched.current = true;
-      const timer = setTimeout(() => setActiveView('cleanstart'), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isComparisonInView]);
-
   return (
     <section className="bg-white">
       {/* ── PROBLEM BLOCK ─────────────────────────────────────────────────── */}
       <div className="px-4 md:px-8 lg:px-[50px] py-12 md:py-[100px]">
-        <div className="max-w-[1340px] mx-auto flex flex-col gap-10 md:gap-14">
-          {/* Header */}
-          <motion.h2
-            className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.02em] leading-[1.1]"
+        <div className="max-w-[1340px] mx-auto flex flex-col lg:flex-row gap-10 lg:gap-8">
+          {/* Header — 35% left */}
+          <motion.div
+            className="lg:w-[35%] lg:flex-shrink-0 lg:sticky lg:top-32 lg:self-start"
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.7, ease: EASE }}
           >
-            Modern Software Introduces<br />New Security Risks
-          </motion.h2>
+            <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.02em] leading-[1.1]">
+              Modern Software Introduces New Security Risks
+            </h2>
+          </motion.div>
 
-          {/* Problem cards — 2x2 grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+          {/* Problem cards — 65% right, 2x2 grid */}
+          <div className="lg:w-[65%] grid grid-cols-1 sm:grid-cols-2 gap-3">
             {PROBLEMS.map((problem, i) => (
               <ProblemCard key={problem.title} {...problem} delay={i * 0.08} />
             ))}
@@ -919,170 +909,98 @@ export function BuildSecurelySection() {
         </div>
       </div>
 
-      {/* ── COMPARISON TABLE (white background) ─────────────────────────── */}
+      {/* ── COMPARISON ──────────────────────────────────────────────────── */}
       <div className="bg-white px-4 md:px-8 lg:px-[50px] py-12 md:py-[100px]">
-        <div className="max-w-[1340px] mx-auto flex flex-col gap-12 md:gap-16">
+        <div className="max-w-[1340px] mx-auto flex flex-col md:flex-row md:items-start md:justify-between gap-10 md:gap-[60px]">
 
-          {/* Header — 35/65 split */}
-          <div className="flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-0">
-            <motion.div
-              className="lg:w-[35%] shrink-0"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.7, ease: EASE }}
-            >
-              <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.02em] leading-[1.1]">
-                Security isn&apos;t just patching
-              </h2>
-            </motion.div>
-            <motion.div
-              className="flex-1 lg:pl-8"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.7, delay: 0.15, ease: EASE }}
-            >
-              <p className="font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-[#181818]/50 leading-relaxed max-w-[480px]">
-                Most container security tools patch vulnerabilities after the fact. CleanStart eliminates them at the source, before your images are even built.
-              </p>
-              <div className="flex items-center gap-3 mt-[10px]">
-                <button
-                  onClick={() => setActiveView('public')}
-                  className="relative rounded-full font-['Google_Sans',sans-serif] font-medium text-[13px] md:text-[14px] px-5 py-2.5 transition-all duration-400"
-                  style={{
-                    background: activeView === 'public' ? '#181818' : 'transparent',
-                    color: activeView === 'public' ? '#ffffff' : 'rgba(24,24,24,0.3)',
-                    border: activeView === 'public' ? '1.5px solid #181818' : '1.5px solid rgba(24,24,24,0.1)',
-                    boxShadow: activeView === 'public' ? '0 2px 12px rgba(0,0,0,0.12)' : 'none',
-                  }}
-                >
-                  Public Images
-                </button>
-                <button
-                  onClick={() => setActiveView('cleanstart')}
-                  className="relative flex items-center gap-2 rounded-full font-['Google_Sans',sans-serif] font-medium text-[13px] md:text-[14px] px-5 py-2.5 transition-all duration-400"
-                  style={{
-                    background: activeView === 'cleanstart' ? '#056BF1' : 'transparent',
-                    color: activeView === 'cleanstart' ? '#ffffff' : 'rgba(24,24,24,0.3)',
-                    border: activeView === 'cleanstart' ? '1.5px solid #056BF1' : '1.5px solid rgba(24,24,24,0.1)',
-                    boxShadow: activeView === 'cleanstart' ? '0 2px 16px rgba(5,107,241,0.2)' : 'none',
-                  }}
-                >
-                  <svg width="14" height="14" viewBox="0 0 108.25 123.68" fill="none" className="shrink-0">
-                    <polygon
-                      points="94.39 39.89 94.39 85.24 61.19 105.11 61.19 59.02 48.28 66.46 48.63 66.68 48.63 120.39 54.12 123.68 108.25 92.04 108.25 32.16 108.03 32.03 94.39 39.89"
-                      fill={activeView === 'cleanstart' ? '#06C7F2' : 'currentColor'}
-                      style={{ transition: 'fill 0.4s ease' }}
-                    />
-                    <polygon
-                      points="61.19 58.83 19.87 34.52 54.64 15.43 94.39 38.18 94.39 39.89 108.03 32.03 53.86 0 0 32.16 0 91.26 12.55 98.77 12.55 45.5 48.28 66.46 61.19 59.02 61.19 58.83"
-                      fill={activeView === 'cleanstart' ? '#ffffff' : 'currentColor'}
-                      style={{ transition: 'fill 0.4s ease' }}
-                    />
-                  </svg>
-                  CleanStart
-                </button>
+          {/* Left — heading + paragraph */}
+          <motion.div
+            className="md:max-w-[320px] lg:max-w-[380px] shrink-0 md:sticky md:top-32 md:self-start"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.7, ease: EASE }}
+          >
+            <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.02em] leading-[1.1]">
+              Security isn&apos;t just patching
+            </h2>
+            <p className="font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-[#0F1924]/50 leading-relaxed mt-5 max-w-[380px]">
+              Most tools patch vulnerabilities after the fact. CleanStart eliminates them at the source.
+            </p>
+          </motion.div>
+
+          {/* Right — unified grid */}
+          <motion.div
+            className="flex-1 md:pl-[110px]"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6, ease: EASE }}
+          >
+            {/* Column headings — same grid as rows */}
+            <div className="flex items-end gap-[12px] md:gap-[16px] mb-[20px]">
+              <div className="flex-1">
+                <h3 className="font-['Google_Sans',sans-serif] font-semibold text-[20px] md:text-[24px] text-[#181818] tracking-[-0.01em] leading-tight whitespace-nowrap">
+                  Public images
+                </h3>
               </div>
-            </motion.div>
-          </div>
-
-          {/* Comparison — Morphing Cards */}
-          <div ref={comparisonRef}>
-            {/* Morphing cards grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-5 w-full">
-              {COMPARISON_ROWS.map((row, i) => {
-                const isClean = activeView === 'cleanstart';
-                const cardIcons = [
-                  <Shield01Icon key="shield" size={36} strokeWidth={1.4} />,
-                  <Blockchain04Icon key="chain" size={36} strokeWidth={1.4} />,
-                  <Layers01Icon key="layers" size={36} strokeWidth={1.4} />,
-                  <ScanIcon key="scan" size={36} strokeWidth={1.4} />,
-                  <RefreshIcon key="refresh" size={36} strokeWidth={1.4} />,
-                ];
-                return (
-                  <motion.div
-                    key={row.left}
-                    className="relative rounded-[20px] overflow-hidden flex flex-col"
-                    style={{
-                      background: isClean ? 'white' : '#F4F5F7',
-                      border: isClean ? '1px solid rgba(5,107,241,0.1)' : '1px solid rgba(0,0,0,0.03)',
-                      boxShadow: isClean
-                        ? '0 8px 32px rgba(5,107,241,0.08), 0 1px 2px rgba(0,0,0,0.04)'
-                        : '0 1px 4px rgba(0,0,0,0.02)',
-                      padding: '28px 24px',
-                      minHeight: '240px',
-                      transition: 'background 0.5s cubic-bezier(0.16,1,0.3,1), border 0.5s ease, box-shadow 0.5s ease',
-                    }}
-                    initial={{ opacity: 0, y: 36 }}
-                    animate={isComparisonInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.6, delay: 0.06 + i * 0.08, ease: EASE }}
-                  >
-                    {/* Top accent line — slides in when CleanStart */}
-                    <motion.div
-                      className="absolute top-0 left-0 right-0 h-[3px]"
-                      style={{ background: 'linear-gradient(90deg, #056BF1, #06C7F2)' }}
-                      animate={{ scaleX: isClean ? 1 : 0, transformOrigin: 'left' }}
-                      transition={{ duration: 0.6, delay: i * 0.06, ease: EASE }}
-                    />
-
-                    {/* Icon */}
-                    <div
-                      className="mb-6"
-                      style={{
-                        color: isClean ? '#056BF1' : 'rgba(24,24,24,0.15)',
-                        transition: 'color 0.5s cubic-bezier(0.16,1,0.3,1)',
-                      }}
-                    >
-                      {cardIcons[i]}
-                    </div>
-
-                    {/* Feature text — morphs between states */}
-                    <div className="mt-auto flex flex-col gap-3">
-                      <AnimatePresence mode="wait">
-                        <motion.p
-                          key={activeView}
-                          className="font-['Google_Sans',sans-serif] font-semibold text-[15px] md:text-[16px] leading-snug tracking-[-0.01em]"
-                          style={{ color: isClean ? '#181818' : 'rgba(24,24,24,0.35)' }}
-                          initial={{ opacity: 0, y: 8, filter: 'blur(4px)' }}
-                          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                          exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
-                          transition={{ duration: 0.35, delay: i * 0.04, ease: EASE }}
-                        >
-                          {isClean ? row.right : row.left}
-                        </motion.p>
-                      </AnimatePresence>
-
-                      {/* Status indicator */}
-                      <div className="flex items-center gap-2">
-                        <motion.div
-                          className="w-[7px] h-[7px] rounded-full"
-                          animate={{
-                            backgroundColor: isClean ? '#10B981' : '#F59E0B',
-                            scale: isClean ? [1, 1.4, 1] : 1,
-                          }}
-                          transition={{ duration: 0.4, delay: i * 0.05, ease: EASE }}
-                        />
-                        <AnimatePresence mode="wait">
-                          <motion.span
-                            key={activeView}
-                            className="font-['Google_Sans',sans-serif] font-medium text-[11px] md:text-[12px] tracking-[0.02em]"
-                            style={{ color: isClean ? '#10B981' : '#D97706' }}
-                            initial={{ opacity: 0, x: -4 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 4 }}
-                            transition={{ duration: 0.25, delay: i * 0.04 }}
-                          >
-                            {isClean ? 'Secured' : 'At risk'}
-                          </motion.span>
-                        </AnimatePresence>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
+              <div className="w-[110px] md:w-[130px] shrink-0" />
+              <div className="flex-1">
+                <div className="flex items-center gap-[6px]">
+                  <svg className="w-[22px] h-[24px] md:w-[26px] md:h-[28px] shrink-0" viewBox="0 0 108.25 123.68" fill="none">
+                    <path d="M94.39 39.89V85.24L61.19 105.11V59.02L48.28 66.46L48.63 66.68V120.39L54.12 123.68L108.25 92.04V32.16L108.03 32.03L94.39 39.89Z" fill="#056BF1" />
+                    <path d="M61.19 58.83L19.87 34.52L54.64 15.43L94.39 38.18V39.89L108.03 32.03L53.86 0L0 32.16V91.26L12.55 98.77V45.5L48.28 66.46L61.19 59.02V58.83Z" fill="#06C7F2" />
+                  </svg>
+                  <h3 className="font-['Google_Sans',sans-serif] font-semibold text-[20px] md:text-[24px] text-[#181818] tracking-[-0.01em] leading-tight">
+                    CleanStart
+                  </h3>
+                </div>
+              </div>
             </div>
-          </div>
+
+            {/* Rows: Public bars → label → CleanStart bars */}
+            <div className="flex flex-col gap-[14px]">
+              {COMPARISON_GRID.map((row, i) => (
+                <motion.div
+                  key={row.label}
+                  className="flex items-center gap-[12px] md:gap-[16px]"
+                  initial={{ opacity: 0, y: 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.4, delay: 0.15 + i * 0.05, ease: EASE }}
+                >
+                  {/* Public bars */}
+                  <div className="flex gap-[2px] flex-1">
+                    {Array.from({ length: BAR_TOTAL }).map((_, j) => (
+                      <div
+                        key={j}
+                        className={`flex-1 h-[20px] md:h-[26px] rounded-[2px] ${
+                          j < row.publicScore ? 'bg-[#6B7280]' : 'bg-[#E5E7EB]'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Label */}
+                  <span className="font-['Google_Sans',sans-serif] font-normal text-[13px] md:text-[15px] text-[#0F1924]/50 w-[110px] md:w-[130px] shrink-0 text-center leading-tight">
+                    {row.label}
+                  </span>
+
+                  {/* CleanStart bars */}
+                  <div className="flex gap-[2px] flex-1">
+                    {Array.from({ length: BAR_TOTAL }).map((_, j) => (
+                      <div
+                        key={j}
+                        className={`flex-1 h-[20px] md:h-[26px] rounded-[2px] ${
+                          j < row.cleanScore ? 'bg-[#056BF1]' : 'bg-[#E5E7EB]'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </div>
 
