@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { CleanstartImagesContent } from "@/components/products/cleanstart-images-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Hardened Container Images | CleanStart",
   description:

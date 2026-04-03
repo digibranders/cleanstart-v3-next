@@ -36,7 +36,7 @@ const resources: Resource[] = [
   { id: 10, title: "The Real Cost of Public Container Images", type: "Whitepaper", image: "/resource-center/the-real-cost-of-public-container-images.png", cta: "Download" },
   { id: 11, title: "Rethinking Container Builds for Security and Scale", type: "Whitepaper", image: "/resource-center/rethinking-container-builds-for-security-and-bscale.png", cta: "Download" },
   // Ebooks
-  { id: 12, title: "Containing Vulnerabilities in your Containers", type: "Ebook", image: "/resource-center/containing-vulnerabilities-in-your-container.png", cta: "Download" },
+  { id: 12, title: "Containing Vulnerabilities in your Containers", type: "Ebook", image: "/resource-center/containing-vulnerabilities-in-your-container.webp", cta: "Download" },
   // Datasheets
   { id: 13, title: "CleanSight", type: "Datasheet", image: "/resource-center/cleansight-2.jpg", cta: "Download" },
   { id: 14, title: "CleanStart AI-SBOM", type: "Datasheet", image: "/resource-center/ai-sbom.jpg", cta: "Download" },

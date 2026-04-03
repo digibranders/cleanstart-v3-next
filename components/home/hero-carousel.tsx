@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 // Placeholder image paths — replace with actual assets in /public/images/hero/
 const heroEventImage = "/images/hero/kubecon-event.png";
@@ -1433,11 +1434,11 @@ export function HeroCarousel() {
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={activeSlide.eventImage}
             alt="KubeCon + CloudNativeCon India 2026"
             className="w-full h-full object-cover"
+            fill
           />
           {/* Dark overlay for better text readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50" />

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { ScaContent } from "./sca-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Enhance Software Composition Analysis | CleanStart",
   description:

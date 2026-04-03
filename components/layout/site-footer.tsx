@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { CallToActionButton } from '@/components/shared/call-to-action-button';
 
@@ -140,11 +141,13 @@ export function SiteFooter() {
               viewport={{ once: true, margin: '-40px' }}
               transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
             >
-              <img
+              <Image
                 src="/Footer/Image (Kubr Bird Mascot).png"
                 alt="Kubr - CleanStart mascot"
                 className="w-full h-full object-contain"
                 style={{ filter: 'drop-shadow(0px 12px 80px rgba(0,0,0,0.35))' }}
+                width={400}
+                height={400}
               />
             </motion.div>
 

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { PricingContent } from "./pricing-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Pricing | CleanStart",
   description:

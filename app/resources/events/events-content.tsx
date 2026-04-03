@@ -91,7 +91,7 @@ const pastEvents: EventCard[] = [
     title: "ET CISO",
     date: "March 20, 2025",
     location: "Le Meridian Coimbatore",
-    image: "/events/event-poster.png",
+    image: "/events/event-poster.webp",
   },
 ];
 

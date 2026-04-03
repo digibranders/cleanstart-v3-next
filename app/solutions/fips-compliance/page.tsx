@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { FipsComplianceContent } from "./fips-compliance-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "FIPS Compliance | CleanStart",
   description:

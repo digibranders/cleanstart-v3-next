@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { PodcastContent } from "./podcast-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Leadership Exchange Podcast | CleanStart",
   description:

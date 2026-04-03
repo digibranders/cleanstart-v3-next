@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { CleansightContent } from "./cleansight-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "CleanSight | Continuous Container Visibility",
   description:

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { ResourceCenterContent } from "./resource-center-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Resource Center | CleanStart",
   description:

@@ -208,7 +208,7 @@ const BENEFITS: BenefitData[] = [
   {
     title: "Continuous Protection",
     description: "Identify vulnerable components in seconds with commit-level traceability.",
-    image: "/about-us/about-feature.png",
+    image: "/about-us/about-feature.webp",
   },
 ];
 
@@ -311,7 +311,7 @@ export function AboutContent() {
               transition={{ duration: 0.9, delay: 0.3, ease: EASE }}
             >
               <img
-                src="/about-us/about-hero.png"
+                src="/about-us/about-hero.webp"
                 alt="CleanStart security illustration showing secure software foundation"
                 className="w-full max-w-[560px] h-auto drop-shadow-2xl"
               />
@@ -396,13 +396,13 @@ export function AboutContent() {
             >
               <div className="relative">
                 <img
-                  src="/about-us/about-illustration.png"
+                  src="/about-us/about-illustration.webp"
                   alt="CleanStart story illustration showing secure software development journey"
                   className="w-full max-w-[520px] h-auto rounded-[20px]"
                 />
                 {/* Decorative accent */}
                 <motion.img
-                  src="/about-us/decorative-accent.png"
+                  src="/about-us/decorative-accent.webp"
                   alt=""
                   aria-hidden="true"
                   className="absolute -bottom-6 -left-6 w-24 h-24 opacity-60"

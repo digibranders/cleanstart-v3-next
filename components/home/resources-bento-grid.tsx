@@ -61,12 +61,12 @@ function BlogCard({
     >
       {/* Full Background Image */}
       <div className="absolute inset-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={image}
           alt={title}
           className="w-full h-full object-cover transition-transform duration-500"
           style={{ transform: hovered ? "scale(1.05)" : "scale(1)" }}
+          fill
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
       </div>
@@ -124,12 +124,12 @@ function ResourceCard({
     >
       {/* Full Background Image */}
       <div className="absolute inset-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={getBackgroundImage()}
           alt={title}
           className="w-full h-full object-cover transition-transform duration-500"
           style={{ transform: hovered ? "scale(1.05)" : "scale(1)" }}
+          fill
         />
         <div className="absolute inset-0 bg-gradient-to-b from-white/85 via-white/80 to-white/90"></div>
       </div>
@@ -174,12 +174,12 @@ function EventCard({
     >
       {/* Full Background Image */}
       <div className="absolute inset-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src="https://images.unsplash.com/photo-1760386129113-6e20e3b59731?w=800&q=80"
           alt={title}
           className="w-full h-full object-cover transition-transform duration-500"
           style={{ transform: hovered ? "scale(1.05)" : "scale(1)" }}
+          fill
         />
         <div className="absolute inset-0 bg-gradient-to-br from-[#5d04d8]/90 to-[#7d24f8]/90"></div>
       </div>
@@ -244,12 +244,12 @@ function WinnerCard({ delay }: { delay: number }) {
     >
       {/* Full Background Image */}
       <div className="absolute inset-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src="https://images.unsplash.com/photo-1762340916350-ad5a3d620c16?w=800&q=80"
           alt="Secure Deployments"
           className="w-full h-full object-cover transition-transform duration-500"
           style={{ transform: hovered ? "scale(1.05)" : "scale(1)" }}
+          fill
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a1f]/95 via-[#1a1a3f]/90 to-[#0a0a1f]/95"></div>
         <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,rgba(5,107,241,0.15)_50%,transparent_100%)] opacity-50"></div>

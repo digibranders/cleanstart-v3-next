@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { BlogContent } from "./blog-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Blog — Security Perspectives | CleanStart",
   description:

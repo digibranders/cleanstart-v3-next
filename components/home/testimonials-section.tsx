@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, useInView, AnimatePresence } from 'motion/react';
+import Image from 'next/image';
 import svgPaths from '@/lib/svg-data/svg-ny1mcrs1mx';
 import trustedSvgPaths from '@/lib/svg-data/svg-0p28azmihl';
 import { CallToActionButton } from '@/components/shared/call-to-action-button';
@@ -26,7 +27,7 @@ const contentSlides = [
       'Hewlett Packard Enterprise migrated 200+ production container images to CleanStart hardened builds, eliminating 88,000 known CVEs and reducing their attack surface by 80%. Security review cycles dropped from weeks to hours.',
     date: 'Q4 2025',
     cta: 'Read Case Study',
-    image: '/images/figma/891596228f2ccc9edf84581e6b09c7000509f721.png',
+    image: '/images/figma/891596228f2ccc9edf84581e6b09c7000509f721.webp',
   },
   {
     type: 'Case Study',
@@ -37,7 +38,7 @@ const contentSlides = [
       'Hitachi\'s platform engineering team replaced unpredictable base images with CleanStart\'s verified source builds, saving over 352,000 engineering hours annually and achieving zero security incidents in their first deployment quarter.',
     date: 'Q3 2025',
     cta: 'Read Case Study',
-    image: '/images/figma/3939a4a7b7ba76abe2ee30e4f57fbb4728675be9.png',
+    image: '/images/figma/3939a4a7b7ba76abe2ee30e4f57fbb4728675be9.webp',
   },
   {
     type: 'Case Study',
@@ -48,7 +49,7 @@ const contentSlides = [
       'Encora\'s DevSecOps team leveraged CleanStart\'s hardened container images to meet stringent federal compliance requirements, enabling rapid deployment into regulated environments with full software traceability via CleanSBOM.',
     date: 'Q2 2025',
     cta: 'Read Case Study',
-    image: '/images/figma/d96951a1bd5bb3095e272f77dc790777830fd5f3.png',
+    image: '/images/figma/d96951a1bd5bb3095e272f77dc790777830fd5f3.webp',
   },
 ];
 
@@ -584,10 +585,12 @@ function TestimonialCard({
       {/* Author */}
       <div className="flex items-center gap-[12px] mt-[32px]">
         <div className="relative w-[36px] h-[36px] rounded-full overflow-hidden border border-black/10">
-          <img
+          <Image
             alt={item.name}
             className="w-full h-full object-cover"
             src={avatar}
+            width={36}
+            height={36}
           />
         </div>
         <div className="flex flex-col">

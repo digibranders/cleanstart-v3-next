@@ -123,7 +123,7 @@ const mosaicImages = [
   { src: "/teams/team-office.avif", alt: "CleanStart office space" },
   { src: "/teams/whatsapp-image-2026-03-16-at-1.33.31-pm.jpeg", alt: "Team collaboration moment" },
   { src: "/teams/whatsapp-image-2026-03-16-at-1.34.18-pm.jpeg", alt: "Team working together" },
-  { src: "/teams/team-culture.png", alt: "CleanStart team culture" },
+  { src: "/teams/team-culture.webp", alt: "CleanStart team culture" },
   { src: "/teams/whatsapp-image-2026-03-16-at-1.33.31-pm-1.jpeg", alt: "Team brainstorming session" },
   { src: "/teams/whatsapp-image-2026-03-16-at-1.35.05-pm.jpeg", alt: "Team celebration" },
   { src: "/teams/img20260107154155.jpg.jpeg", alt: "CleanStart team event" },

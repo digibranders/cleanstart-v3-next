@@ -76,7 +76,7 @@ const testimonials = [
       "CleanStart makes it possible for teams to ship faster, safer, and smarter — with peace of mind baked into your pipeline.",
     name: "Shaq Khan",
     role: "Founder & CEO - Fortifire (US)",
-    photo: "/partners/partner-testimonial-2.png",
+    photo: "/partners/partner-testimonial-2.webp",
   },
 ];
 

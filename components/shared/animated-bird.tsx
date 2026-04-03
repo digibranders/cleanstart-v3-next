@@ -7,7 +7,7 @@ const FPS = 24;
 
 // Generate frame paths
 const frames = Array.from({ length: TOTAL_FRAMES }, (_, i) =>
-  `/kubr-bird-frames/frame-${String(i + 1).padStart(3, "0")}.png`
+  `/kubr-bird-frames-webp/frame-${String(i + 1).padStart(3, "0")}.webp`
 );
 
 export function AnimatedBird({ className }: { className?: string }) {

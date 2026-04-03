@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { ForCISOContent as ForCisoContent } from "./for-ciso-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "For CISOs & Security Leaders | CleanStart",
   description:
