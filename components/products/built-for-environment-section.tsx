@@ -341,6 +341,7 @@ export function BuiltForEnvironmentSection() {
               transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             >
               <p className="font-['Google_Sans',sans-serif] font-normal text-[36px] text-[#056bf1] leading-[56px] tracking-[-1.12px]">
+                {/* eslint-disable-next-line react-hooks/refs */}
                 <span ref={imageCount.ref}>{imageCount.count.toLocaleString()}</span>+
               </p>
               <p className="font-['Google_Sans',sans-serif] font-normal text-[16px] text-black leading-normal">
@@ -356,6 +357,7 @@ export function BuiltForEnvironmentSection() {
               transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             >
               <p className="font-['Google_Sans',sans-serif] font-normal text-[36px] text-[#056bf1] leading-[56px] tracking-[-1.12px]">
+                {/* eslint-disable-next-line react-hooks/refs */}
                 <span ref={updateFreq.ref}>{updateFreq.count}</span>hr
               </p>
               <p className="font-['Google_Sans',sans-serif] font-normal text-[16px] text-black leading-normal">

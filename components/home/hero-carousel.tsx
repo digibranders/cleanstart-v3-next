@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -128,6 +128,7 @@ function AntigravityParticles({
         baseY: y,
       });
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setParticles(newParticles);
   }, []);
 
@@ -515,9 +516,20 @@ function OrbitalVerification() {
 // --- SBOM Dependency Network Visual ---
 
 function GridPatternVisual() {
+  const [floatingParticles, setFloatingParticles] = useState<Array<{ x: number; y: number }>>([]);
   const [nodes, setNodes] = useState<
     Array<{ id: number; x: number; y: number; delay: number; type: string }>
   >([]);
+
+  useEffect(() => {
+    const particles = Array.from({ length: 20 }, (_, i) => {
+      const angle = (Math.PI * 2 * i) / 20;
+      const radius = 160 + Math.random() * 100;
+      return { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius };
+    });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFloatingParticles(particles);
+  }, []);
 
   useEffect(() => {
     const newNodes = [];
@@ -546,6 +558,7 @@ function GridPatternVisual() {
         type: "secondary",
       });
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setNodes(newNodes);
   }, []);
 
@@ -778,12 +791,7 @@ function GridPatternVisual() {
             </motion.div>
           ))}
         </div>
-        {Array.from({ length: 20 }).map((_, i) => {
-          const angle = (Math.PI * 2 * i) / 20;
-          const radius = 160 + Math.random() * 100;
-          const x = Math.cos(angle) * radius;
-          const y = Math.sin(angle) * radius;
-          return (
+        {floatingParticles.map(({ x, y }, i) => (
             <motion.div
               key={`particle-${i}`}
               className="absolute left-1/2 top-1/2 w-1 h-1 rounded-full bg-white"
@@ -801,8 +809,7 @@ function GridPatternVisual() {
                 ease: "easeInOut",
               }}
             />
-          );
-        })}
+          ))}
         <motion.div
           className="absolute left-1/2 bottom-[20px] -translate-x-1/2"
           initial={{ opacity: 0, y: 20 }}
@@ -840,6 +847,7 @@ function WavesVisual() {
       detected: false,
       isCritical: Math.random() > 0.7,
     }));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setThreats(newThreats);
   }, []);
 
@@ -1199,9 +1207,11 @@ function SlideNavigation({
 
   useEffect(() => {
     if (!isAutoPlaying) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProgress(0);
       return;
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProgress(0);
     const startTime = Date.now();
     const duration = 5000;

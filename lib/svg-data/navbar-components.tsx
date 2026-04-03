@@ -473,17 +473,14 @@ function AntigravityParticles({
   const animationFrameRef = useRef<number>(undefined);
   const rotationRef = useRef(0);
 
-  // Initialize particles in a circular area around center
   useEffect(() => {
     const particleCount = 80;
     const newParticles: Particle[] = [];
-
     for (let i = 0; i < particleCount; i++) {
       const angle = (Math.PI * 2 * i) / particleCount;
-      const radius = 80 + Math.random() * 60; // 80-140px from center
+      const radius = 80 + Math.random() * 60;
       const x = Math.cos(angle) * radius;
       const y = Math.sin(angle) * radius;
-
       newParticles.push({
         id: i,
         x,
@@ -496,7 +493,7 @@ function AntigravityParticles({
         baseY: y,
       });
     }
-
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setParticles(newParticles);
   }, []);
 
@@ -1093,6 +1090,17 @@ const HERO_SLIDES: HeroSlide[] = [
 
 // SBOM Dependency Network Visual
 function GridPatternVisual() {
+  const [floatingParticles, setFloatingParticles] = useState<Array<{ x: number; y: number }>>([]);
+
+  useEffect(() => {
+    const particles = Array.from({ length: 20 }, (_, i) => {
+      const angle = (Math.PI * 2 * i) / 20;
+      const radius = 160 + Math.random() * 100;
+      return { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius };
+    });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFloatingParticles(particles);
+  }, []);
   const [nodes, setNodes] = useState<
     Array<{
       id: number;
@@ -1144,6 +1152,7 @@ function GridPatternVisual() {
       });
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setNodes(newNodes);
   }, []);
 
@@ -1398,20 +1407,11 @@ function GridPatternVisual() {
         </div>
 
         {/* Floating particles representing verified components */}
-        {Array.from({ length: 20 }).map((_, i) => {
-          const angle = (Math.PI * 2 * i) / 20;
-          const radius = 160 + Math.random() * 100;
-          const x = Math.cos(angle) * radius;
-          const y = Math.sin(angle) * radius;
-
-          return (
+        {floatingParticles.map(({ x, y }, i) => (
             <motion.div
               key={`particle-${i}`}
               className="absolute left-1/2 top-1/2 w-1 h-1 rounded-full bg-white"
-              style={{
-                x,
-                y,
-              }}
+              style={{ x, y }}
               initial={{ opacity: 0, scale: 0 }}
               animate={{
                 opacity: [0, 0.6, 0],
@@ -1425,8 +1425,7 @@ function GridPatternVisual() {
                 ease: "easeInOut",
               }}
             />
-          );
-        })}
+          ))}
 
         {/* Status badge */}
         <motion.div
@@ -1458,14 +1457,14 @@ function WavesVisual() {
   const [scanAngle, setScanAngle] = useState(0);
 
   useEffect(() => {
-    // Generate threat positions - some critical, most standard
     const newThreats = Array.from({ length: 12 }, (_, i) => ({
       id: i,
       angle: Math.random() * 360,
       distance: 100 + Math.random() * 200,
       detected: false,
-      isCritical: Math.random() > 0.7, // 30% critical threats
+      isCritical: Math.random() > 0.7,
     }));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setThreats(newThreats);
   }, []);
 
@@ -1831,10 +1830,12 @@ function SlideNavigation({
 
   useEffect(() => {
     if (!isAutoPlaying) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProgress(0);
       return;
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProgress(0);
     const startTime = Date.now();
     const duration = 5000; // 5 seconds

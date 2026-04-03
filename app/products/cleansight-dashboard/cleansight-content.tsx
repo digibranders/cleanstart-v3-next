@@ -526,7 +526,7 @@ function ComparisonSection(): React.ReactElement {
             Vulnerability Scanners vs CleanSight
           </h2>
           <p className="font-['Google_Sans',sans-serif] text-lg text-gray-600">
-            Why discovery alone isn't enough.
+            Why discovery alone isn&apos;t enough.
           </p>
         </motion.div>
 
@@ -595,6 +595,10 @@ function ComparisonSection(): React.ReactElement {
    ═══════════════════════════════════════════════ */
 
 function StatsSection(): React.ReactElement {
+  const timeToRemediate = useCountUp(24);
+  const remediationCoverage = useCountUp(99);
+  const cveReduction = useCountUp(95);
+
   return (
     <section
       className="w-full px-4 md:px-8 lg:px-[50px] py-12 md:py-[100px]"
@@ -625,7 +629,8 @@ function StatsSection(): React.ReactElement {
             transition={{ duration: 0.6, delay: 0 }}
           >
             <div className="font-['Google_Sans',sans-serif] text-5xl md:text-6xl font-bold text-white mb-2">
-              <span ref={useCountUp(24).ref}>{useCountUp(24).value}</span>h
+              {/* eslint-disable-next-line react-hooks/refs */}
+              <span ref={timeToRemediate.ref}>{timeToRemediate.value}</span>h
             </div>
             <p className="font-['Google_Sans',sans-serif] text-white/80">Time to remediate</p>
           </motion.article>
@@ -638,7 +643,8 @@ function StatsSection(): React.ReactElement {
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             <div className="font-['Google_Sans',sans-serif] text-5xl md:text-6xl font-bold text-white mb-2">
-              <span ref={useCountUp(99).ref}>{useCountUp(99).value}</span>%
+              {/* eslint-disable-next-line react-hooks/refs */}
+              <span ref={remediationCoverage.ref}>{remediationCoverage.value}</span>%
             </div>
             <p className="font-['Google_Sans',sans-serif] text-white/80">Remediation coverage</p>
           </motion.article>
@@ -651,7 +657,8 @@ function StatsSection(): React.ReactElement {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="font-['Google_Sans',sans-serif] text-5xl md:text-6xl font-bold text-white mb-2">
-              <span ref={useCountUp(95).ref}>{useCountUp(95).value}</span>%
+              {/* eslint-disable-next-line react-hooks/refs */}
+              <span ref={cveReduction.ref}>{cveReduction.value}</span>%
             </div>
             <p className="font-['Google_Sans',sans-serif] text-white/80">CVE reduction</p>
           </motion.article>
@@ -697,7 +704,7 @@ function BottomCtaSection(): React.ReactElement {
               See Everything. Fix Everything.
             </h2>
             <p className="font-['Google_Sans',sans-serif] text-lg text-white/80 mb-8">
-              From discovery to secure production in minutes. Don't settle for static scans or
+              From discovery to secure production in minutes. Don&apos;t settle for static scans or
               fragmented inventories.
             </p>
             <motion.div {...anim(0.1)}>

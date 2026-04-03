@@ -58,6 +58,7 @@ function AntigravityParticles({ containerRef }: { containerRef: React.RefObject<
         baseX: x, baseY: y,
       });
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setParticles(newParticles);
   }, []);
 
@@ -172,6 +173,7 @@ function FrostedSquareFlow() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     const measure = () => {
       if (containerRef.current) {
@@ -457,6 +459,7 @@ function WavesVisual() {
       id: i, angle: Math.random() * 360, distance: 100 + Math.random() * 200,
       detected: false, isCritical: Math.random() > 0.7,
     }));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setThreats(newThreats);
   }, []);
 
@@ -1079,7 +1082,9 @@ function SlideNavigation({ totalSlides, currentSlide, isAutoPlaying, onSlideChan
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!isAutoPlaying) { setProgress(0); return; }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProgress(0);
     const startTime = Date.now();
     const duration = 5000;

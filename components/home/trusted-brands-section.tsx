@@ -178,6 +178,7 @@ export function TrustedBrandsSection() {
                 transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
               >
                 <p className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#056bf1] leading-[1.2] tracking-[-0.02em]">
+                  {/* eslint-disable-next-line react-hooks/refs */}
                   <span ref={orgCount.ref}>{orgCount.count.toLocaleString()}</span>+
                 </p>
                 <p className="font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-[#64748B] leading-[1.6]">
@@ -193,6 +194,7 @@ export function TrustedBrandsSection() {
                 transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
               >
                 <p className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#056bf1] leading-[1.2] tracking-[-0.02em]">
+                  {/* eslint-disable-next-line react-hooks/refs */}
                   <span ref={uptimeCount.ref}>{uptimeCount.count.toFixed(1)}</span>%
                 </p>
                 <p className="font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-[#64748B] leading-[1.6]">
