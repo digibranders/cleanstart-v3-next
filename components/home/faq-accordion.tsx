@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import Image from "next/image";
 
 // Placeholder mascot image path — replace with actual asset in /public/images/
 const imgMascot = "/images/mascot/faq-mascot.png";
@@ -103,12 +104,13 @@ export function FaqAccordion() {
                 ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 alt="CleanStart mascot"
                 className="w-full max-w-full origin-top-left lg:scale-[1.65] pointer-events-none select-none"
                 style={{ transform: "scaleX(-1)" }}
                 src={imgMascot}
+                width={600}
+                height={600}
               />
             </motion.div>
           </div>
@@ -199,11 +201,12 @@ export function FaqAccordion() {
             ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
           }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             alt="CleanStart mascot"
             className="-scale-y-100 rotate-180 w-[260px] max-w-full pointer-events-none select-none"
             src={imgMascot}
+            width={260}
+            height={260}
           />
         </motion.div>
       </div>

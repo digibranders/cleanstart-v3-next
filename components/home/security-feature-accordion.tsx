@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { useState } from "react";
+import Image from "next/image";
 
 // Inline arrow path data (was imported from svg-qm7mkkrrsd)
 const ARROW_UP_RIGHT_PATH =
@@ -119,11 +120,11 @@ export function SecurityFeatureAccordion() {
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.7, delay: 0.1 * i, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 alt=""
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 src={card.image}
+                fill
               />
               <div className="relative flex flex-col justify-between h-full p-[24px]">
                 <p className="font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-white leading-[1.6]">
@@ -177,11 +178,11 @@ export function SecurityFeatureAccordion() {
                 }}
               >
                 {/* Background image */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   alt=""
                   className="absolute inset-0 w-full h-full object-cover"
                   src={card.image}
+                  fill
                 />
 
                 {/* Expanded content -- visible when active */}

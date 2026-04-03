@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from 'motion/react';
+import Image from 'next/image';
 
-const imgMascot = "/images/figma/a674999a29eed54ef246c53ee3d19db8aeb8b33d.png";
+const imgMascot = "/images/figma/a674999a29eed54ef246c53ee3d19db8aeb8b33d.webp";
 
 const stats = [
   { value: '95%', label: 'Had critical vulnerabilitties' },
@@ -45,10 +46,12 @@ export function StatsSection() {
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
-          <img
+          <Image
             alt="CleanStart mascot"
             className="absolute h-full left-[-48.26%] max-w-none top-0 w-[148.26%]"
             src={imgMascot}
+            width={452}
+            height={300}
           />
         </motion.div>
       </div>

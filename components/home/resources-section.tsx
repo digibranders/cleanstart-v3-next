@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
+import Image from 'next/image';
 import { CallToActionButton } from '@/components/shared/call-to-action-button';
 import { AnimatedBird } from '@/components/shared/animated-bird';
 
@@ -46,10 +47,11 @@ function EventCard() {
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
-      <img
+      <Image
         alt="Cybersecurity conference event"
         className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 ${hovered ? 'scale-105' : 'scale-100'}`}
         src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80"
+        fill
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[#0F1924]/90 via-[#0F1924]/40 to-transparent" />
       <div className="relative h-full flex flex-col justify-between p-6">
@@ -128,10 +130,11 @@ function ResourceCard({
     >
       {/* Subtle image overlay */}
       <div className="absolute inset-0 opacity-[0.04]">
-        <img
+        <Image
           alt=""
           className="w-full h-full object-cover"
           src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&q=40"
+          fill
         />
       </div>
       <div className="relative flex flex-col gap-3 flex-1">
@@ -164,10 +167,11 @@ function BlogCard() {
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
     >
-      <img
+      <Image
         alt="Blog post about container security"
         className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 ${hovered ? 'scale-105' : 'scale-100'}`}
         src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80"
+        fill
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
       <div className="relative h-full flex flex-col justify-between p-6">
@@ -216,10 +220,11 @@ function WinnerCard() {
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
     >
-      <img
+      <Image
         alt="Secure deployments worldwide"
         className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 ${hovered ? 'scale-105' : 'scale-100'}`}
         src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80"
+        fill
       />
       <div className="absolute inset-0 bg-black/70" />
       <div className="relative h-full flex flex-col justify-between p-6">

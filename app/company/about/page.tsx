@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { AboutContent } from "./about-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "About Us | CleanStart",
   description:

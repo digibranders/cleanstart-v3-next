@@ -760,7 +760,7 @@ function AwardShieldVisual() {
           animate={{ scale: [1, 1.04, 1] }}
           transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <Image src="/home/cybersecurity-award-2026.svg" alt="Cybersecurity Excellence Award 2026" width={160} height={160} />
+          <Image src="/home/cybersecurity-award-2026.svg" alt="Cybersecurity Excellence Award 2026" width={160} height={160} priority />
         </motion.div>
       </motion.div>
 

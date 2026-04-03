@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { EventsContent } from "./events-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "In-Person Events | CleanStart",
   description:

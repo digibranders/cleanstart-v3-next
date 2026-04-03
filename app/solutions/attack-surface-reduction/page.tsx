@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { AttackSurfaceContent } from "./attack-surface-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Attack Surface Reduction | CleanStart",
   description:

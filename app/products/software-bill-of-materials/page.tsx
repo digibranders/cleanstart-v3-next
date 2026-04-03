@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { SbomContent } from "./sbom-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "CleanStart SBOM | Know What You Ship",
   description:

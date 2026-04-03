@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { ContactContent } from "./contact-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Contact Us | CleanStart",
   description:

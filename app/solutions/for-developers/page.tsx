@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { ForDevelopersContent } from "./for-developers-content";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Built for Developers | CleanStart",
   description:

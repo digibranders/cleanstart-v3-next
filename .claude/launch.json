@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["/Users/siddiqueahmed/Desktop/AI/cleanstart/cleanstart-v3-next/start-dev.sh"],
       "port": 3000
     }
   ]

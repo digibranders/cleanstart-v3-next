@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import Image from 'next/image';
 
-const imgMascot = "/images/figma/82d49bdfed2c595f2665832701007b3b68fd268f.png";
+const imgMascot = "/images/figma/82d49bdfed2c595f2665832701007b3b68fd268f.webp";
 
 const faqItems = [
   {
@@ -137,10 +138,12 @@ export function FAQSection() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
           >
-            <img
+            <Image
               alt="CleanStart mascot"
               className="w-full h-full object-contain"
               src={imgMascot}
+              width={500}
+              height={508}
             />
           </motion.div>
         </div>

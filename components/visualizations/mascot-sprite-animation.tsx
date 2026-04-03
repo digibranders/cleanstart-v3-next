@@ -25,7 +25,6 @@ export function MascotSpriteAnimation({ className }: { className?: string }) {
       className={className}
       width={200}
       height={200}
-      unoptimized
       priority
     />
   );
