@@ -58,6 +58,7 @@ function AntigravityParticles({ containerRef }: { containerRef: React.RefObject<
         baseX: x, baseY: y,
       });
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setParticles(newParticles);
   }, []);
 
@@ -172,6 +173,7 @@ function FrostedSquareFlow() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     const measure = () => {
       if (containerRef.current) {
@@ -367,24 +369,13 @@ function FrostedSquareFlow() {
 
 function OrbitalVerification() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [showVerified, setShowVerified] = useState(false);
-
-  useEffect(() => {
-    // Show the "All Layers Verified" pill after a delay
-    const timeout = setTimeout(() => setShowVerified(true), 3000);
-    const loop = setInterval(() => {
-      setShowVerified(false);
-      setTimeout(() => setShowVerified(true), 3000);
-    }, 8000);
-    return () => { clearTimeout(timeout); clearInterval(loop); };
-  }, []);
 
   return (
     <div ref={containerRef} className="absolute inset-0 flex items-center justify-center">
       <motion.div
         className="absolute inset-0 pointer-events-none"
         style={{ background: 'radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.015) 40%, transparent 65%)' }}
-        animate={{ opacity: showVerified ? 1 : 0.6 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       />
       <AntigravityParticles containerRef={containerRef} />
@@ -410,38 +401,13 @@ function OrbitalVerification() {
       <motion.div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
         style={{ width: '140px', height: '161px', zIndex: 30, opacity: 1 }}
-        animate={{ scale: showVerified ? 1.03 : 1 }}
+        animate={{ scale: 1 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="w-full h-full" style={{ opacity: 1 }}>
           <WhiteBgCube />
         </div>
       </motion.div>
-      {showVerified && (
-        <motion.div
-          className="absolute left-1/2 bottom-[20px] -translate-x-1/2"
-          initial={{ opacity: 0, y: 20, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <div
-            className="px-5 py-2.5 rounded-full border"
-            style={{
-              background: 'rgba(255,255,255,0.2)',
-              borderColor: 'rgba(255,255,255,0.35)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-            }}
-          >
-            <div className="flex items-center gap-2.5">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="rgba(255,255,255,0.9)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span className="font-['Google_Sans',sans-serif] text-[13px] font-semibold text-white">All Layers Verified</span>
-            </div>
-          </div>
-        </motion.div>
-      )}
     </div>
   );
 }
@@ -457,6 +423,7 @@ function WavesVisual() {
       id: i, angle: Math.random() * 360, distance: 100 + Math.random() * 200,
       detected: false, isCritical: Math.random() > 0.7,
     }));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setThreats(newThreats);
   }, []);
 
@@ -1025,6 +992,7 @@ interface HeroSlide {
   title: string;
   subtitle: string;
   ctaText: string;
+  ctaHref?: string;
   background: string;
   visualType: 'orbital' | 'grid' | 'waves' | 'vulnerability-grid' | 'award' | 'source-build';
   navLabel: string;
@@ -1036,21 +1004,13 @@ const AWARD_GRADIENT = 'linear-gradient(180deg, rgb(15, 12, 8) 0%, rgb(101, 82, 
 const HERO_SLIDES: HeroSlide[] = [
   {
     id: 1,
-    title: 'A Secure Foundation for Every Container You Ship',
-    subtitle: 'Verified container images built from source with minimal components and near-zero vulnerabilities.',
+    title: 'Verified container images built from source',
+    subtitle: '',
     ctaText: 'Explore Images',
+    ctaHref: '/products/hardened-images',
     background: MASTER_GRADIENT,
     visualType: 'orbital',
     navLabel: 'Secure Foundation',
-  },
-  {
-    id: 2,
-    title: '95% of Container Images Contain Critical Vulnerabilities',
-    subtitle: 'Security risks often start in the software supply chain. CleanStart helps eliminate them before production.',
-    ctaText: 'Learn How',
-    background: MASTER_GRADIENT,
-    visualType: 'vulnerability-grid',
-    navLabel: 'Container Security',
   },
   {
     id: 3,
@@ -1061,15 +1021,6 @@ const HERO_SLIDES: HeroSlide[] = [
     visualType: 'award',
     navLabel: 'Award Winner',
   },
-  {
-    id: 4,
-    title: 'Zero-Vulnerability Images, Built from Source',
-    subtitle: 'Minimal components, reproducible builds, and verified source packages for a trusted software foundation.',
-    ctaText: 'See Platform',
-    background: MASTER_GRADIENT,
-    visualType: 'source-build',
-    navLabel: 'Zero-Vulnerability',
-  },
 ];
 
 function SlideNavigation({ totalSlides, currentSlide, isAutoPlaying, onSlideChange, onPlayPauseToggle }: {
@@ -1079,7 +1030,9 @@ function SlideNavigation({ totalSlides, currentSlide, isAutoPlaying, onSlideChan
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!isAutoPlaying) { setProgress(0); return; }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProgress(0);
     const startTime = Date.now();
     const duration = 5000;
@@ -1189,11 +1142,11 @@ export function HeroSection() {
       {activeSlide.visualType === 'orbital' && <FrostedSquareFlow />}
 
       {/* Main content — no Navbar here, it's in the Next.js layout */}
-      <div className="relative flex-1 flex flex-col items-center justify-center pt-[90px] px-4 sm:px-6 md:px-8" style={{ gap: '16px' }}>
+      <div className="relative flex-1 flex flex-col items-center justify-center pt-[90px] pb-8 px-4 sm:px-6 md:px-8" style={{ gap: '16px' }}>
         {/* Title & Subtitle — z-40 to stay above hero animation and below navbar z-100 */}
         <motion.div
           className="text-center z-40 w-full max-w-4xl shrink-0 flex flex-col items-center justify-end"
-          style={{ minHeight: '120px' }}
+          style={{ height: '150px' }}
           key={`text-${currentSlide}`}
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1202,13 +1155,15 @@ export function HeroSection() {
           <h1 className="font-['Google_Sans',sans-serif] text-[32px] sm:text-[40px] md:text-[48px] font-normal text-white leading-[1.2] tracking-[-0.02em] px-4">
             {activeSlide.title}
           </h1>
-          <p className="font-['Google_Sans',sans-serif] text-[14px] sm:text-[15px] md:text-[16px] text-white/70 leading-[1.6] px-4 mt-[10px]">
-            {activeSlide.subtitle}
-          </p>
+          {activeSlide.subtitle && (
+            <p className="font-['Google_Sans',sans-serif] text-[14px] sm:text-[15px] md:text-[16px] text-white/70 leading-[1.6] px-4 mt-[10px]">
+              {activeSlide.subtitle}
+            </p>
+          )}
         </motion.div>
 
-        {/* Visualization — equal fixed size, clipped to prevent overlap */}
-        <div className="relative w-full max-w-[940px] aspect-square" style={{ maxHeight: '480px', zIndex: 23 }}>
+        {/* Visualization — flexible height to keep CTA visible */}
+        <div className="relative w-full max-w-[940px] flex-1 min-h-0" style={{ maxHeight: '420px', zIndex: 23 }}>
           <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'scale(0.78)', transformOrigin: 'center center' }}>
             {activeSlide.visualType === 'orbital' && <OrbitalVerification />}
             {activeSlide.visualType === 'waves' && <WavesVisual />}
@@ -1218,13 +1173,18 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* CTA — below animation */}
-        <motion.div className="z-40 shrink-0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}>
-          <CallToActionButton label={activeSlide.ctaText} variant="light" size="md" />
+        {/* CTA — always below content, same size and position for all slides */}
+        <motion.div
+          className="z-40 shrink-0"
+          key={`cta-${currentSlide}`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <CallToActionButton label={activeSlide.ctaText} href={activeSlide.ctaHref} variant="light" size="md" />
         </motion.div>
 
         {/* Scroll Down Indicator — below CTA, brand blue */}
-        <ScrollDownIndicator />
       </div>
 
       {/* Slide Navigation */}

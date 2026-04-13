@@ -383,7 +383,9 @@ export function SiteHeader({ forceWhite = false }: { forceWhite?: boolean }) {
   const pathname = usePathname();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMenuOpen(false);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHoveredItem(null);
   }, [pathname]);
 

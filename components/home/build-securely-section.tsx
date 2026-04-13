@@ -1,11 +1,13 @@
 "use client";
 
-import { motion, useInView, AnimatePresence } from 'motion/react';
+import { motion, useInView, AnimatePresence, useScroll, useTransform, type MotionValue } from 'motion/react';
 import { useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { CircleArrowCTA } from '@/components/shared/circle-arrow-cta';
 import { type ReactNode } from 'react';
 import { PackageOpenIcon, RefreshIcon, ScanIcon, ShuffleIcon, Blockchain04Icon, Shield01Icon, Bug01Icon, Layers01Icon } from 'hugeicons-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { CodeSquareIcon, Configuration01Icon, LockedIcon } from '@hugeicons/core-free-icons';
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -93,13 +95,20 @@ const PIPELINE_NODES = [
   { id: 'clean-sight', label: 'CleanSight', description: 'Visibility dashboard' },
 ];
 
-const BAR_TOTAL = 20;
-const COMPARISON_GRID = [
-  { label: 'Source trust', publicScore: 7, cleanScore: 20 },
-  { label: 'Attack surface', publicScore: 4, cleanScore: 17 },
-  { label: 'Build integrity', publicScore: 3, cleanScore: 20 },
-  { label: 'Security model', publicScore: 7, cleanScore: 20 },
-  { label: 'Reproducibility', publicScore: 3, cleanScore: 20 },
+const COMPARISON_PUBLIC = [
+  'Patch after image creation',
+  'Public base images',
+  'Large attack surface',
+  'Scanner-driven security',
+  'Non-deterministic builds',
+];
+
+const COMPARISON_CLEAN = [
+  'Built from verified source',
+  'Controlled packages',
+  'Minimal components',
+  'Secure by design',
+  'Reproducible builds',
 ];
 
 
@@ -114,7 +123,6 @@ interface StatItem {
 const STATS: StatItem[] = [
   { value: 88, suffix: ',000+', decimals: 0, label: 'CVEs remediated' },
   { value: 97.6, suffix: '%', decimals: 1, label: 'Average CVE reduction' },
-  { value: 80, suffix: '%', decimals: 0, label: 'Attack surface reduction' },
   { value: 352, suffix: ',000+', decimals: 0, label: 'Engineering hours saved' },
   { value: 10, suffix: 'M+', decimals: 0, label: 'Packages from verified source' },
   { value: 100, suffix: '%', decimals: 0, label: 'Deterministic builds' },
@@ -168,40 +176,192 @@ function ProblemCard({ icon, title, description, tint, bgIcon, bgColor, delay }:
 
 function StatCard({ stat, delay }: { stat: StatItem; delay: number }) {
   const { value, ref } = useCountUp(stat.value, stat.decimals);
+
   return (
     <motion.div
-      className="relative flex flex-col justify-between rounded-[12px] overflow-hidden h-full"
-      style={{
-        padding: '15px',
-        minHeight: '280px',
-        background: 'transparent',
-        border: '1.5px solid rgba(255,255,255,0.25)',
-      }}
-      initial={{ opacity: 0, y: 28 }}
+      className="relative flex flex-col justify-between rounded-[10px] overflow-hidden bg-white h-full"
+      style={{ padding: '18px 16px' }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.65, delay, ease: EASE }}
+      transition={{ duration: 0.55, delay, ease: EASE }}
     >
-      {/* Number */}
-      <p
-        className="font-['Google_Sans',sans-serif] font-normal leading-none tracking-[-0.03em] text-white text-[32px] md:text-[40px]"
-      >
+      <p className="font-['Google_Sans',sans-serif] font-semibold leading-none tracking-[-0.02em] text-[#0F1924] text-[28px] md:text-[32px]">
         {stat.prefix && <span>{stat.prefix}</span>}
         <span ref={ref}>
           {stat.decimals > 0 ? value.toFixed(stat.decimals) : Math.round(value)}
         </span>
         <span>{stat.suffix}</span>
       </p>
-      {/* Label */}
-      <p className="font-['Google_Sans',sans-serif] font-normal text-[13px] md:text-[14px] leading-snug mt-4" style={{ color: 'rgba(255,255,255,0.65)' }}>
+      <p className="font-['Google_Sans',sans-serif] font-normal text-[12px] md:text-[13px] leading-snug text-[#0F1924]/50 mt-3">
         {stat.label}
       </p>
     </motion.div>
   );
 }
 
+// ─── Platform Process Flow (inside dark strip) ─────────────────────────────
+
+const PROCESS_STEPS = [
+  { label: 'CleanCompile', icon: CodeSquareIcon },
+  { label: 'Build', icon: Configuration01Icon },
+  { label: 'Vault', icon: LockedIcon },
+] as const;
+
+// Card index → pipeline step index mapping
+const CARD_TO_STEP: Record<number, number> = {
+  0: 0, // CleanImages → CleanCompile
+  1: 1, // Packages → Build
+  2: 1, // LLM Models → Build
+  3: 2, // CleanSight → Vault
+};
+
+function PlatformProcessFlow({ activeStep }: { activeStep: number | null }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-40px' });
+
+  return (
+    <div ref={ref} className="flex items-center gap-0">
+      {PROCESS_STEPS.map((step, i) => {
+        const isActive = activeStep === i;
+        return (
+          <div key={step.label} className="flex items-center">
+            {/* Step: icon + label */}
+            <motion.div
+              className="flex items-center gap-[8px] relative z-10 px-[12px] py-[6px] rounded-[8px]"
+              style={{
+                background: isActive ? '#06C7F2' : 'rgba(255,255,255,0.95)',
+                border: 'none',
+                transition: 'all 0.3s ease',
+              }}
+              initial={{ opacity: 0 }}
+              animate={isInView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.6, delay: i * 0.15 + 0.2, ease: EASE }}
+            >
+              <div
+                className="flex items-center justify-center rounded-[5px]"
+                style={{
+                  width: 24,
+                  height: 24,
+                  background: isActive ? 'rgba(255,255,255,0.25)' : 'rgba(5,107,241,0.1)',
+                  transition: 'background 0.3s ease',
+                }}
+              >
+                <HugeiconsIcon
+                  icon={step.icon}
+                  size={14}
+                  color={isActive ? '#ffffff' : '#056BF1'}
+                  strokeWidth={1.5}
+                />
+              </div>
+              <span
+                className="font-['Google_Sans',sans-serif] text-[13px] font-medium whitespace-nowrap tracking-[-0.01em]"
+                style={{
+                  color: isActive ? '#ffffff' : '#0F1924',
+                  transition: 'color 0.3s ease',
+                }}
+              >
+                {step.label}
+              </span>
+            </motion.div>
+
+            {/* Connector: track + animated dot */}
+            {i < PROCESS_STEPS.length - 1 && (
+              <div className="relative flex items-center" style={{ width: 48, marginLeft: 6, marginRight: 6 }}>
+                {/* Static track */}
+                <div className="absolute top-1/2 -translate-y-1/2 w-full h-[1px] rounded-full bg-white/[0.15]" />
+
+                {/* Traveling dot */}
+                <motion.div
+                  className="absolute top-1/2 -translate-y-1/2 rounded-full"
+                  style={{
+                    width: 4,
+                    height: 4,
+                    background: '#ffffff',
+                    boxShadow: '0 0 8px 2px rgba(255,255,255,0.4)',
+                  }}
+                  animate={isInView ? { left: ['-2px', '46px'] } : {}}
+                  transition={{
+                    duration: 1.4,
+                    delay: i * 0.6 + 1.2,
+                    repeat: Infinity,
+                    repeatDelay: 3 - i * 0.5,
+                    ease: [0.4, 0, 0.2, 1],
+                  }}
+                />
+
+                {/* Chevron */}
+                <svg
+                  className="absolute right-[-2px] top-1/2 -translate-y-1/2 z-10"
+                  width="6" height="10" viewBox="0 0 6 10" fill="none"
+                >
+                  <path d="M1.5 2l2.5 3L1.5 8" stroke="rgba(255,255,255,0.35)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ─── Product Accordion Cards ─────────────────────────────────────────────────
 
+/* ── Product Suite Data ─────────────────────────────────────────────────── */
+
+interface ProductSuiteItem {
+  title: string;
+  subtitle: string;
+  tag: string;
+  icon: ReactNode;
+}
+
+const PRODUCT_SUITE: ProductSuiteItem[] = [
+  {
+    title: 'Clean Image', subtitle: 'Minimal, immutable runtime with zero known CVEs.', tag: 'RUNTIME',
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="20" height="12" rx="2" /><path d="M6 10h.01M10 10h.01M14 10h.01" /><path d="M2 10h20" /></svg>,
+  },
+  {
+    title: 'Clean Packages', subtitle: 'Every dependency curated, verified, and traceable.', tag: 'DEPENDENCIES',
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" /><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12" /></svg>,
+  },
+  {
+    title: 'Clean ML Models', subtitle: 'Scanned, signed, and safe by design for AI workloads.', tag: 'AI / ML',
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" /></svg>,
+  },
+  {
+    title: 'CleanSight', subtitle: 'AI-powered risk, policy, and drift detection in real time.', tag: 'OBSERVABILITY',
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" /><circle cx="12" cy="12" r="3" /></svg>,
+  },
+  {
+    title: 'Clean SBOM', subtitle: 'Complete, signed software bill of materials — always current.', tag: 'TRANSPARENCY',
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path d="M14 2v6h6M9 13h6M9 17h3M9 9h1" /></svg>,
+  },
+];
+
+/* ── Engine data ── */
+
+interface EngineFeature {
+  label: string;
+  desc: string;
+  icon: ReactNode;
+}
+
+const ENGINE_FEATURES_AI: EngineFeature[] = [
+  { label: 'Plan', desc: 'Define build strategy', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 6h16M4 12h10M4 18h6" /></svg> },
+  { label: 'Analyze', desc: 'Scan dependencies', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.35-4.35" /></svg> },
+  { label: 'Orchestrate', desc: 'Optimize pipeline', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="2" /><circle cx="5" cy="19" r="2" /><circle cx="19" cy="19" r="2" /><path d="M12 7v4M7.5 17.5L10.5 13M16.5 17.5L13.5 13" /></svg> },
+];
+
+const ENGINE_FEATURES_COMPILE: EngineFeature[] = [
+  { label: 'Spec', desc: 'Lock requirements', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 8h6M9 12h6M9 16h3" /></svg> },
+  { label: 'Build', desc: 'Hermetic compile', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94L6.13 20.8a2.1 2.1 0 01-3-3l7.37-7.37a6 6 0 017.94-7.94l-3.76 3.76z" /></svg> },
+  { label: 'Attest', desc: 'Sign provenance', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg> },
+  { label: 'Handoff', desc: 'Deliver artifact', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg> },
+];
+
+/* ── Legacy data kept for compatibility ─────────────────────────────────── */
 const PRODUCT_CARDS = [
   { title: 'CleanImages', cta: 'Learn More', image: '/home/card-container-images.png' },
   { title: 'Packages', cta: 'Learn More', image: '/home/card-packages.png' },
@@ -209,190 +369,287 @@ const PRODUCT_CARDS = [
   { title: 'CleanSight', cta: 'Learn More', image: '/home/card-vm.png' },
 ];
 
-function ProductAccordionCards() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [cardCenters, setCardCenters] = useState<number[]>([]);
+/* ── Product card data for bottom row ── */
+const PRODUCT_CARDS_STATIC = [
+  {
+    tag: 'RUNTIME',
+    title: 'Clean Image',
+    subtitle: 'Minimal. Immutable. Zero CVE.',
+    icon: '/home/factory/group-quality.svg',
+  },
+  {
+    tag: 'DEPENDENCIES',
+    title: 'Clean Packages',
+    subtitle: 'Curated. Verified. No hidden risk.',
+    icon: '/home/factory/capa-shield.svg',
+  },
+  {
+    tag: 'AI/ML',
+    title: 'Clean ML Models',
+    subtitle: 'Scanned. Signed. Safe by design.',
+    icon: '/home/factory/five-v.svg',
+  },
+  {
+    tag: 'OBSERVABILITY',
+    title: 'Cleansight',
+    subtitle: 'AI-powered insights. Risk, policy & drift detection.',
+    icon: '/home/factory/four-v.svg',
+  },
+  {
+    tag: 'TRANSPARENCY',
+    title: 'Clean SBOM',
+    subtitle: 'Complete. Signed. Continuously verified.',
+    icon: '/home/factory/gov-3.svg',
+  },
+];
 
-  // Measure card center positions for dynamic node lines
-  useEffect(() => {
-    function measure() {
-      const container = containerRef.current;
-      if (!container) return;
-      const containerRect = container.getBoundingClientRect();
-      const centers = cardRefs.current.map((el) => {
-        if (!el) return 0;
-        const rect = el.getBoundingClientRect();
-        return ((rect.left + rect.width / 2 - containerRect.left) / containerRect.width) * 1000;
-      });
-      setCardCenters(centers);
-    }
-    measure();
-    // Re-measure on resize and after accordion animation settles
-    const timer = setTimeout(measure, 400);
-    window.addEventListener('resize', measure);
-    return () => { clearTimeout(timer); window.removeEventListener('resize', measure); };
-  }, [activeIndex]);
-
-  // Platform strip target positions (fixed: center of SVG)
-  const platformLeft = 350;
-  const platformRight = 650;
-  const platformTargets = [350, 450, 550, 650];
-
+/* ── Foundation card (shared between desktop/mobile) ── */
+function FoundationCard(): React.ReactElement {
   return (
-    <div>
-      {/* Desktop accordion */}
-      <div ref={containerRef} className="hidden lg:flex gap-5" style={{ height: '420px' }}>
-        {PRODUCT_CARDS.map((card, i) => {
-          const isActive = i === activeIndex;
-          return (
-            <div
-              key={card.title}
-              ref={(el) => { cardRefs.current[i] = el; }}
-              className="relative rounded-[15px] overflow-hidden flex flex-col justify-end cursor-pointer h-full"
-              onMouseEnter={() => setActiveIndex(i)}
-              style={{
-                flex: isActive ? '0 0 420px' : '1 1 0px',
-                minWidth: 0,
-                transition: 'flex 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
-              }}
-            >
-              <Image
-                src={card.image}
-                alt={card.title}
-                fill
-                className="object-cover"
-              />
-
-              {/* Gradient overlay */}
-              <div className="absolute inset-x-0 bottom-0 h-[50%] bg-gradient-to-t from-[#0F1924]/90 to-transparent" />
-
-              {/* Bottom: title + CTA */}
-              <div
-                className="relative z-10 p-6 md:p-7 flex items-center justify-between gap-4"
-                style={{ opacity: isActive ? 1 : 0.7, transition: 'opacity 0.3s ease' }}
-              >
-                <h4 className="font-['Google_Sans',sans-serif] text-[18px] text-white font-semibold leading-tight whitespace-nowrap">
-                  {card.title}
-                </h4>
-                <div
-                  style={{
-                    opacity: isActive ? 1 : 0,
-                    transform: isActive ? 'scale(1)' : 'scale(0.8)',
-                    transition: 'opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                  }}
-                >
-                  <CircleArrowCTA variant="filled-blue" size={44} />
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Dynamic node connecting lines (cards → platform) */}
-      {cardCenters.length === 4 && cardCenters[0] > 0 && (
-        <svg className="hidden lg:block w-full h-[50px]" viewBox="0 0 1000 50" preserveAspectRatio="none" fill="none">
-          {cardCenters.map((cx, i) => {
-            const tx = platformTargets[i];
-            const midY = 25;
-            const curveR = 10;
-            const goRight = tx > cx;
-            const path = `M ${cx} 0 L ${cx} ${midY - curveR} Q ${cx} ${midY} ${cx + (goRight ? curveR : -curveR)} ${midY} L ${tx + (goRight ? -curveR : curveR)} ${midY} Q ${tx} ${midY} ${tx} ${midY + curveR} L ${tx} 50`;
-            return (
-              <motion.path
-                key={i}
-                d={path}
-                stroke="#056BF1"
-                strokeWidth="1.5"
-                fill="none"
-                opacity="0.4"
-                initial={false}
-                animate={{ d: path }}
-                transition={{ duration: 0.4, ease: EASE }}
-              />
-            );
-          })}
-          {/* Node dots at card bottoms */}
-          {cardCenters.map((cx, i) => (
-            <motion.circle
-              key={`top-${i}`}
-              cy={3}
-              r={3}
-              fill="#056BF1"
-              opacity={0.6}
-              initial={false}
-              animate={{ cx }}
-              transition={{ duration: 0.4, ease: EASE }}
-            />
-          ))}
-          {/* Node dots at platform top */}
-          {platformTargets.map((tx, i) => (
-            <circle key={`bot-${i}`} cx={tx} cy={47} r={3} fill="#056BF1" />
-          ))}
-        </svg>
-      )}
-
-      {/* Platform strip */}
-      <div className="hidden lg:flex mx-auto rounded-[15px] bg-[#056BF1] flex-col items-center justify-center gap-2 py-4 px-8"
-        style={{ boxShadow: '0 4px 24px rgba(5,107,241,0.3)', width: 'calc(50% - 10px)' }}
-      >
-        <svg width="180" height="37" viewBox="0 0 595.93 123.68" fill="none">
-          <polygon points="94.39 39.89 94.39 85.24 61.19 105.11 61.19 59.02 48.28 66.46 48.63 66.68 48.63 120.39 54.12 123.68 108.25 92.04 108.25 32.16 108.03 32.03 94.39 39.89" fill="#08c5f0"/>
-          <polygon points="61.19 58.83 19.87 34.52 54.64 15.43 94.39 38.18 94.39 39.89 108.03 32.03 53.86 0 0 32.16 0 91.26 12.55 98.77 12.55 45.5 48.28 66.46 61.19 59.02 61.19 58.83" fill="white"/>
-          <path d="M157.05,42.27c2.82-1.9,6.34-2.85,10.58-2.85,4.7,0,8.53,1.16,11.47,3.48,2.95,2.32,5.04,5.54,6.26,9.66l10.64-2.93c-1.96-6.16-5.36-11.06-10.2-14.69-4.85-3.63-10.91-5.45-18.17-5.45-6.31,0-11.71,1.38-16.2,4.14s-7.95,6.61-10.36,11.54c-2.41,4.93-3.61,10.66-3.61,17.17s1.21,12.23,3.61,17.17c2.41,4.93,5.86,8.78,10.36,11.54,4.5,2.76,9.9,4.14,16.2,4.14,7.27,0,13.33-1.82,18.17-5.45,4.85-3.63,8.25-8.53,10.2-14.69l-10.64-2.93c-1.23,4.09-3.31,7.3-6.26,9.63-2.95,2.34-6.77,3.5-11.47,3.5-4.23,0-7.77-.95-10.6-2.85-2.83-1.9-4.96-4.56-6.37-7.99-1.42-3.43-2.12-7.45-2.12-12.07.03-4.61.75-8.63,2.17-12.07,1.42-3.43,3.53-6.09,6.35-7.99Z" fill="white"/>
-          <rect x="206.51" y="29.49" width="10.55" height="64.38" fill="white"/>
-          <path d="M263.6,48.69c-3.43-2.29-7.6-3.44-12.5-3.44-4.64,0-8.73,1.05-12.26,3.15-3.53,2.1-6.29,5.06-8.28,8.87-1.99,3.81-2.98,8.3-2.98,13.47,0,4.79,1.01,9.02,3.04,12.7,2.03,3.68,4.85,6.55,8.47,8.63,3.62,2.07,7.82,3.11,12.61,3.11s8.72-1.18,12.5-3.55,6.58-5.68,8.39-9.94l-10.42-3.15c-1.02,2.19-2.47,3.86-4.36,5.01-1.88,1.15-4.12,1.73-6.72,1.73-4.03,0-7.09-1.31-9.2-3.94-1.65-2.06-2.64-4.8-3-8.19h34.22c.41-5.66-.22-10.58-1.88-14.76-1.66-4.17-4.21-7.41-7.64-9.7ZM251.53,54.49c3.83,0,6.63,1.18,8.41,3.55,1.26,1.68,2.08,4.07,2.46,7.14h-23.24c.48-2.73,1.39-4.96,2.74-6.68,2.1-2.67,5.31-4.01,9.63-4.01Z" fill="white"/>
-          <path d="M319.33,54.05c-1.55-3.12-3.92-5.37-7.12-6.74-3.2-1.37-6.9-2.06-11.1-2.06-5.58,0-10.01,1.21-13.29,3.64-3.29,2.42-5.51,5.63-6.68,9.63l9.63,3.02c.79-2.42,2.17-4.13,4.16-5.12,1.99-.99,4.04-1.49,6.17-1.49,3.53,0,6.04.77,7.53,2.32,1.24,1.29,1.94,3.18,2.13,5.65-1.9.28-3.77.55-5.57.81-2.99.42-5.77.88-8.32,1.38-2.56.5-4.78,1.05-6.68,1.67-2.51.85-4.55,1.93-6.13,3.26-1.58,1.33-2.75,2.91-3.5,4.73-.76,1.83-1.14,3.88-1.14,6.15,0,2.6.61,4.98,1.82,7.14,1.21,2.16,3,3.89,5.37,5.19,2.36,1.3,5.25,1.95,8.67,1.95,4.26,0,7.82-.8,10.66-2.39,2.19-1.22,4.17-2.99,5.93-5.3v6.37h9.24v-29.04c0-2.04-.09-3.93-.26-5.67-.18-1.74-.69-3.44-1.53-5.1ZM309.6,78.93c-.35,1.08-1.03,2.23-2.04,3.46-1.01,1.23-2.36,2.26-4.05,3.11-1.69.85-3.74,1.27-6.13,1.27-1.67,0-3.06-.26-4.18-.79-1.12-.53-1.98-1.23-2.56-2.12s-.88-1.92-.88-3.09c0-1.02.23-1.91.68-2.67.45-.76,1.1-1.43,1.95-2.01s1.88-1.09,3.11-1.53c1.25-.41,2.7-.78,4.34-1.12,1.63-.34,3.59-.69,5.87-1.07,1.45-.24,3.11-.51,4.93-.8-.02.8-.05,1.71-.09,2.75-.07,1.74-.39,3.28-.94,4.62Z" fill="white"/>
-          <path d="M374.37,57.21c-.64-2.04-1.63-3.97-2.98-5.78-1.34-1.81-3.15-3.3-5.43-4.47-2.28-1.17-5.17-1.75-8.67-1.75-4.44,0-8.17.97-11.21,2.91-1.63,1.04-3.04,2.28-4.25,3.71v-5.27h-9.42v47.3h10.69v-24.31c0-2.89.32-5.26.96-7.12.64-1.85,1.5-3.31,2.56-4.38s2.26-1.82,3.57-2.26c1.31-.44,2.64-.66,3.99-.66,2.51,0,4.5.54,5.98,1.62s2.58,2.46,3.33,4.14,1.22,3.42,1.42,5.23c.2,1.81.31,3.46.31,4.95v22.77h10.69v-26.41c0-1.14-.1-2.62-.29-4.45-.19-1.82-.61-3.76-1.25-5.8Z" fill="white"/>
-          <path d="M429.25,62.77c-1.78-1.25-3.63-2.23-5.56-2.93-1.93-.7-3.66-1.25-5.21-1.66l-11.3-3.15c-1.43-.38-2.84-.85-4.23-1.42-1.39-.57-2.55-1.34-3.48-2.32s-1.4-2.24-1.4-3.79c0-1.63.55-3.07,1.64-4.29,1.09-1.23,2.54-2.17,4.34-2.83,1.79-.66,3.74-.97,5.85-.94,2.16.06,4.2.5,6.11,1.31,1.91.82,3.53,2.01,4.86,3.57,1.33,1.56,2.23,3.45,2.69,5.67l11.34-1.97c-.94-3.88-2.54-7.2-4.82-9.94s-5.11-4.84-8.5-6.29-7.24-2.18-11.56-2.21c-4.26-.03-8.14.64-11.63,2.01-3.49,1.37-6.26,3.44-8.32,6.2s-3.09,6.17-3.09,10.23c0,2.77.46,5.1,1.38,6.99.92,1.88,2.1,3.43,3.55,4.64,1.44,1.21,2.98,2.16,4.6,2.85,1.62.69,3.13,1.23,4.53,1.64l16.29,4.82c1.17.35,2.2.77,3.09,1.25s1.62,1.01,2.19,1.6,1,1.25,1.29,1.99c.29.75.44,1.55.44,2.43,0,1.96-.62,3.61-1.86,4.95-1.24,1.34-2.85,2.36-4.84,3.07-1.99.7-4.1,1.05-6.35,1.05-3.8,0-7.15-1.02-10.05-3.07-2.91-2.04-4.83-4.93-5.76-8.67l-10.95,1.66c.64,4.12,2.15,7.67,4.53,10.66,2.38,2.99,5.42,5.29,9.11,6.9,3.69,1.61,7.85,2.41,12.46,2.41,3.24,0,6.34-.41,9.31-1.23,2.96-.82,5.6-2.04,7.9-3.68s4.14-3.69,5.5-6.15c1.36-2.47,2.04-5.34,2.04-8.61s-.58-5.75-1.73-7.8c-1.15-2.04-2.62-3.69-4.4-4.95Z" fill="white"/>
-          <path d="M458.72,33.43h-10.51v13.14h-8.58v8.28h8.58v19.71c0,2.69.03,5.1.09,7.23s.63,4.22,1.71,6.26c1.23,2.25,3.02,3.89,5.39,4.93,2.37,1.04,5.04,1.59,8.04,1.66,2.99.07,6.05-.18,9.18-.77v-8.85c-2.95.44-5.58.55-7.88.35s-3.99-1.18-5.04-2.93c-.55-.9-.85-2.07-.9-3.5s-.07-3.09-.07-4.99v-19.09h13.88v-8.28h-13.88v-13.14Z" fill="white"/>
-          <path d="M520.08,54.05c-1.55-3.12-3.92-5.37-7.12-6.74-3.2-1.37-6.9-2.06-11.1-2.06-5.58,0-10.01,1.21-13.29,3.64-3.29,2.42-5.51,5.63-6.68,9.63l9.63,3.02c.79-2.42,2.17-4.13,4.16-5.12,1.99-.99,4.04-1.49,6.17-1.49,3.53,0,6.04.77,7.53,2.32,1.24,1.29,1.94,3.18,2.13,5.65-1.9.28-3.77.55-5.57.81-2.99.42-5.77.88-8.32,1.38-2.56.5-4.78,1.05-6.68,1.67-2.51.85-4.55,1.93-6.13,3.26-1.58,1.33-2.74,2.91-3.5,4.73-.76,1.83-1.14,3.88-1.14,6.15,0,2.6.61,4.98,1.82,7.14,1.21,2.16,3,3.89,5.36,5.19,2.37,1.3,5.26,1.95,8.67,1.95,4.26,0,7.82-.8,10.66-2.39,2.19-1.22,4.17-2.99,5.93-5.3v6.37h9.24v-29.04c0-2.04-.09-3.93-.26-5.67-.18-1.74-.69-3.44-1.53-5.1ZM510.35,78.93c-.35,1.08-1.03,2.23-2.04,3.46-1.01,1.23-2.36,2.26-4.05,3.11-1.69.85-3.74,1.27-6.13,1.27-1.66,0-3.06-.26-4.18-.79-1.12-.53-1.98-1.23-2.56-2.12s-.88-1.92-.88-3.09c0-1.02.23-1.91.68-2.67.45-.76,1.1-1.43,1.95-2.01.85-.58,1.88-1.09,3.11-1.53,1.25-.41,2.7-.78,4.34-1.12,1.63-.34,3.59-.69,5.87-1.07,1.45-.24,3.11-.51,4.93-.8-.02.8-.05,1.71-.09,2.75-.07,1.74-.39,3.28-.94,4.62Z" fill="white"/>
-          <path d="M555.55,46.37c-1.49.1-2.94.38-4.36.83-1.42.45-2.71,1.07-3.88,1.86-1.37.85-2.55,1.92-3.53,3.22-.44.59-.84,1.21-1.21,1.86v-7.57h-9.33v47.3h10.6v-24.04c0-1.81.22-3.5.66-5.06.44-1.56,1.12-2.96,2.04-4.18.92-1.23,2.11-2.23,3.57-3.02,1.46-.88,3.1-1.39,4.93-1.53,1.82-.15,3.44-.01,4.84.39v-9.85c-1.4-.23-2.85-.3-4.34-.2Z" fill="white"/>
-          <path d="M595.93,54.84v-8.28h-13.88v-13.14h-10.51v13.14h-8.58v8.28h8.58v19.71c0,2.69.03,5.1.09,7.23s.63,4.22,1.71,6.26c1.23,2.25,3.02,3.89,5.39,4.93,2.37,1.04,5.04,1.59,8.04,1.66,2.99.07,6.05-.18,9.18-.77v-8.85c-2.95.44-5.58.55-7.88.35s-3.99-1.18-5.04-2.93c-.55-.9-.85-2.07-.9-3.5s-.07-3.09-.07-4.99v-19.09h13.88Z" fill="white"/>
-        </svg>
-        <span className="font-['Google_Sans',sans-serif] text-[13px] text-white font-medium tracking-wide">
-          Platform
+    <div
+      className="rounded-[20px] border border-[#E5E7EB] bg-white overflow-hidden"
+      style={{ boxShadow: '0 2px 20px rgba(0,0,0,0.04)' }}
+    >
+      <div className="text-center py-5 border-b border-[#E5E7EB]">
+        <span className="font-['Google_Sans',sans-serif] font-bold text-[13px] md:text-[15px] tracking-[0.15em] uppercase text-[#181818]">
+          Built on Zero-CVE Foundation
         </span>
       </div>
-
-      {/* Sub-labels below platform strip */}
-      <div className="hidden lg:flex mt-3 mx-auto items-center justify-center gap-0"
-        style={{ width: 'calc(50% - 10px)' }}
-      >
-        <span className="font-['Google_Sans',sans-serif] text-[13px] text-[#056BF1]/70 font-medium">CleanCompile</span>
-        <span className="font-['Google_Sans',sans-serif] text-[13px] text-[#056BF1]/30 mx-3">|</span>
-        <span className="font-['Google_Sans',sans-serif] text-[13px] text-[#056BF1]/70 font-medium">Build</span>
-        <span className="font-['Google_Sans',sans-serif] text-[13px] text-[#056BF1]/30 mx-3">|</span>
-        <span className="font-['Google_Sans',sans-serif] text-[13px] text-[#056BF1]/70 font-medium">Vault</span>
-      </div>
-
-      {/* Mobile/tablet grid fallback */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 lg:hidden">
-        {PRODUCT_CARDS.map((card, i) => (
-          <motion.div
-            key={card.title}
-            className="relative rounded-[15px] overflow-hidden flex flex-col justify-end aspect-square cursor-pointer"
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.7, delay: i * 0.08, ease: EASE }}
-          >
-            <Image src={card.image} alt={card.title} fill className="object-cover" />
-            <div className="absolute inset-x-0 bottom-0 h-[40%] bg-gradient-to-t from-[#0F1924] to-transparent" />
-            <div className="relative z-10 p-6 flex items-center justify-between gap-4">
-              <h4 className="font-['Google_Sans',sans-serif] text-[18px] text-white font-semibold leading-tight">{card.title}</h4>
-              <CircleArrowCTA variant="filled-blue" size={44} />
+      <div className="flex flex-col lg:flex-row">
+        <div className="flex-1 bg-[#056BF1] p-6 md:p-8 lg:p-10">
+          <div className="flex items-start gap-4 mb-6">
+            <div className="flex-1">
+              <h4 className="font-['Google_Sans',sans-serif] font-bold text-[18px] md:text-[22px] text-white tracking-[-0.02em] uppercase mb-2">AI Logic Engine</h4>
+              <p className="font-['Google_Sans',sans-serif] text-[12px] md:text-[13px] text-white/80 leading-relaxed">Multi-agent orchestration that plans, analyzes, and optimizes every build.</p>
             </div>
-          </motion.div>
-        ))}
+            <Image src="/home/factory/ai-engine.svg" alt="AI Logic Engine" width={80} height={80} className="shrink-0" />
+          </div>
+          <div className="flex gap-3 md:gap-4">
+            {[
+              { label: 'Plan', icon: '/home/factory/step-plan.svg' },
+              { label: 'Analyze', icon: '/home/factory/step-analyze.svg' },
+              { label: 'Orchestrate', icon: '/home/factory/step-orchestrate.svg' },
+            ].map((s) => (
+              <div key={s.label} className="flex-1 text-center">
+                <span className="font-['Google_Sans',sans-serif] font-semibold text-[12px] md:text-[14px] text-white block mb-2">{s.label}</span>
+                <div className="flex justify-center"><Image src={s.icon} alt={s.label} width={36} height={36} /></div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center justify-center px-2 py-4 lg:py-0 bg-white">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="hidden lg:block"><path d="M8 16h16M20 10l6 6-6 6" stroke="#056BF1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="lg:hidden"><path d="M16 8v16M10 20l6 6 6-6" stroke="#056BF1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </div>
+        <div className="flex-1 bg-[#056BF1] p-6 md:p-8 lg:p-10">
+          <div className="flex items-start gap-4 mb-6">
+            <Image src="/home/factory/compile-factory.svg" alt="CleanCompile Factory" width={80} height={80} className="shrink-0" />
+            <div className="flex-1">
+              <h4 className="font-['Google_Sans',sans-serif] font-bold text-[18px] md:text-[22px] text-white tracking-[-0.02em] uppercase mb-2">CleanCompile Factory</h4>
+              <p className="font-['Google_Sans',sans-serif] text-[12px] md:text-[13px] text-white/80 leading-relaxed">Hermetic, deterministic builds. Only what you specify.</p>
+            </div>
+          </div>
+          <div className="flex gap-3 md:gap-4">
+            {[
+              { label: 'Spec', icon: '/home/factory/step-spec.svg' },
+              { label: 'Build', icon: '/home/factory/step-plan.svg' },
+              { label: 'Attest', icon: '/home/factory/step-attest.svg' },
+              { label: 'Handoff', icon: '/home/factory/step-handoff.svg' },
+            ].map((s) => (
+              <div key={s.label} className="flex-1 text-center">
+                <span className="font-['Google_Sans',sans-serif] font-semibold text-[12px] md:text-[14px] text-white block mb-2">{s.label}</span>
+                <div className="flex justify-center"><Image src={s.icon} alt={s.label} width={36} height={36} /></div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-// ─── Pipeline Infographic ────────────────────────────────────────────────────
+/* ── Product card (shared) ── */
+function ProductCard({ card, visible }: { card: typeof PRODUCT_CARDS_STATIC[0]; visible: boolean }): React.ReactElement {
+  return (
+    <div
+      className="rounded-[16px] bg-[#056BF1] p-4 md:p-5 lg:p-6 flex flex-col items-center text-center transition-all duration-700 min-h-[180px] md:min-h-[200px] lg:min-h-[220px]"
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(40px)',
+      }}
+    >
+      <span className="font-['Google_Sans',sans-serif] font-bold text-[10px] md:text-[11px] tracking-[0.12em] uppercase text-white mb-3 md:mb-4">{card.tag}</span>
+      <div className="mb-3 md:mb-4 flex-shrink-0"><Image src={card.icon} alt={card.title} width={40} height={40} className="md:w-[50px] md:h-[50px]" /></div>
+      <h4 className="font-['Google_Sans',sans-serif] font-bold text-[14px] md:text-[15px] lg:text-[17px] text-white leading-tight mb-1">{card.title}</h4>
+      <p className="font-['Google_Sans',sans-serif] text-[10px] md:text-[11px] lg:text-[12px] text-white leading-snug mb-3 md:mb-4">{card.subtitle}</p>
+      <div className="mt-auto">
+        <div className="w-[34px] h-[34px] md:w-[40px] md:h-[40px] rounded-full bg-white flex items-center justify-center">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="#056BF1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── SVG path data — circuit-board right-angle paths with rounded corners ── */
+const R = 18;
+const FLOW_PATHS = [
+  { endX: 100, d: `M 500 0 L 500 ${30 - R} Q 500 30, ${500 - R} 30 L ${100 + R} 30 Q 100 30, 100 ${30 + R} L 100 130` },
+  { endX: 300, d: `M 500 0 L 500 ${60 - R} Q 500 60, ${500 - R} 60 L ${300 + R} 60 Q 300 60, 300 ${60 + R} L 300 130` },
+  { endX: 500, d: `M 500 0 L 500 130` },
+  { endX: 700, d: `M 500 0 L 500 ${60 - R} Q 500 60, ${500 + R} 60 L ${700 - R} 60 Q 700 60, 700 ${60 + R} L 700 130` },
+  { endX: 900, d: `M 500 0 L 500 ${30 - R} Q 500 30, ${500 + R} 30 L ${900 - R} 30 Q 900 30, 900 ${30 + R} L 900 130` },
+];
+
+/* ── Fluid node animation hook — rAF-driven dash traveling along path ── */
+function useFluidPaths(
+  pathRefs: React.RefObject<(SVGPathElement | null)[]>,
+  flowRefs: React.RefObject<(SVGPathElement | null)[]>,
+  active: boolean,
+) {
+  const offsetsRef = useRef<number[]>([0, 0, 0, 0, 0]);
+  const lastTimeRef = useRef(performance.now());
+
+  useEffect(() => {
+    if (!active) return;
+
+    let rafId: number;
+
+    function frame(t: number) {
+      const dt = (t - lastTimeRef.current) / 1000;
+      lastTimeRef.current = t;
+
+      const paths = pathRefs.current;
+      const flows = flowRefs.current;
+      if (!paths || !flows) { rafId = requestAnimationFrame(frame); return; }
+
+      for (let i = 0; i < 5; i++) {
+        const basePath = paths[i];
+        const flowPath = flows[i];
+        if (!basePath || !flowPath) continue;
+
+        const totalLen = basePath.getTotalLength();
+        const dashLen = totalLen * 0.28; // visible dash = ~28% of path
+
+        // speed varies per line for organic feel
+        const speed = (2.0 + i * 0.1);
+        const v = totalLen / speed; // px/sec
+
+        offsetsRef.current[i] -= v * dt;
+        if (offsetsRef.current[i] < -totalLen) offsetsRef.current[i] += totalLen;
+
+        flowPath.style.strokeDasharray = `${dashLen} ${totalLen}`;
+        flowPath.style.strokeDashoffset = String(offsetsRef.current[i]);
+      }
+
+      rafId = requestAnimationFrame(frame);
+    }
+
+    rafId = requestAnimationFrame(frame);
+    return () => cancelAnimationFrame(rafId);
+  }, [active, pathRefs, flowRefs]);
+}
+
+/* ── Scroll-driven animated build flow ── */
+function StaticBuildFlow(): React.ReactElement {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const basePathRefs = useRef<(SVGPathElement | null)[]>([]);
+
+  const { scrollYProgress } = useScroll({
+    target: scrollRef,
+    offset: ['start start', 'end end'],
+  });
+
+  // Scroll-driven: lines draw in first, then cards appear
+  const lineProgress = useTransform(scrollYProgress, [0.05, 0.55], [0, 1]);
+  const cardsProgress = useTransform(scrollYProgress, [0.55, 0.8], [0, 1]);
+
+  const [lineP, setLineP] = useState(0);
+  const [cardsP, setCardsP] = useState(0);
+
+  useEffect(() => {
+    const unsubLine = lineProgress.on('change', (v) => setLineP(v));
+    const unsubCards = cardsProgress.on('change', (v) => setCardsP(v));
+    return () => { unsubLine(); unsubCards(); };
+  }, [lineProgress, cardsProgress]);
+
+  return (
+    <>
+      {/* ═══ DESKTOP: scroll-driven animation ═══ */}
+      <div ref={scrollRef} className="hidden lg:block relative" style={{ height: '200vh' }}>
+        <div className="sticky top-20 pb-10">
+          <FoundationCard />
+
+          {/* SVG flow lines */}
+          <div className="relative" style={{ height: 140 }}>
+            <svg
+              className="absolute inset-0 w-full"
+              viewBox="0 0 1000 140"
+              style={{ height: 140, overflow: 'visible' }}
+              preserveAspectRatio="none"
+            >
+              <defs />
+
+              {/* Base paths — solid blue stroke, draw in with scroll */}
+              {FLOW_PATHS.map((fp, i) => {
+                const stagger = Math.min(1, Math.max(0, lineP * 1.6 - i * 0.12));
+                const totalLen = 600;
+                return (
+                  <path
+                    key={`base-${i}`}
+                    ref={(el) => { basePathRefs.current[i] = el; }}
+                    d={fp.d}
+                    fill="none"
+                    stroke="#056BF1"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    vectorEffect="non-scaling-stroke"
+                    strokeDasharray={totalLen}
+                    strokeDashoffset={totalLen * (1 - stagger)}
+                  />
+                );
+              })}
+
+
+              {/* Arrow tips */}
+              {FLOW_PATHS.map((fp, i) => {
+                const tipVisible = lineP * 1.6 - i * 0.12 > 0.9;
+                return (
+                  <polygon
+                    key={`tip-${i}`}
+                    points={`${fp.endX},140 ${fp.endX - 7},126 ${fp.endX + 7},126`}
+                    fill="#056BF1"
+                    style={{ opacity: tipVisible ? 1 : 0, transition: 'opacity 0.3s' }}
+                  />
+                );
+              })}
+            </svg>
+          </div>
+
+          {/* Product cards */}
+          <div className="grid grid-cols-5 gap-3">
+            {PRODUCT_CARDS_STATIC.map((card, i) => {
+              const threshold = 0.15 * i;
+              const cardVisible = cardsP > threshold;
+              return <ProductCard key={card.title} card={card} visible={cardVisible} />;
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ═══ MOBILE: static layout ═══ */}
+      <div className="lg:hidden flex flex-col gap-6">
+        <FoundationCard />
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {PRODUCT_CARDS_STATIC.map((card) => (
+            <ProductCard key={card.title} card={card} visible />
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
 
 function cubeGeom(cx: number, cy: number, size: number) {
   const hw = size * 0.58;
@@ -807,6 +1064,121 @@ function OrbitalInfographic() {
   );
 }
 
+// ─── Advantage Stats — scroll-driven card fan animation ─────────────────────
+
+const ADVANTAGE_CARDS = [
+  { stat: '88,000+', label: 'CVEs remediated', color: '#D4EDDA' },
+  { stat: '97.6%', label: 'Average CVE reduction', color: '#D6E4F0' },
+  { stat: '352,000+', label: 'Engineering hours saved', color: '#056BF1' },
+  { stat: '10M+', label: 'Packages from verified source', color: '#E8E8EC' },
+  { stat: '100%', label: 'Deterministic builds', color: '#FFAB91' },
+];
+
+function AdvantageStatCard({
+  card,
+  index,
+  fanProgress,
+}: {
+  card: typeof ADVANTAGE_CARDS[0];
+  index: number;
+  fanProgress: MotionValue<number>;
+}): React.ReactElement {
+  const isDark = card.color === '#056BF1';
+
+  // Stacked: cards pile vertically with small offset, centered horizontally
+  // Released: cards spread into a horizontal row
+  const stackedX = 0;
+  const fannedX = index * 175;
+
+  const stackedY = index * 44;
+  const fannedY = 0;
+
+  const x = useTransform(fanProgress, [0, 1], [stackedX, fannedX]);
+  const y = useTransform(fanProgress, [0, 1], [stackedY, fannedY]);
+
+  return (
+    <motion.div
+      className="absolute rounded-[10px] flex flex-col justify-between"
+      style={{
+        x,
+        y,
+        width: 170,
+        height: 190,
+        background: card.color,
+        padding: '22px',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+        zIndex: 5 - index,
+      }}
+    >
+      <p className={`font-['Google_Sans',sans-serif] font-bold text-[34px] leading-none tracking-[-0.03em] ${isDark ? 'text-white' : 'text-[#0A1628]'}`}>
+        {card.stat}
+      </p>
+      <p className={`font-['Google_Sans',sans-serif] text-[13px] leading-snug ${isDark ? 'text-white' : 'text-[#4B5563]'}`}>
+        {card.label}
+      </p>
+    </motion.div>
+  );
+}
+
+function AdvantageStats(): React.ReactElement {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+
+  const fanProgress = useTransform(scrollYProgress, [0.15, 0.55], [0, 1]);
+
+  return (
+    <div ref={sectionRef} className="overflow-hidden" style={{ background: '#F0F1F3' }}>
+      <div className="px-4 md:px-8 lg:px-[50px] py-16 md:py-[100px]" style={{ maxWidth: 1340, margin: '0 auto' }}>
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-20 items-start">
+
+          {/* Left: headline + subtext */}
+          <div className="lg:w-[320px] flex-shrink-0">
+            <h2 className="font-['Google_Sans',sans-serif] text-[32px] md:text-[40px] lg:text-[44px] font-bold text-[#0A1628] leading-[1.1] tracking-[-0.02em] mb-4">
+              CleanStart<br />Advantage
+            </h2>
+            <p className="font-['Google_Sans',sans-serif] text-[15px] md:text-[16px] text-[#6B7280] leading-[1.6]">
+              Real results from teams that replaced vulnerable public images with CleanStart&apos;s hardened, source-built containers.
+            </p>
+          </div>
+
+          {/* Right: animated cards — stack vertically → release horizontally */}
+          <div className="flex-1 hidden lg:block relative" style={{ height: 210 }}>
+            {ADVANTAGE_CARDS.map((card, i) => (
+              <AdvantageStatCard key={card.stat} card={card} index={i} fanProgress={fanProgress} />
+            ))}
+          </div>
+
+        </div>
+
+        {/* Mobile + Tablet: static grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:hidden mt-8">
+          {ADVANTAGE_CARDS.map((card) => {
+            const isDark = card.color === '#056BF1';
+            return (
+              <div
+                key={card.stat}
+                className="p-4 md:p-5 flex flex-col justify-between rounded-[10px]"
+                style={{ background: card.color, aspectRatio: '1' }}
+              >
+                <p className={`font-['Google_Sans',sans-serif] font-bold text-[22px] md:text-[28px] leading-none tracking-[-0.03em] ${isDark ? 'text-white' : 'text-[#0A1628]'}`}>
+                  {card.stat}
+                </p>
+                <p className={`font-['Google_Sans',sans-serif] text-[11px] md:text-[12px] ${isDark ? 'text-white' : 'text-[#4B5563]'}`}>
+                  {card.label}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Section ─────────────────────────────────────────────────────────────
 
 export function BuildSecurelySection() {
@@ -814,10 +1186,10 @@ export function BuildSecurelySection() {
     <section className="bg-white">
       {/* ── PROBLEM BLOCK ─────────────────────────────────────────────────── */}
       <div className="px-4 md:px-8 lg:px-[50px] py-12 md:py-[100px]">
-        <div className="max-w-[1340px] mx-auto flex flex-col lg:flex-row gap-10 lg:gap-8">
+        <div className="max-w-[1340px] mx-auto flex flex-col md:flex-row gap-8 md:gap-6 lg:gap-8">
           {/* Header — 35% left */}
           <motion.div
-            className="lg:w-[35%] lg:flex-shrink-0 lg:sticky lg:top-32 lg:self-start"
+            className="md:w-[40%] lg:w-[35%] md:flex-shrink-0 md:sticky md:top-32 md:self-start"
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
@@ -829,7 +1201,7 @@ export function BuildSecurelySection() {
           </motion.div>
 
           {/* Problem cards — 65% right, 2x2 grid */}
-          <div className="lg:w-[65%] grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="md:w-[60%] lg:w-[65%] grid grid-cols-1 sm:grid-cols-2 gap-3">
             {PROBLEMS.map((problem, i) => (
               <ProblemCard key={problem.title} {...problem} delay={i * 0.08} />
             ))}
@@ -838,179 +1210,45 @@ export function BuildSecurelySection() {
       </div>
 
       {/* ── SOLUTION BLOCK ────────────────────────────────────────────────── */}
-      <div className="px-4 md:px-8 lg:px-[50px]">
-        <div className="relative rounded-[15px] overflow-hidden bg-[#cdf5fe] px-4 md:px-8 lg:px-[50px] py-12 md:py-[100px]">
-          {/* Perspective grid background */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {/* Grid at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 h-[45%]" style={{ perspective: '400px' }}>
-              <div
-                className="absolute inset-0 origin-bottom"
-                style={{
-                  transform: 'rotateX(55deg)',
-                  backgroundImage: `
-                    linear-gradient(to right, rgba(5,107,241,0.35) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(5,107,241,0.35) 1px, transparent 1px)
-                  `,
-                  backgroundSize: '50px 50px',
-                }}
-              />
-              {/* Center radial gradient overlay */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: 'radial-gradient(ellipse at 50% 100%, rgba(5,107,241,0.15) 0%, rgba(205,245,254,0.7) 50%, rgba(205,245,254,1) 100%)',
-                }}
-              />
-            </div>
-            {/* Grid at top */}
-            <div className="absolute top-0 left-0 right-0 h-[25%]" style={{ perspective: '400px' }}>
-              <div
-                className="absolute inset-0 origin-top"
-                style={{
-                  transform: 'rotateX(-55deg)',
-                  backgroundImage: `
-                    linear-gradient(to right, rgba(5,107,241,0.3) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(5,107,241,0.3) 1px, transparent 1px)
-                  `,
-                  backgroundSize: '50px 50px',
-                }}
-              />
-              {/* Fade out */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: 'radial-gradient(ellipse at 50% 0%, rgba(5,107,241,0.1) 0%, rgba(205,245,254,0.75) 50%, rgba(205,245,254,1) 100%)',
-                }}
-              />
-            </div>
-          </div>
+      <div className="bg-white px-4 md:px-8 lg:px-[50px] py-16 md:py-[100px]">
+        <div className="max-w-[1340px] mx-auto flex flex-col gap-12 md:gap-16">
 
-          <div className="relative z-10 max-w-[1340px] mx-auto flex flex-col gap-12 md:gap-16">
-          {/* Solution header */}
-          <div className="flex flex-col gap-6">
+          {/* Solution header — tight, left-aligned with subtitle */}
+          <div className="flex flex-col lg:flex-row lg:items-end gap-5 lg:gap-12">
             <motion.div
+              className="flex-shrink-0"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.7, ease: EASE }}
             >
-              <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.02em] leading-[1.1] max-w-[700px]">
+              <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.02em] leading-[1.1] max-w-[600px]">
                 Built Securely, from Source to Image
               </h2>
             </motion.div>
-
+            <motion.p
+              className="font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-[#0F1924]/45 leading-relaxed max-w-[400px] lg:pb-1"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
+            >
+              Five hardened products built on a zero-CVE foundation, powered by AI-driven compilation.
+            </motion.p>
           </div>
 
-          {/* ── PRODUCT CARDS (accordion) + nodes + platform ────────── */}
-          <ProductAccordionCards />
+          {/* ── STATIC BUILD FLOW — foundation + product cards ────────── */}
+          <StaticBuildFlow />
 
-          </div>
         </div>
       </div>
 
       {/* ── COMPARISON ──────────────────────────────────────────────────── */}
       <div className="bg-white px-4 md:px-8 lg:px-[50px] py-12 md:py-[100px]">
-        <div className="max-w-[1340px] mx-auto flex flex-col md:flex-row md:items-start md:justify-between gap-10 md:gap-[60px]">
+        <div className="max-w-[1340px] mx-auto">
 
-          {/* Left — heading + paragraph */}
-          <motion.div
-            className="md:max-w-[320px] lg:max-w-[380px] shrink-0 md:sticky md:top-32 md:self-start"
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.7, ease: EASE }}
-          >
-            <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.02em] leading-[1.1]">
-              Security isn&apos;t just patching
-            </h2>
-            <p className="font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-[#0F1924]/50 leading-relaxed mt-5 max-w-[380px]">
-              Most tools patch vulnerabilities after the fact. CleanStart eliminates them at the source.
-            </p>
-          </motion.div>
-
-          {/* Right — unified grid */}
-          <motion.div
-            className="flex-1 md:pl-[110px]"
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.6, ease: EASE }}
-          >
-            {/* Column headings — same grid as rows */}
-            <div className="flex items-end gap-[12px] md:gap-[16px] mb-[20px]">
-              <div className="flex-1">
-                <h3 className="font-['Google_Sans',sans-serif] font-semibold text-[20px] md:text-[24px] text-[#181818] tracking-[-0.01em] leading-tight whitespace-nowrap">
-                  Public images
-                </h3>
-              </div>
-              <div className="w-[110px] md:w-[130px] shrink-0" />
-              <div className="flex-1">
-                <div className="flex items-center gap-[6px]">
-                  <svg className="w-[22px] h-[24px] md:w-[26px] md:h-[28px] shrink-0" viewBox="0 0 108.25 123.68" fill="none">
-                    <path d="M94.39 39.89V85.24L61.19 105.11V59.02L48.28 66.46L48.63 66.68V120.39L54.12 123.68L108.25 92.04V32.16L108.03 32.03L94.39 39.89Z" fill="#056BF1" />
-                    <path d="M61.19 58.83L19.87 34.52L54.64 15.43L94.39 38.18V39.89L108.03 32.03L53.86 0L0 32.16V91.26L12.55 98.77V45.5L48.28 66.46L61.19 59.02V58.83Z" fill="#06C7F2" />
-                  </svg>
-                  <h3 className="font-['Google_Sans',sans-serif] font-semibold text-[20px] md:text-[24px] text-[#181818] tracking-[-0.01em] leading-tight">
-                    CleanStart
-                  </h3>
-                </div>
-              </div>
-            </div>
-
-            {/* Rows: Public bars → label → CleanStart bars */}
-            <div className="flex flex-col gap-[14px]">
-              {COMPARISON_GRID.map((row, i) => (
-                <motion.div
-                  key={row.label}
-                  className="flex items-center gap-[12px] md:gap-[16px]"
-                  initial={{ opacity: 0, y: 8 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.4, delay: 0.15 + i * 0.05, ease: EASE }}
-                >
-                  {/* Public bars */}
-                  <div className="flex gap-[2px] flex-1">
-                    {Array.from({ length: BAR_TOTAL }).map((_, j) => (
-                      <div
-                        key={j}
-                        className={`flex-1 h-[20px] md:h-[26px] rounded-[2px] ${
-                          j < row.publicScore ? 'bg-[#6B7280]' : 'bg-[#E5E7EB]'
-                        }`}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Label */}
-                  <span className="font-['Google_Sans',sans-serif] font-normal text-[13px] md:text-[15px] text-[#0F1924]/50 w-[110px] md:w-[130px] shrink-0 text-center leading-tight">
-                    {row.label}
-                  </span>
-
-                  {/* CleanStart bars */}
-                  <div className="flex gap-[2px] flex-1">
-                    {Array.from({ length: BAR_TOTAL }).map((_, j) => (
-                      <div
-                        key={j}
-                        className={`flex-1 h-[20px] md:h-[26px] rounded-[2px] ${
-                          j < row.cleanScore ? 'bg-[#056BF1]' : 'bg-[#E5E7EB]'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* ── CLEANSTART ADVANTAGE STATS ────────────────────────────────────── */}
-      <div className="bg-[#056BF1] px-4 md:px-8 lg:px-[50px] py-12 md:py-[100px]">
-
-        <div className="max-w-[1340px] mx-auto flex flex-col gap-12 md:gap-16">
-
-          {/* Header — split: title left, description right (ref layout) */}
-          <div className="flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-0">
+          {/* Header — 35/65 split */}
+          <div className="flex flex-col lg:flex-row lg:items-start gap-5 lg:gap-0 mb-12 md:mb-16">
             <motion.div
               className="lg:w-[35%] shrink-0"
               initial={{ opacity: 0, y: 24 }}
@@ -1018,30 +1256,156 @@ export function BuildSecurelySection() {
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.7, ease: EASE }}
             >
-              <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-white tracking-[-0.02em] leading-[1.1]">
-                CleanStart<br />Advantage
+              <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.02em] leading-[1.1]">
+                Security isn&apos;t just patching
               </h2>
             </motion.div>
             <motion.p
-              className="flex-1 lg:pl-8 font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-white/60 leading-relaxed max-w-[480px]"
+              className="flex-1 lg:pl-8 font-['Google_Sans',sans-serif] font-normal text-[14px] md:text-[16px] text-[#0F1924]/45 leading-relaxed max-w-[480px]"
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.7, delay: 0.15, ease: EASE }}
+              transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
             >
-              Real results from teams that replaced vulnerable public images with CleanStart&apos;s hardened, source-built containers.
+              Most tools patch vulnerabilities after the fact. CleanStart eliminates them at the source.
             </motion.p>
           </div>
 
-          {/* Stats grid — all in one row */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
-            {STATS.map((stat, i) => (
-              <StatCard key={stat.label} stat={stat} delay={i * 0.07} />
-            ))}
-          </div>
+          {/* Infographic comparison — two cards with VS center */}
+          <div className="flex flex-col md:flex-row items-stretch gap-5 md:gap-0 relative">
 
+            {/* Public Images card — light/muted */}
+            <motion.div
+              className="flex-1 rounded-[18px] md:rounded-r-none overflow-hidden relative"
+              style={{ background: '#F4F5F7', border: '1px solid rgba(0,0,0,0.04)', borderRight: 'none' }}
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.7, ease: EASE }}
+            >
+              {/* Card header */}
+              <div className="px-7 md:px-10 pt-8 pb-5">
+                <h3 className="font-['Google_Sans',sans-serif] font-semibold text-[22px] md:text-[26px] text-[#181818]/60 tracking-[-0.02em]">
+                  Public Images
+                </h3>
+              </div>
+
+              {/* Items */}
+              <div className="px-7 md:px-10 pb-8 flex flex-col gap-[6px]">
+                {COMPARISON_PUBLIC.map((item, i) => (
+                  <motion.div
+                    key={item}
+                    className="flex items-center gap-3.5 py-[10px]"
+                    initial={{ opacity: 0, x: -16 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ duration: 0.45, delay: 0.15 + i * 0.08, ease: EASE }}
+                  >
+                    {/* Cross icon */}
+                    <motion.div
+                      className="w-[28px] h-[28px] rounded-full flex items-center justify-center shrink-0"
+                      style={{ background: 'rgba(0,0,0,0.05)' }}
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true, margin: '-40px' }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 18, delay: 0.2 + i * 0.09 }}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M3.5 3.5L8.5 8.5M8.5 3.5L3.5 8.5" stroke="#181818" strokeOpacity="0.25" strokeWidth="1.5" strokeLinecap="round" />
+                      </svg>
+                    </motion.div>
+                    <span className="font-['Google_Sans',sans-serif] font-normal text-[15px] md:text-[16px] text-[#0F1924]/40 leading-snug">
+                      {item}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Center VS badge */}
+            <motion.div
+              className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.3 }}
+            >
+              <div
+                className="w-[52px] h-[52px] rounded-full flex items-center justify-center"
+                style={{
+                  background: '#056BF1',
+                  boxShadow: '0 0 0 5px white, 0 4px 20px rgba(5,107,241,0.25)',
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M7 4l6 6-6 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+            </motion.div>
+
+            {/* CleanStart card — brand blue */}
+            <motion.div
+              className="flex-1 rounded-[18px] md:rounded-l-none overflow-hidden relative"
+              style={{ background: '#056BF1' }}
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
+            >
+              {/* Card header */}
+              <div className="px-7 md:px-10 pt-8 pb-5">
+                <div className="flex items-center gap-[10px]">
+                  <svg className="w-[24px] h-[26px] shrink-0" viewBox="0 0 108.25 123.68" fill="none">
+                    <polygon points="94.39 39.89 94.39 85.24 61.19 105.11 61.19 59.02 48.28 66.46 48.63 66.68 48.63 120.39 54.12 123.68 108.25 92.04 108.25 32.16 108.03 32.03 94.39 39.89" fill="#06C7F2"/>
+                    <polygon points="61.19 58.83 19.87 34.52 54.64 15.43 94.39 38.18 94.39 39.89 108.03 32.03 53.86 0 0 32.16 0 91.26 12.55 98.77 12.55 45.5 48.28 66.46 61.19 59.02 61.19 58.83" fill="white"/>
+                  </svg>
+                  <h3 className="font-['Google_Sans',sans-serif] font-semibold text-[22px] md:text-[26px] text-white tracking-[-0.02em]">
+                    CleanStart
+                  </h3>
+                </div>
+              </div>
+
+              {/* Items */}
+              <div className="px-7 md:px-10 pb-8 flex flex-col gap-[6px]">
+                {COMPARISON_CLEAN.map((item, i) => (
+                  <motion.div
+                    key={item}
+                    className="flex items-center gap-3.5 py-[10px]"
+                    initial={{ opacity: 0, x: 16 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ duration: 0.45, delay: 0.2 + i * 0.08, ease: EASE }}
+                  >
+                    {/* Check circle */}
+                    <motion.div
+                      className="w-[28px] h-[28px] rounded-full flex items-center justify-center shrink-0"
+                      style={{ background: 'rgba(255,255,255,0.15)' }}
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true, margin: '-40px' }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 18, delay: 0.3 + i * 0.09 }}
+                    >
+                      <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+                        <path d="M3 7.5L5.5 10L11 4" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </motion.div>
+                    <span className="font-['Google_Sans',sans-serif] font-medium text-[15px] md:text-[16px] text-white leading-snug">
+                      {item}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Decorative corner arcs */}
+              <div className="absolute -bottom-[60px] -right-[60px] w-[180px] h-[180px] rounded-full border border-white/[0.06] pointer-events-none" />
+              <div className="absolute -bottom-[30px] -right-[30px] w-[120px] h-[120px] rounded-full border border-white/[0.04] pointer-events-none" />
+            </motion.div>
+          </div>
         </div>
       </div>
+
+      {/* ── CLEANSTART ADVANTAGE — animated stats showcase ─────────── */}
+      <AdvantageStats />
     </section>
   );
 }

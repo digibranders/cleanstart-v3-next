@@ -618,7 +618,7 @@ export function SbomContent(): React.ReactElement {
             {/* Right: Description + CTA */}
             <motion.div {...anim(0.1)}>
               <p className="text-white/80 text-base md:text-lg font-['Google_Sans',sans-serif] mb-8 leading-relaxed">
-                Don't settle for static or incomplete SBOMs. CleanStart delivers continuous visibility, verified provenance, and audit-ready evidence.
+                Don&apos;t settle for static or incomplete SBOMs. CleanStart delivers continuous visibility, verified provenance, and audit-ready evidence.
               </p>
               <CallToActionButton
                 label="Contact Us"
