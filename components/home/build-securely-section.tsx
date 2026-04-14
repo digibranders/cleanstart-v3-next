@@ -376,30 +376,45 @@ const PRODUCT_CARDS_STATIC = [
     title: 'Clean Image',
     subtitle: 'Minimal. Immutable. Zero CVE.',
     icon: '/home/factory/group-quality.svg',
+    tint: '#EBF4FF',
+    accent: '#056BF1',
+    accentLight: '#b3d4fc',
   },
   {
     tag: 'DEPENDENCIES',
     title: 'Clean Packages',
     subtitle: 'Curated. Verified. No hidden risk.',
     icon: '/home/factory/capa-shield.svg',
+    tint: '#E8F5ED',
+    accent: '#1A9E56',
+    accentLight: '#8fd4b0',
   },
   {
     tag: 'AI/ML',
     title: 'Clean ML Models',
     subtitle: 'Scanned. Signed. Safe by design.',
     icon: '/home/factory/five-v.svg',
+    tint: '#EEE8F8',
+    accent: '#7C4DBC',
+    accentLight: '#b8a0e0',
   },
   {
     tag: 'OBSERVABILITY',
     title: 'Cleansight',
     subtitle: 'AI-powered insights. Risk, policy & drift detection.',
     icon: '/home/factory/four-v.svg',
+    tint: '#FFF8EB',
+    accent: '#D4940A',
+    accentLight: '#e8d480',
   },
   {
     tag: 'TRANSPARENCY',
     title: 'Clean SBOM',
     subtitle: 'Complete. Signed. Continuously verified.',
     icon: '/home/factory/gov-3.svg',
+    tint: '#FAE8E2',
+    accent: '#D4582A',
+    accentLight: '#e8a890',
   },
 ];
 
@@ -407,60 +422,82 @@ const PRODUCT_CARDS_STATIC = [
 function FoundationCard(): React.ReactElement {
   return (
     <div
-      className="rounded-[20px] border border-[#E5E7EB] bg-white overflow-hidden"
-      style={{ boxShadow: '0 2px 20px rgba(0,0,0,0.04)' }}
+      className="rounded-[20px] overflow-hidden"
+      style={{
+        background: '#EBF4FF',
+        border: '1px solid rgba(5,107,241,0.1)',
+        boxShadow: '0 2px 20px rgba(0,0,0,0.04)',
+      }}
     >
-      <div className="text-center py-5 border-b border-[#E5E7EB]">
+      {/* Foundation title bar */}
+      <div className="text-center py-5 border-b border-[#056BF1]/10">
         <span className="font-['Google_Sans',sans-serif] font-bold text-[13px] md:text-[15px] tracking-[0.15em] uppercase text-[#181818]">
           Built on Zero-CVE Foundation
         </span>
       </div>
-      <div className="flex flex-col lg:flex-row">
-        <div className="flex-1 bg-[#056BF1] p-6 md:p-8 lg:p-10">
-          <div className="flex items-start gap-4 mb-6">
-            <div className="flex-1">
-              <h4 className="font-['Google_Sans',sans-serif] font-bold text-[18px] md:text-[22px] text-white tracking-[-0.02em] uppercase mb-2">AI Logic Engine</h4>
-              <p className="font-['Google_Sans',sans-serif] text-[12px] md:text-[13px] text-white/80 leading-relaxed">Multi-agent orchestration that plans, analyzes, and optimizes every build.</p>
-            </div>
-            <Image src="/home/factory/ai-engine.svg" alt="AI Logic Engine" width={80} height={80} className="shrink-0" />
-          </div>
-          <div className="flex gap-3 md:gap-4">
-            {[
-              { label: 'Plan', icon: '/home/factory/step-plan.svg' },
-              { label: 'Analyze', icon: '/home/factory/step-analyze.svg' },
-              { label: 'Orchestrate', icon: '/home/factory/step-orchestrate.svg' },
-            ].map((s) => (
-              <div key={s.label} className="flex-1 text-center">
-                <span className="font-['Google_Sans',sans-serif] font-semibold text-[12px] md:text-[14px] text-white block mb-2">{s.label}</span>
-                <div className="flex justify-center"><Image src={s.icon} alt={s.label} width={36} height={36} /></div>
+
+      {/* Inner container with padding — two engine cards sit inside */}
+      <div className="p-4 md:p-6 lg:p-8">
+        <div className="flex flex-col lg:flex-row gap-4 md:gap-5 lg:gap-6 items-stretch">
+          {/* AI Logic Engine card */}
+          <div className="flex-1 bg-white rounded-[16px] p-6 md:p-8 lg:p-10 flex flex-col justify-between" style={{ border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+            <div className="flex items-start justify-between gap-6 mb-8">
+              <div>
+                <h4 className="font-['Google_Sans',sans-serif] font-bold text-[18px] md:text-[22px] text-[#181818] tracking-[-0.02em] uppercase mb-3">AI Logic Engine</h4>
+                <p className="font-['Google_Sans',sans-serif] text-[12px] md:text-[13px] text-[#0F1924]/50 leading-relaxed max-w-[280px]">Multi-agent orchestration that plans, analyzes, and optimizes every build.</p>
               </div>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center justify-center px-2 py-4 lg:py-0 bg-white">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="hidden lg:block"><path d="M8 16h16M20 10l6 6-6 6" stroke="#056BF1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="lg:hidden"><path d="M16 8v16M10 20l6 6 6-6" stroke="#056BF1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        </div>
-        <div className="flex-1 bg-[#056BF1] p-6 md:p-8 lg:p-10">
-          <div className="flex items-start gap-4 mb-6">
-            <Image src="/home/factory/compile-factory.svg" alt="CleanCompile Factory" width={80} height={80} className="shrink-0" />
-            <div className="flex-1">
-              <h4 className="font-['Google_Sans',sans-serif] font-bold text-[18px] md:text-[22px] text-white tracking-[-0.02em] uppercase mb-2">CleanCompile Factory</h4>
-              <p className="font-['Google_Sans',sans-serif] text-[12px] md:text-[13px] text-white/80 leading-relaxed">Hermetic, deterministic builds. Only what you specify.</p>
+              <div className="shrink-0 w-[64px] h-[64px] md:w-[72px] md:h-[72px] rounded-[14px] bg-[#056BF1] flex items-center justify-center">
+                <Image src="/home/factory/ai-engine.svg" alt="AI Logic Engine" width={40} height={40} className="md:w-[46px] md:h-[46px] brightness-0 invert" />
+              </div>
+            </div>
+            <div className="flex gap-6 md:gap-8">
+              {[
+                { label: 'Plan', icon: '/home/factory/step-plan.svg' },
+                { label: 'Analyze', icon: '/home/factory/step-analyze.svg' },
+                { label: 'Orchestrate', icon: '/home/factory/step-orchestrate.svg' },
+              ].map((s) => (
+                <div key={s.label} className="text-left">
+                  <span className="font-['Google_Sans',sans-serif] font-semibold text-[12px] md:text-[14px] text-[#181818] block mb-2">{s.label}</span>
+                  <div className="w-[40px] h-[40px] rounded-[10px] bg-[#EBF4FF] flex items-center justify-center">
+                    <Image src={s.icon} alt={s.label} width={24} height={24} className="[filter:brightness(0)_saturate(100%)_invert(27%)_sepia(96%)_saturate(2878%)_hue-rotate(210deg)_brightness(96%)_contrast(99%)]" />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-          <div className="flex gap-3 md:gap-4">
-            {[
-              { label: 'Spec', icon: '/home/factory/step-spec.svg' },
-              { label: 'Build', icon: '/home/factory/step-plan.svg' },
-              { label: 'Attest', icon: '/home/factory/step-attest.svg' },
-              { label: 'Handoff', icon: '/home/factory/step-handoff.svg' },
-            ].map((s) => (
-              <div key={s.label} className="flex-1 text-center">
-                <span className="font-['Google_Sans',sans-serif] font-semibold text-[12px] md:text-[14px] text-white block mb-2">{s.label}</span>
-                <div className="flex justify-center"><Image src={s.icon} alt={s.label} width={36} height={36} /></div>
+
+          {/* Arrow between cards */}
+          <div className="flex items-center justify-center shrink-0">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="hidden lg:block"><path d="M8 16h16M20 10l6 6-6 6" stroke="#056BF1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="lg:hidden"><path d="M16 8v16M10 20l6 6 6-6" stroke="#056BF1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </div>
+
+          {/* CleanCompile Factory card */}
+          <div className="flex-1 bg-white rounded-[16px] p-6 md:p-8 lg:p-10 flex flex-col justify-between" style={{ border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+            <div className="flex items-start justify-between gap-6 mb-8">
+              <div>
+                <h4 className="font-['Google_Sans',sans-serif] font-bold text-[18px] md:text-[22px] text-[#181818] tracking-[-0.02em] uppercase mb-3">CleanCompile Factory</h4>
+                <p className="font-['Google_Sans',sans-serif] text-[12px] md:text-[13px] text-[#0F1924]/50 leading-relaxed max-w-[280px]">Hermetic, deterministic builds. Only what you specify.</p>
               </div>
-            ))}
+              <div className="shrink-0 w-[64px] h-[64px] md:w-[72px] md:h-[72px] rounded-[14px] bg-[#056BF1] flex items-center justify-center">
+                <Image src="/home/factory/compile-factory.svg" alt="CleanCompile Factory" width={40} height={40} className="md:w-[46px] md:h-[46px] brightness-0 invert" />
+              </div>
+            </div>
+            <div className="flex gap-6 md:gap-8">
+              {[
+                { label: 'Spec', icon: '/home/factory/step-spec.svg' },
+                { label: 'Build', icon: '/home/factory/step-plan.svg' },
+                { label: 'Attest', icon: '/home/factory/step-attest.svg' },
+                { label: 'Handoff', icon: '/home/factory/step-handoff.svg' },
+              ].map((s) => (
+                <div key={s.label} className="text-left">
+                  <span className="font-['Google_Sans',sans-serif] font-semibold text-[12px] md:text-[14px] text-[#181818] block mb-2">{s.label}</span>
+                  <div className="w-[40px] h-[40px] rounded-[10px] bg-[#EBF4FF] flex items-center justify-center">
+                    <Image src={s.icon} alt={s.label} width={24} height={24} className="[filter:brightness(0)_saturate(100%)_invert(27%)_sepia(96%)_saturate(2878%)_hue-rotate(210deg)_brightness(96%)_contrast(99%)]" />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -472,33 +509,63 @@ function FoundationCard(): React.ReactElement {
 function ProductCard({ card, visible }: { card: typeof PRODUCT_CARDS_STATIC[0]; visible: boolean }): React.ReactElement {
   return (
     <div
-      className="rounded-[16px] bg-[#056BF1] p-4 md:p-5 lg:p-6 flex flex-col items-center text-center transition-all duration-700 min-h-[180px] md:min-h-[200px] lg:min-h-[220px]"
+      className="relative rounded-[15px] p-5 lg:p-6 flex flex-col transition-all duration-700 h-full overflow-hidden group cursor-pointer"
       style={{
+        background: card.tint,
+        border: '1px solid rgba(0,0,0,0.04)',
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(40px)',
       }}
     >
-      <span className="font-['Google_Sans',sans-serif] font-bold text-[10px] md:text-[11px] tracking-[0.12em] uppercase text-white mb-3 md:mb-4">{card.tag}</span>
-      <div className="mb-3 md:mb-4 flex-shrink-0"><Image src={card.icon} alt={card.title} width={40} height={40} className="md:w-[50px] md:h-[50px]" /></div>
-      <h4 className="font-['Google_Sans',sans-serif] font-bold text-[14px] md:text-[15px] lg:text-[17px] text-white leading-tight mb-1">{card.title}</h4>
-      <p className="font-['Google_Sans',sans-serif] text-[10px] md:text-[11px] lg:text-[12px] text-white leading-snug mb-3 md:mb-4">{card.subtitle}</p>
+      {/* Background decorative icon */}
+      <div
+        className="absolute -bottom-3 -right-3 opacity-[0.12] transition-transform duration-500 group-hover:scale-110 group-hover:opacity-[0.2]"
+      >
+        <Image src={card.icon} alt="" width={100} height={100} className="w-[100px] h-[100px]" />
+      </div>
+
+      {/* Tag */}
+      <span
+        className="font-['Google_Sans',sans-serif] font-bold text-[10px] md:text-[11px] tracking-[0.12em] uppercase mb-4"
+        style={{ color: card.accent }}
+      >
+        {card.tag}
+      </span>
+
+      {/* Icon */}
+      <div className="mb-4 flex-shrink-0">
+        <div
+          className="w-[44px] h-[44px] md:w-[50px] md:h-[50px] rounded-[12px] flex items-center justify-center"
+          style={{ background: card.accent }}
+        >
+          <Image src={card.icon} alt={card.title} width={28} height={28} className="md:w-[32px] md:h-[32px] brightness-0 invert" />
+        </div>
+      </div>
+
+      {/* Text */}
+      <h4 className="font-['Google_Sans',sans-serif] font-bold text-[14px] md:text-[15px] lg:text-[17px] text-[#181818] leading-tight mb-1">{card.title}</h4>
+      <p className="font-['Google_Sans',sans-serif] text-[11px] md:text-[12px] text-[#0F1924]/50 leading-snug mb-4">{card.subtitle}</p>
+
+      {/* CTA arrow */}
       <div className="mt-auto">
-        <div className="w-[34px] h-[34px] md:w-[40px] md:h-[40px] rounded-full bg-white flex items-center justify-center">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="#056BF1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        <div
+          className="w-[34px] h-[34px] md:w-[38px] md:h-[38px] rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
+          style={{ background: card.accent }}
+        >
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </div>
       </div>
     </div>
   );
 }
 
-/* ── SVG path data — circuit-board right-angle paths with rounded corners ── */
-const R = 18;
+/* ── SVG path data — smooth organic curves from center to each card ── */
 const FLOW_PATHS = [
-  { endX: 100, d: `M 500 0 L 500 ${30 - R} Q 500 30, ${500 - R} 30 L ${100 + R} 30 Q 100 30, 100 ${30 + R} L 100 130` },
-  { endX: 300, d: `M 500 0 L 500 ${60 - R} Q 500 60, ${500 - R} 60 L ${300 + R} 60 Q 300 60, 300 ${60 + R} L 300 130` },
-  { endX: 500, d: `M 500 0 L 500 130` },
-  { endX: 700, d: `M 500 0 L 500 ${60 - R} Q 500 60, ${500 + R} 60 L ${700 - R} 60 Q 700 60, 700 ${60 + R} L 700 130` },
-  { endX: 900, d: `M 500 0 L 500 ${30 - R} Q 500 30, ${500 + R} 30 L ${900 - R} 30 Q 900 30, 900 ${30 + R} L 900 130` },
+  { endX: 100, color: '#056BF1', d: `M 500 0 C 500 50, 100 50, 100 140` },
+  { endX: 300, color: '#1A9E56', d: `M 500 0 C 500 60, 300 60, 300 140` },
+  { endX: 500, color: '#7C4DBC', d: `M 500 0 L 500 140` },
+  { endX: 700, color: '#D4940A', d: `M 500 0 C 500 60, 700 60, 700 140` },
+  { endX: 900, color: '#D4582A', d: `M 500 0 C 500 50, 900 50, 900 140` },
 ];
 
 /* ── Fluid node animation hook — rAF-driven dash traveling along path ── */
@@ -551,9 +618,102 @@ function useFluidPaths(
 }
 
 /* ── Scroll-driven animated build flow ── */
+const CIRCUIT_COLORS = ['#056BF1', '#1A9E56', '#7C4DBC', '#D4940A', '#D4582A'];
+
+function CircuitFlowSVG({ lineP, containerRef }: { lineP: number; containerRef: React.RefObject<HTMLDivElement | null> }) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [paths, setPaths] = useState<{ d: string; color: string; endX: number; endY: number; nodes: {x:number;y:number}[] }[]>([]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const svg = svgRef.current;
+    if (!container || !svg) return;
+
+    function calcPaths() {
+      const svgRect = svg!.getBoundingClientRect();
+      const cards = container!.querySelectorAll('[data-card-index]');
+      const foundation = container!.querySelector('[data-foundation]');
+      if (!foundation || cards.length < 5) return;
+
+      const foundationRect = foundation.getBoundingClientRect();
+      // Origin = bottom center of foundation card
+      const originX = foundationRect.left + foundationRect.width / 2 - svgRect.left;
+      const originY = 0;
+
+      const R = 16; // corner radius in pixels
+      const newPaths: typeof paths = [];
+
+      // Single horizontal routing level for all branching paths
+      const hY = svgRect.height * 0.45;
+
+      cards.forEach((card, i) => {
+        const cardRect = card.getBoundingClientRect();
+        const endX = cardRect.left + cardRect.width / 2 - svgRect.left;
+        const endY = svgRect.height;
+        const color = CIRCUIT_COLORS[i];
+
+        if (i === 2) {
+          // Center card — straight line down
+          newPaths.push({ d: `M ${originX} ${originY} L ${endX} ${endY}`, color, endX, endY, nodes: [] });
+        } else {
+          const goLeft = i < 2;
+
+          // Path: vertical down to hY, then horizontal to endX, then vertical down
+          const d = goLeft
+            ? `M ${originX} ${originY} L ${originX} ${hY - R} Q ${originX} ${hY} ${originX - R} ${hY} L ${endX + R} ${hY} Q ${endX} ${hY} ${endX} ${hY + R} L ${endX} ${endY}`
+            : `M ${originX} ${originY} L ${originX} ${hY - R} Q ${originX} ${hY} ${originX + R} ${hY} L ${endX - R} ${hY} Q ${endX} ${hY} ${endX} ${hY + R} L ${endX} ${endY}`;
+
+          // Single node at the destination bend (where it turns downward to the card)
+          newPaths.push({ d, color, endX, endY, nodes: [{ x: endX, y: hY }] });
+        }
+      });
+
+      setPaths(newPaths);
+    }
+
+    calcPaths();
+    window.addEventListener('resize', calcPaths);
+    return () => window.removeEventListener('resize', calcPaths);
+  }, [containerRef]);
+
+  return (
+    <svg ref={svgRef} className="absolute inset-0 w-full h-full" style={{ overflow: 'visible' }}>
+      {paths.map((c, i) => {
+        const stagger = Math.min(1, Math.max(0, lineP * 1.6 - i * 0.12));
+        const totalLen = 2000;
+        const nodesVisible = stagger > 0.5;
+        const tipVisible = stagger > 0.9;
+        return (
+          <g key={`circuit-${i}`}>
+            {/* Ghost trace */}
+            <path d={c.d} fill="none" stroke={c.color} strokeWidth="1" opacity={0.08} strokeLinecap="round" />
+            {/* Main path */}
+            <path
+              d={c.d} fill="none" stroke={c.color} strokeWidth="2" strokeLinecap="round"
+              strokeDasharray={totalLen} strokeDashoffset={totalLen * (1 - stagger)}
+            />
+            {/* Junction nodes at bends */}
+            {c.nodes.map((n, ni) => (
+              <g key={ni} style={{ opacity: nodesVisible ? 1 : 0, transition: 'opacity 0.3s' }}>
+                <circle cx={n.x} cy={n.y} r="5" fill="white" stroke={c.color} strokeWidth="2" />
+                <circle cx={n.x} cy={n.y} r="2" fill={c.color} />
+              </g>
+            ))}
+            {/* Terminal node */}
+            <g style={{ opacity: tipVisible ? 1 : 0, transition: 'opacity 0.3s' }}>
+              <circle cx={c.endX} cy={c.endY} r="6" fill={c.color} />
+              <circle cx={c.endX} cy={c.endY} r="3" fill="white" />
+            </g>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 function StaticBuildFlow(): React.ReactElement {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const basePathRefs = useRef<(SVGPathElement | null)[]>([]);
+  const flowContainerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: scrollRef,
@@ -577,62 +737,26 @@ function StaticBuildFlow(): React.ReactElement {
     <>
       {/* ═══ DESKTOP: scroll-driven animation ═══ */}
       <div ref={scrollRef} className="hidden lg:block relative" style={{ height: '200vh' }}>
-        <div className="sticky top-20 pb-10">
-          <FoundationCard />
+        <div ref={flowContainerRef} className="sticky top-20 pb-10">
+          <div data-foundation>
+            <FoundationCard />
+          </div>
 
-          {/* SVG flow lines */}
-          <div className="relative" style={{ height: 140 }}>
-            <svg
-              className="absolute inset-0 w-full"
-              viewBox="0 0 1000 140"
-              style={{ height: 140, overflow: 'visible' }}
-              preserveAspectRatio="none"
-            >
-              <defs />
-
-              {/* Base paths — solid blue stroke, draw in with scroll */}
-              {FLOW_PATHS.map((fp, i) => {
-                const stagger = Math.min(1, Math.max(0, lineP * 1.6 - i * 0.12));
-                const totalLen = 600;
-                return (
-                  <path
-                    key={`base-${i}`}
-                    ref={(el) => { basePathRefs.current[i] = el; }}
-                    d={fp.d}
-                    fill="none"
-                    stroke="#056BF1"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    vectorEffect="non-scaling-stroke"
-                    strokeDasharray={totalLen}
-                    strokeDashoffset={totalLen * (1 - stagger)}
-                  />
-                );
-              })}
-
-
-              {/* Arrow tips */}
-              {FLOW_PATHS.map((fp, i) => {
-                const tipVisible = lineP * 1.6 - i * 0.12 > 0.9;
-                return (
-                  <polygon
-                    key={`tip-${i}`}
-                    points={`${fp.endX},140 ${fp.endX - 7},126 ${fp.endX + 7},126`}
-                    fill="#056BF1"
-                    style={{ opacity: tipVisible ? 1 : 0, transition: 'opacity 0.3s' }}
-                  />
-                );
-              })}
-            </svg>
+          {/* Circuit board flow lines — pixel-perfect using DOM measurements */}
+          <div className="relative" style={{ height: 160 }}>
+            <CircuitFlowSVG lineP={lineP} containerRef={flowContainerRef} />
           </div>
 
           {/* Product cards */}
-          <div className="grid grid-cols-5 gap-3">
+          <div className="grid grid-cols-5 gap-4">
             {PRODUCT_CARDS_STATIC.map((card, i) => {
               const threshold = 0.15 * i;
               const cardVisible = cardsP > threshold;
-              return <ProductCard key={card.title} card={card} visible={cardVisible} />;
+              return (
+                <div key={card.title} data-card-index={i}>
+                  <ProductCard card={card} visible={cardVisible} />
+                </div>
+              );
             })}
           </div>
         </div>
@@ -641,7 +765,7 @@ function StaticBuildFlow(): React.ReactElement {
       {/* ═══ MOBILE: static layout ═══ */}
       <div className="lg:hidden flex flex-col gap-6">
         <FoundationCard />
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {PRODUCT_CARDS_STATIC.map((card) => (
             <ProductCard key={card.title} card={card} visible />
           ))}
@@ -1214,7 +1338,7 @@ export function BuildSecurelySection() {
         <div className="max-w-[1340px] mx-auto flex flex-col gap-12 md:gap-16">
 
           {/* Solution header — tight, left-aligned with subtitle */}
-          <div className="flex flex-col lg:flex-row lg:items-end gap-5 lg:gap-12">
+          <div className="flex flex-col lg:flex-row lg:items-start gap-5 lg:gap-12">
             <motion.div
               className="flex-shrink-0"
               initial={{ opacity: 0, y: 24 }}
@@ -1223,7 +1347,7 @@ export function BuildSecurelySection() {
               transition={{ duration: 0.7, ease: EASE }}
             >
               <h2 className="font-['Google_Sans',sans-serif] font-normal text-[32px] md:text-[40px] lg:text-[48px] text-[#181818] tracking-[-0.02em] leading-[1.1] max-w-[600px]">
-                Built Securely, from Source to Image
+                The CleanStart Platform
               </h2>
             </motion.div>
             <motion.p
@@ -1233,7 +1357,7 @@ export function BuildSecurelySection() {
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
             >
-              Five hardened products built on a zero-CVE foundation, powered by AI-driven compilation.
+              From source to zero-CVE containers. Rebuilt with AI. Proven by design.
             </motion.p>
           </div>
 

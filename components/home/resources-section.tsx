@@ -203,7 +203,7 @@ function MascotCard() {
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
     >
-      <AnimatedBird className="w-full h-full object-contain scale-110" />
+      <AnimatedBird className="w-full h-full object-contain scale-[0.825]" />
     </motion.div>
   );
 }
@@ -276,11 +276,11 @@ export function ResourcesSection() {
         </div>
 
         {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 auto-rows-[280px] md:auto-rows-[300px] lg:auto-rows-[320px] gap-4 md:gap-[25px] w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 auto-rows-[200px] md:auto-rows-[220px] lg:auto-rows-[240px] gap-4 md:gap-[20px] w-full">
           {/* Row 1 Col 1: EventCard (span 2 rows) */}
           <EventCard />
 
-          {/* Row 1 Col 2: StatCard 67% purple */}
+          {/* Row 1 Col 2: StatCard 67% */}
           <StatCard
             value="67%"
             description="of security teams report improved incident response time"

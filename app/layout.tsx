@@ -1,17 +1,9 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
 import { SmoothScrollProvider } from "@/components/layout/smooth-scroll-provider";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { ScrollToTop } from "@/components/layout/scroll-to-top";
 import "./globals.css";
-
-const googleSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-  variable: "--font-google-sans",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -35,7 +27,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="antialiased">
-      <body className={`${googleSans.variable} font-['Google_Sans',sans-serif]`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body style={{ fontFamily: "'Google Sans', sans-serif" }}>
         <SmoothScrollProvider>
           <ScrollToTop />
           <SiteHeader />
