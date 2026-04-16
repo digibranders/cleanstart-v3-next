@@ -116,6 +116,7 @@ const megaMenuData: Record<string, MegaMenuEntry> = {
           { title: 'Teams', desc: 'The people building the future of container security', path: '/company/team' },
           { title: 'Careers', desc: 'Join our team and help build a more secure future', path: '/company/careers' },
           { title: 'Contact Us', desc: 'Get in touch with our sales and support teams', path: '/company/contact' },
+          { title: 'Community', desc: 'Join the clean software movement', path: '/community' },
         ],
       },
     ],
