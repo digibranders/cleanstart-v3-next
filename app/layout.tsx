@@ -6,6 +6,7 @@ import { ScrollToTop } from "@/components/layout/scroll-to-top";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://cleanstart.com"),
   title: {
     default: "CleanStart — Hardened Container Security",
     template: "%s | CleanStart",
